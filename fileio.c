@@ -1489,7 +1489,7 @@ int UZ_EXP UzpInput(pG, buf, size, flag)
     int flag;     /* flag bits (bit 0: no echo) */
 {
     /* tell picky compilers to shut up about "unused variable" warnings */
-    pG = pG; buf = buf; flag = flag;
+    pG = NULL; buf = NULL; flag = 0;
 
     *size = 0;
     return 0;
@@ -1583,7 +1583,7 @@ int UZ_EXP UzpPassword (pG, rcnt, pwbuf, size, zfn, efn)
 
 #ifndef REENTRANT
     /* tell picky compilers to shut up about "unused variable" warnings */
-    pG = pG;
+    pG = NULL;
 #endif
 
     if (*rcnt == 0) {           /* First call for current entry */
@@ -1614,7 +1614,7 @@ int UZ_EXP UzpPassword (pG, rcnt, pwbuf, size, zfn, efn)
 
 #else /* !CRYPT */
     /* tell picky compilers to shut up about "unused variable" warnings */
-    pG = pG; rcnt = rcnt; pwbuf = pwbuf; size = size; zfn = zfn; efn = efn;
+    pG = NULL; rcnt = NULL; pwbuf = NULL; size = 0; zfn = NULL; efn = NULL;
 
     return IZ_PW_ERROR;  /* internal error; function should never get called */
 #endif /* ?CRYPT */
