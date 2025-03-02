@@ -178,6 +178,10 @@ typedef struct stat z_stat;
 # endif
 #endif
 
+#ifdef HAVE_ICONV
+#include <iconv.h>
+#endif
+
 #ifdef MINIX
 #  include <stdio.h>
 #endif

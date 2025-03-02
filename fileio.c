@@ -147,6 +147,11 @@ static int disk_error OF((__GPRO));
 static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
+#ifdef HAVE_ICONV
+static ZCONST char Far CannotConvertEncoding[] =
+  "error:  cannot convert filename encoding to %s\n        %s\n";
+#endif
+
 #if (!defined(VMS) && !defined(AOS_VS) && !defined(CMS_MVS) && !defined(MACOS))
 #if (!defined(TANDEM))
 #if (defined(ATH_BEO_THS_UNX) || defined(DOS_FLX_NLM_OS2_W32))
@@ -2240,8 +2245,38 @@ int do_string(__G__ length, option)   /* return PK-type error code */
 
         /* translate the Zip entry filename coded in host-dependent "extended
            ASCII" into the compiler's (system's) internal text code page */
-        Ext_ASCII_TO_Native(G.filename, G.pInfo->hostnum, G.pInfo->hostver,
-                            G.pInfo->HasUxAtt, (option == DS_FN_L));
+#ifdef HAVE_ICONV
+#ifdef UTF8_MAYBE_NATIVE
+        if (G.pInfo->GPFIsUTF8 && G.native_is_utf8) {
+        } else
+#endif
+        if (G.iconv_desc != NULL) {
+            iconv_t cd = G.iconv_desc;
+            size_t olen = sizeof(G.filename);
+            char *out = G.filename;
+#ifdef UNICODE_SUPPORT
+            size_t ilen = strlen(G.filename_full) + 1;
+            char *buf = G.filename_full, *in = buf;
+            if (G.pInfo->GPFIsUTF8)
+                cd = iconv_open(G.codeset, "UTF-8");
+#else
+            size_t ilen = length + 1;
+            char buf[ilen], *in = buf;
+            memcpy(buf, out, ilen);
+#endif
+            if (iconv(cd, &in, &ilen, &out, &olen) == (size_t)(-1)) {
+                Info(slide, 0x401, ((char *)slide,
+                  LoadFarString(CannotConvertEncoding),
+                  G.codeset, strerror(errno)));
+                error = PK_WARN;
+                memcpy(G.filename, buf, length + 1);
+            }
+            if (cd != G.iconv_desc)
+                iconv_close(cd);
+        } else
+#endif
+            Ext_ASCII_TO_Native(G.filename, G.pInfo->hostnum, G.pInfo->hostver,
+                                G.pInfo->HasUxAtt, (option == DS_FN_L));
 
         if (G.pInfo->lcflag)      /* replace with lowercase filename */
             STRLOWER(G.filename, G.filename);
@@ -2352,8 +2387,19 @@ int do_string(__G__ length, option)   /* return PK-type error code */
                   free(fn);
                 }
 # endif /* UNICODE_WCHAR */
-                if (G.unipath_filename != G.filename_full)
+                if (G.unipath_filename != G.filename_full) {
+#ifdef HAVE_ICONV
+                  char *in = G.unipath_filename, *out = G.filename;
+                  size_t ilen = strlen(G.unipath_filename) + 1;
+                  size_t olen = sizeof(G.filename);
+                  iconv_t cd = iconv_open(G.codeset, "UTF-8");
+                  if (cd != (iconv_t)(-1)) {
+                      iconv(cd, &in, &ilen, &out, &olen);
+                      iconv_close(cd);
+                  }
+#endif
                   free(G.unipath_filename);
+                }
                 G.unipath_filename = NULL;
               }
             }

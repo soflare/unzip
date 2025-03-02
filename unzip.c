@@ -141,6 +141,13 @@ static void  show_version_info  OF((__GPRO));
     "warning:  -U \"escape all non-ASCII UTF-8 chars\" is not supported\n";
 #endif
 
+#ifdef HAVE_ICONV
+   static ZCONST char Far MustGiveEncoding[] =
+     "error:  must give filename encoding with -E option\n";
+   static ZCONST char Far ConversionNotSupported[] =
+     "error:  conversion from %s to %s is not supported\n";
+#endif
+
 #if CRYPT
    static ZCONST char Far MustGivePasswd[] =
      "error:  must give decryption password with -P option\n";
@@ -758,9 +765,6 @@ int unzip(__G__ argc, argv)
     /* initialize international char support to the current environment */
     SETLOCALE(LC_CTYPE, "");
 
-#ifdef UNICODE_SUPPORT
-    /* see if can use UTF-8 Unicode locale */
-# ifdef UTF8_MAYBE_NATIVE
     {
         char *codeset;
 #  if !(defined(NO_NL_LANGINFO) || defined(NO_LANGINFO_H))
@@ -777,6 +781,14 @@ int unzip(__G__ argc, argv)
             if (codeset != NULL) ++codeset;
         }
 #  endif /* ?(NO_NL_LANGINFO || NO_LANGINFO_H) */
+#ifdef HAVE_ICONV
+        strncpy(G.codeset, codeset, sizeof(G.codeset));
+        G.codeset[sizeof(G.codeset) - 1] = '\0';
+#endif
+
+#ifdef UNICODE_SUPPORT
+    /* see if can use UTF-8 Unicode locale */
+# ifdef UTF8_MAYBE_NATIVE
         /* is the current codeset UTF-8 ? */
         if ((codeset != NULL) && (strcmp(codeset, "UTF-8") == 0)) {
             /* successfully found UTF-8 char coding */
@@ -1481,6 +1493,38 @@ int uz_opts(__G__ pargc, pargv)
                         uO.E_flag = TRUE;
                     }
                     break;
+#elif defined(HAVE_ICONV)
+                case ('E'):    /*  -E: filename encoding */
+                    if (G.iconv_desc != NULL) { /* the last one takes effect */
+                        iconv_close(G.iconv_desc);
+                        G.iconv_desc = NULL;
+                    }
+                    if (negative) {
+                        negative = 0;
+                        break;
+                    }
+                    if (*s == '\0') {    /* -E encoding, not -Eencoding */
+                        s = *++argv;
+                        --argc;
+                        if (argc <= 1 || *s == '-') {
+                            Info(slide, 0x401, ((char *)slide,
+                              LoadFarString(MustGiveEncoding)));
+                            return(PK_PARAM);
+                        }
+                    }
+                    if (STRNICMP(G.codeset, s, sizeof(G.codeset))) {
+                        G.iconv_desc = iconv_open(G.codeset, s);
+                        if (G.iconv_desc == (iconv_t)(-1)) {
+                            G.iconv_desc = NULL;
+                            Info(slide, 0x401, ((char *)slide,
+                              LoadFarString(ConversionNotSupported),
+                              s, G.codeset));
+                            return(PK_PARAM);
+                        }
+                    }
+                    while (*++s != 0)
+                        ;
+                    break;
 #endif /* MACOS */
                 case ('f'):    /* "freshen" (extract only newer files) */
                     if (negative)
@@ -2157,6 +2201,7 @@ static void help_extended(__G)
   "  -D   Skip restoration of timestamps for extracted directories.  On VMS this",
   "         is on by default and -D essentially becames -DD.",
   "  -DD  Skip restoration of timestamps for all entries.",
+  "  -E e [Not MacOS and have iconv] Filename encoding.",
   "  -E   [MacOS (not Unix Apple)]  Display contents of MacOS extra field during",
   "         restore.",
   "  -F   [Acorn] Suppress removal of NFS filetype extension.  [Non-Acorn if",
@@ -2254,6 +2299,7 @@ static void help_extended(__G)
   "  -m  List in long Unix ls -l format.  As -s, but includes compression %.",
   "  -l  List in long Unix ls -l format.  As -m, but compression in bytes.",
   "  -v  List zipfile information in verbose, multi-page format.",
+  "  -E e [Not MacOS and have iconv] Filename encoding.",
   "  -h  List header line.  Includes archive name, actual size, total files.",
   "  -M  Pipe all output through internal pager similar to Unix more(1) command.",
   "  -t  List totals for files listed or for all files.  Includes uncompressed",

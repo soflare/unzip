@@ -305,6 +305,10 @@ typedef struct Globals {
     ulg      unipath_checksum;     /* Unicode field checksum */
     char     *unipath_filename;    /* UTF-8 path */
 #endif /* UNICODE_SUPPORT */
+#ifdef HAVE_ICONV
+    char     codeset[32];          /* LC_CTYPE of current locale */
+    iconv_t  iconv_desc;           /* iconv descriptor */
+#endif
 
 #ifdef CMS_MVS
     char     *tempfn;              /* temp file used; erase on close */

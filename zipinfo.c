@@ -135,6 +135,13 @@ static char *zi_time   OF((__GPRO__ ZCONST ulg *datetimez,
 static ZCONST char nullStr[] = "";
 static ZCONST char PlurSufx[] = "s";
 
+#ifdef HAVE_ICONV
+static ZCONST char Far MustGiveEncoding[] =
+  "error:  must give filename encoding with -E option\n";
+static ZCONST char Far ConversionNotSupported[] =
+  "error:  conversion from %s to %s is not supported\n";
+#endif
+
 static ZCONST char Far ZipInfHeader2[] =
   "Zip file size: %s bytes, number of entries: %s\n";
 static ZCONST char Far EndCentDirRec[] = "\nEnd-of-central-directory record:\n";
@@ -492,6 +499,39 @@ int zi_opts(__G__ pargc, pargv)
                         uO.C_flag = TRUE;
                     break;
 #endif /* !CMS_MVS */
+#ifdef HAVE_ICONV
+                case ('E'):    /*  -E: filename encoding */
+                    if (G.iconv_desc != NULL) { /* the last one takes effect */
+                        iconv_close(G.iconv_desc);
+                        G.iconv_desc = NULL;
+                    }
+                    if (negative) {
+                        negative = 0;
+                        break;
+                    }
+                    if (*s == '\0') {    /* -E encoding, not -Eencoding */
+                        s = *++argv;
+                        --argc;
+                        if (argc <= 1 || *s == '-') {
+                            Info(slide, 0x401, ((char *)slide,
+                              LoadFarString(MustGiveEncoding)));
+                            return(PK_PARAM);
+                        }
+                    }
+                    if (STRNICMP(G.codeset, s, sizeof(G.codeset))) {
+                        G.iconv_desc = iconv_open(G.codeset, s);
+                        if (G.iconv_desc == (iconv_t)(-1)) {
+                            G.iconv_desc = NULL;
+                            Info(slide, 0x401, ((char *)slide,
+                              LoadFarString(ConversionNotSupported),
+                              s, G.codeset));
+                            return(PK_PARAM);
+                        }
+                    }
+                    while (*++s != 0)
+                        ;
+                    break;
+#endif
                 case 'h':      /* header line */
                     if (negative)
                         hflag_2 = hflag_slmv = FALSE, negative = 0;

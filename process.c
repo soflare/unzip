@@ -620,6 +620,12 @@ void free_G_buffers(__G)     /* releases all memory allocated in global vars */
         G.fnfull_bufsize = 0;
     }
 #endif /* UNICODE_SUPPORT */
+#ifdef HAVE_ICONV
+    if (G.iconv_desc) {
+        iconv_close(G.iconv_desc);
+        G.iconv_desc = NULL;
+    }
+#endif
 
 #ifndef SFX
     for (i = 0; i < DIR_BLKSIZ; i++) {
