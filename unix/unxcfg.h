@@ -186,7 +186,12 @@ typedef struct stat z_stat;
 #  include <stdio.h>
 #endif
 #if (!defined(HAVE_STRNICMP) & !defined(NO_STRNICMP))
-#  define NO_STRNICMP
+#  ifndef NO_STRINGS_H
+#    include <strings.h>
+#    define STRNICMP strncasecmp
+#  else
+#    define NO_STRNICMP
+#  endif
 #endif
 #ifndef DATE_FORMAT
 #  define DATE_FORMAT DF_MDY    /* GRR:  customize with locale.h somehow? */
