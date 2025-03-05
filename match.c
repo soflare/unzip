@@ -373,7 +373,7 @@ static int namecmp(s1, s2)
 
 
 int iswild(p)        /* originally only used for stat()-bug workaround in */
-    ZCONST char *p;  /*  VAX C, Turbo/Borland C, Watcom C, Atari MiNT libs; */
+    ZCONST char *p;  /*  VAX C, Turbo/Borland C, Watcom C libs; */
 {                    /*  now used in process_zipfiles() as well */
     for (; *p; INCSTR(p))
         if (*p == '\\' && *(p+1))

@@ -52,8 +52,8 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
-              Atari, Windows 3.x/95/NT/CE, Macintosh, Acorn RISC OS, BeOS,
-              SMS/QDOS, VM/CMS and MVS.
+              Windows 3.x/95/NT/CE, Macintosh, Acorn RISC OS, BeOS, SMS/QDOS,
+              VM/CMS and MVS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -278,7 +278,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local2[] = " -M  pipe through \"more\" pager";
    static ZCONST char Far local3[] = "\n";
 #else
-   static ZCONST char Far local2[] = "";   /* Atari, Mac, CMS/MVS etc. */
+   static ZCONST char Far local2[] = "";   /* Mac, CMS/MVS etc. */
    static ZCONST char Far local3[] = "";
 #endif
 #endif /* ?MACOS */

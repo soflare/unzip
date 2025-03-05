@@ -20,7 +20,7 @@
              Echoff()       (Unix only)
              screensize()   (Unix only)
              zgetch()       (Unix, VMS, and non-Unix/VMS versions)
-             getp()         ("PC," Unix/Atari/Be, VMS/VMCMS/MVS)
+             getp()         ("PC," Unix/Be, VMS/VMCMS/MVS)
 
   ---------------------------------------------------------------------------*/
 
@@ -65,7 +65,7 @@
 
 #ifdef UNZIP            /* Zip handles this with the unix/configure script */
 #  ifndef _POSIX_VERSION
-#    if (defined(SYSV) || defined(CRAY)) &&  !defined(__MINT__)
+#    if (defined(SYSV) || defined(CRAY))
 #      ifndef USE_SYSV_TERMIO
 #        define USE_SYSV_TERMIO
 #      endif
@@ -84,7 +84,7 @@
 #           define HAVE_SYS_TERMIO_H
 #        endif
 #      endif /* ?COHERENT */
-#    endif /* (SYSV || CRAY) && !__MINT__ */
+#    endif /* (SYSV || CRAY) */
 #  endif /* !_POSIX_VERSION */
 #  if !(defined(BSD4_4) || defined(SYSV) || defined(__convexc__))
 #    ifndef NO_FCNTL_H
@@ -589,14 +589,10 @@ char *getp(__G__ m, p, n)
 #else /* !HAVE_WORKING_GETCH */
 
 
-#if (defined(BEO_UNX) || defined(__MINT__))
+#if defined(BEO_UNX)
 
 #ifndef _PATH_TTY
-#  ifdef __MINT__
-#    define _PATH_TTY ttyname(2)
-#  else
-#    define _PATH_TTY "/dev/tty"
-#  endif
+#  define _PATH_TTY "/dev/tty"
 #endif
 
 char *getp(__G__ m, p, n)
@@ -646,7 +642,7 @@ char *getp(__G__ m, p, n)
 
 } /* end function getp() */
 
-#endif /* BEO_UNX || __MINT__ */
+#endif /* BEO_UNX */
 
 
 

@@ -198,9 +198,9 @@ Uz_Globs *globalsCtor()
 #endif /* !FUNZIP */
 
 #if (!defined(DOS_OS2_W32) && !defined(AMIGA) && !defined(RISCOS))
-#if (!defined(MACOS) && !defined(ATARI) && !defined(VMS))
+#if (!defined(MACOS) && !defined(VMS))
     G.echofd = -1;
-#endif /* !(MACOS || ATARI || VMS) */
+#endif /* !(MACOS || VMS) */
 #endif /* !(DOS_OS2_W32 || AMIGA || RISCOS) */
 
 #ifdef SYSTEM_SPECIFIC_CTOR

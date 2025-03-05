@@ -203,15 +203,13 @@
 #  define DECLARE_ERRNO
 #endif /* pyr */
 
-/* stat() bug for Borland, VAX C RTL, and Atari ST MiNT on TOS
- * filesystems:  returns 0 for wildcards!  (returns 0xffffffff on Minix
- * filesystem or `U:' drive under Atari MiNT.)  Watcom C was previously
- * included on this list; it would be good to know what version the problem
- * was fixed at, if it did exist.  */
+/* stat() bug for Borland and VAX C RTL.  Watcom C was previously included on
+ * this list; it would be good to know what version the problem was fixed at,
+ * if it did exist. */
 #if (defined(__TURBOC__) && !defined(WIN32))
 /*#  define WILD_STAT_BUG*/
 #endif
-#if (defined(VMS) || defined(__MINT__))
+#if defined(VMS)
 #  define WILD_STAT_BUG
 #endif
 
@@ -252,31 +250,6 @@
 
 #ifdef AMIGA
 #  include "amiga/amiga.h"
-#endif
-
-/*---------------------------------------------------------------------------
-    Atari ST section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef ATARI
-#  include <time.h>
-#  include <stat.h>
-#  include <fcntl.h>
-#  include <limits.h>
-#  define SYMLINKS
-#  define EXE_EXTENSION  ".tos"
-#  ifndef DATE_FORMAT
-#    define DATE_FORMAT  DF_DMY
-#  endif
-#  define DIR_END        '/'
-#  define INT_SPRINTF
-#  define timezone      _timezone
-#  define lenEOL        2
-#  define PutNativeEOL  {*q++ = native(CR); *q++ = native(LF);}
-#  undef SHORT_NAMES
-#  if (!defined(NOTIMESTAMP) && !defined(TIMESTAMP))
-#    define TIMESTAMP
-#  endif
 #endif
 
 /*---------------------------------------------------------------------------
@@ -609,11 +582,6 @@
 
 
 #if (defined(DOS_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
-#  ifndef HAVE_UNLINK
-#    define HAVE_UNLINK
-#  endif
-#endif
-#if defined(ATARI) /* GRR: others? */
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -1783,7 +1751,7 @@
 #  endif
 #endif
 
-#if (defined(GOT_UTIMBUF) || defined(sgi) || defined(ATARI))
+#if (defined(GOT_UTIMBUF) || defined(sgi))
    typedef struct utimbuf ztimbuf;
 #else
    typedef struct ztimbuf {

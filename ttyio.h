@@ -65,14 +65,6 @@
 #  define HAVE_WORKING_GETCH
 #endif /* AMIGA */
 
-#ifdef ATARI
-#  define echoff(f)
-#  define echon()
-#  include <osbind.h>
-#  define getch() (Cnecin() & 0x000000ff)
-#  define HAVE_WORKING_GETCH
-#endif
-
 #ifdef MACOS
 #  define echoff(f)
 #  define echon()

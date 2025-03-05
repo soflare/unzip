@@ -196,7 +196,7 @@ freely, subject to the above disclaimer and the following restrictions:
 
 /* use prototypes and ANSI libraries if __STDC__, or MS-DOS, or OS/2, or Win32,
  * or IBM C Set/2, or Borland C, or Watcom C, or GNU gcc (emx or Cygwin),
- * or Macintosh, or Sequent, or Atari, or IBM RS/6000, or Silicon Graphics,
+ * or Macintosh, or Sequent, or IBM RS/6000, or Silicon Graphics,
  * or Convex?, or BeOS.
  */
 #if (defined(__STDC__) || defined(MSDOS) || defined(OS2) || defined(WIN32))
@@ -223,7 +223,7 @@ freely, subject to the above disclaimer and the following restrictions:
 #    define MODERN
 #  endif
 #endif
-#if (defined(MACOS) || defined(ATARI_ST) || defined(RISCOS))
+#if (defined(MACOS) || defined(RISCOS))
 #  ifndef PROTO
 #    define PROTO
 #  endif
