@@ -392,22 +392,6 @@ int open_outfile(__G)           /* return 1 if fail */
         return 1;
     }
 #endif /* RISCOS */
-#ifdef TOPS20
-    char *tfilnam;
-
-    if ((tfilnam = (char *)malloc(2*strlen(G.filename)+1)) == (char *)NULL)
-        return 1;
-    strcpy(tfilnam, G.filename);
-    upper(tfilnam);
-    enquote(tfilnam);
-    if ((G.outfile = fopen(tfilnam, FOPW)) == (FILE *)NULL) {
-        Info(slide, 1, ((char *)slide, LoadFarString(CannotCreateFile),
-          tfilnam, strerror(errno)));
-        free(tfilnam);
-        return 1;
-    }
-    free(tfilnam);
-#else /* !TOPS20 */
 #ifdef MTS
     if (uO.aflag)
         G.outfile = zfopen(G.filename, FOPWT);
@@ -467,7 +451,6 @@ int open_outfile(__G)           /* return 1 if fail */
     Trace((stderr, "open_outfile:  fopen(%s) for writing succeeded\n",
       FnFilter1(G.filename)));
 #endif /* !MTS */
-#endif /* !TOPS20 */
 
 #ifdef USE_FWRITE
 #ifdef DOS_OS2_W32
@@ -1710,11 +1693,6 @@ time_t dos_to_unix_time(dosdatetime)
 #else /* !HAVE_MKTIME */
 
     int yr, mo, dy, hh, mm, ss;
-#ifdef TOPS20
-#   define YRBASE  1900
-    struct tmx *tmx;
-    char temp[20];
-#else /* !TOPS20 */
 #   define YRBASE  1970
     int leap;
     unsigned days;
@@ -1735,7 +1713,6 @@ time_t dos_to_unix_time(dosdatetime)
 #endif /* !BSD4_4 */
 #endif /* ?WIN32 */
 #endif /* !MACOS && !RISCOS && !QDOS */
-#endif /* ?TOPS20 */
 
 
     /* dissect date */
@@ -1747,15 +1724,6 @@ time_t dos_to_unix_time(dosdatetime)
     hh = (int)((unsigned)dosdatetime >> 11) & 0x1f;
     mm = (int)((unsigned)dosdatetime >> 5) & 0x3f;
     ss = (int)((unsigned)dosdatetime & 0x1f) * 2;
-
-#ifdef TOPS20
-    tmx = (struct tmx *)malloc(sizeof(struct tmx));
-    sprintf (temp, "%02d/%02d/%02d %02d:%02d:%02d", mo+1, dy+1, yr, hh, mm, ss);
-    time_parse(temp, tmx, (char *)0);
-    m_time = time_make(tmx);
-    free(tmx);
-
-#else /* !TOPS20 */
 
 /*---------------------------------------------------------------------------
     Calculate the number of seconds since the epoch, usually 1 January 1970.
@@ -1840,7 +1808,6 @@ time_t dos_to_unix_time(dosdatetime)
     }
 #endif
 #endif /* !MACOS && !RISCOS && !QDOS */
-#endif /* ?TOPS20 */
 
 #endif /* ?HAVE_MKTIME */
 

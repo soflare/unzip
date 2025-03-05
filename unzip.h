@@ -150,13 +150,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  endif
 #endif
 
-#ifdef __COMPILER_KCC__
-#  include <c-env.h>
-#  ifdef SYS_T20
-#    define TOPS20
-#  endif
-#endif /* __COMPILER_KCC__ */
-
 /* Borland C does not define __TURBOC__ if compiling for a 32-bit platform */
 #ifdef __BORLANDC__
 #  ifndef __TURBOC__

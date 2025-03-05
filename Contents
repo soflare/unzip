@@ -62,7 +62,6 @@ at the end contain their own Contents listings:
   msdos/        support files for compiling under MS-DOS
   os2/          support files for compiling under OS/2 (includes DLL stuff)
   qdos/         support files for compiling under SMS/QDOS
-  tops20/       support files for compiling under TOPS-20
   unix/         support files for compiling under Unix
   vms/          support files for compiling under VMS
   win32/        support files for compiling under Windows 9x and Windows NT

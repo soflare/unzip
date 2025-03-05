@@ -412,38 +412,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    TOPS-20 section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef TOPS20
-#  include <sys/types.h>        /* off_t, time_t, dev_t, ... */
-#  include <sys/stat.h>
-#  include <sys/param.h>
-#  include <sys/time.h>
-#  include <sys/timeb.h>
-#  include <sys/file.h>
-#  include <timex.h>
-#  include <monsym.h>           /* get amazing monsym() macro */
-   extern int open(), close(), read();
-   extern int stat(), unlink(), jsys(), fcntl();
-   extern long lseek(), dup(), creat();
-#  define strchr    index       /* GRR: necessary? */
-#  define strrchr   rindex
-#  define REALLY_SHORT_SYMS
-#  define NO_MKDIR
-#  ifndef HAVE_STRNICMP
-#    define NO_STRNICMP           /* probably not provided by TOPS20 C RTL  */
-#  endif
-#  define DIR_BEG       '<'
-#  define DIR_END       '>'
-#  define DIR_EXT       ".directory"
-#  ifndef DATE_FORMAT
-#    define DATE_FORMAT DF_MDY
-#  endif
-#  define EXE_EXTENSION ".exe"  /* just a guess... */
-#endif /* TOPS20 */
-
-/*---------------------------------------------------------------------------
     Unix section:
   ---------------------------------------------------------------------------*/
 
@@ -593,12 +561,8 @@
 #  define DOS_W32_OS2          /* historical:  don't use */
 #endif
 
-#if (defined(TOPS20) || defined(VMS))
-#  define T20_VMS
-#endif
-
-#if (defined(MSDOS) || defined(T20_VMS))
-#  define DOS_T20_VMS
+#if (defined(MSDOS) || defined(VMS))
+#  define DOS_VMS
 #endif
 
 #if (defined(__BEOS__) || defined(UNIX))
@@ -966,10 +930,6 @@
 #    define FOPWT "w"
 #  endif
 #endif /* CMS_MVS */
-
-#ifdef TOPS20          /* TOPS-20 MODERN?  You kidding? */
-#  define FOPW "w8"
-#endif /* TOPS20 */
 
 /* Defaults when nothing special has been defined previously. */
 #ifdef MODERN
@@ -2355,17 +2315,6 @@ int    huft_build                OF((__GPRO__ ZCONST unsigned *b, unsigned n,
 #endif
 
 /*---------------------------------------------------------------------------
-    TOPS20-only functions:
-  ---------------------------------------------------------------------------*/
-
-#ifdef TOPS20
-   int    upper               OF((char *s));                     /* tops20.c */
-   int    enquote             OF((char *s));                     /* tops20.c */
-   int    dequote             OF((char *s));                     /* tops20.c */
-   int    fnlegal             OF(()); /* error if prototyped? */ /* tops20.c */
-#endif
-
-/*---------------------------------------------------------------------------
     VM/CMS- and MVS-only functions:
   ---------------------------------------------------------------------------*/
 
@@ -2516,7 +2465,7 @@ char    *GetLoadPath     OF((__GPRO));                              /* local */
 #  define MTrace(x)  Trace(x)
 #endif
 
-#if (defined(UNIX) || defined(T20_VMS)) /* generally old systems */
+#if (defined(UNIX) || defined(VMS)) /* generally old systems */
 #  define ToLower(x)   ((char)(isupper((int)x)? tolower((int)x) : x))
 #else
 #  define ToLower      tolower          /* assumed "smart"; used in match() */
