@@ -306,7 +306,7 @@
 #endif /* MACOS */
 
 /*---------------------------------------------------------------------------
-    MS-DOS, OS/2, FLEXOS section:
+    MS-DOS, OS/2 section:
   ---------------------------------------------------------------------------*/
 
 #ifdef WINDLL
@@ -324,7 +324,7 @@
 #  endif
 #endif
 
-#if (defined(MSDOS) || defined(OS2) || defined(FLEXOS))
+#if (defined(MSDOS) || defined(OS2))
 #  include <sys/types.h>      /* off_t, time_t, dev_t, ... */
 #  include <sys/stat.h>
 #  include <io.h>             /* lseek(), open(), setftime(), dup(), creat() */
@@ -334,11 +334,7 @@
 #  ifdef OS2                  /* defined for all OS/2 compilers */
 #    include "os2/os2cfg.h"
 #  else
-#    ifdef FLEXOS
-#      include "flexos/flxcfg.h"
-#    else
-#      include "msdos/doscfg.h"
-#    endif
+#    include "msdos/doscfg.h"
 #  endif
 
 #  if (defined(_MSC_VER) && (_MSC_VER == 700) && !defined(GRR))
@@ -356,7 +352,7 @@
 #  if (defined(__BORLANDC__) && (__BORLANDC__ >= 0x0450))
 #    define timezone      _timezone
 #  endif
-#  if (defined(__GO32__) || defined(FLEXOS))
+#  if (defined(__GO32__))
 #    define DIR_END       '/'
 #  else
 #    define DIR_END       '\\'  /* OS uses '\\' as directory separator */
@@ -371,7 +367,7 @@
 #  if (!defined(NO_EF_UT_TIME) && !defined(USE_EF_UT_TIME))
 #    define USE_EF_UT_TIME
 #  endif
-#endif /* MSDOS || OS2 || FLEXOS */
+#endif /* MSDOS || OS2 */
 
 /*---------------------------------------------------------------------------
     MTS section (piggybacks UNIX, I think):
@@ -617,28 +613,12 @@
 #  define DOS_W32_OS2          /* historical:  don't use */
 #endif
 
-#if (defined(DOS_OS2) || defined(FLEXOS))
-#  define DOS_FLX_OS2
+#if (defined(DOS_OS2) || defined(NLM))
+#  define DOS_NLM_OS2
 #endif
 
-#if (defined(DOS_OS2_W32) || defined(FLEXOS))
-#  define DOS_FLX_OS2_W32
-#endif
-
-#if (defined(DOS_OS2_W32) || defined(FLEXOS))
-#  define DOS_FLX_OS2_W32
-#endif
-
-#if (defined(DOS_FLX_OS2) || defined(NLM))
-#  define DOS_FLX_NLM_OS2
-#endif
-
-#if (defined(DOS_FLX_OS2_W32) || defined(NLM))
-#  define DOS_FLX_NLM_OS2_W32
-#endif
-
-#if (defined(DOS_FLX_OS2_W32) || defined(NLM))
-#  define DOS_FLX_NLM_OS2_W32
+#if (defined(DOS_OS2_W32) || defined(NLM))
+#  define DOS_NLM_OS2_W32
 #endif
 
 #if (defined(TOPS20) || defined(VMS))
@@ -692,7 +672,7 @@
 #endif
 
 
-#if (defined(DOS_FLX_NLM_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
+#if (defined(DOS_NLM_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -709,7 +689,7 @@
 #  if (defined(SYSV) || defined(CONVEX) || defined(NeXT) || defined(BSD4_4))
 #    define INT_SPRINTF      /* sprintf() returns int:  SysVish/Posix */
 #  endif
-#  if (defined(DOS_FLX_NLM_OS2_W32) || defined(VMS) || defined(AMIGA))
+#  if (defined(DOS_NLM_OS2_W32) || defined(VMS) || defined(AMIGA))
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI */
 #  endif
 #  if (defined(ultrix) || defined(__ultrix)) /* Ultrix 4.3 and newer */
@@ -757,7 +737,7 @@
 #define MSG_NO_WDLL(f) (f & 0x1000)   /* bit 12:  1 = skip if Windows DLL */
 
 #if (defined(MORE) && !defined(SCREENLINES))
-#  ifdef DOS_FLX_NLM_OS2_W32
+#  ifdef DOS_NLM_OS2_W32
 #    define SCREENLINES 25  /* can be (should be) a function instead */
 #  else
 #    define SCREENLINES 24  /* VT-100s are assumed to be minimal hardware */
@@ -1059,7 +1039,7 @@
  * define some or all of the following:  NAME_MAX, PATH_MAX, _POSIX_NAME_MAX,
  * _POSIX_PATH_MAX.
  */
-#ifdef DOS_FLX_NLM_OS2_W32
+#ifdef DOS_NLM_OS2_W32
 #  include <limits.h>
 #endif
 

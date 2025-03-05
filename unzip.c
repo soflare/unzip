@@ -166,7 +166,7 @@ static ZCONST char Far IgnoreOOptionMsg[] =
    static ZCONST char Far Example2[] =
 "  unzip foo -d RAM:$   => extract all files from foo into RAMDisc\n";
 #else /* !RISCOS */
-#if (defined(OS2) || (defined(DOS_FLX_OS2_W32) && defined(MORE)))
+#if (defined(OS2) || (defined(DOS_OS2_W32) && defined(MORE)))
    static ZCONST char Far Example2[] =
      "";                /* no room:  too many local3[] items */
 #else /* !OS2 */
@@ -189,13 +189,9 @@ static ZCONST char Far IgnoreOOptionMsg[] =
 #endif /* ?TIMESTAMP */
 
 /* local2[] and local3[]:  modifier options */
-#ifdef DOS_FLX_OS2_W32
-#ifdef FLEXOS
-   static ZCONST char Far local2[] = "";
-#else
+#ifdef DOS_OS2_W32
    static ZCONST char Far local2[] =
      " -$  label removables (-$$ => fixed disks)";
-#endif
 #ifdef OS2
 #ifdef MORE
    static ZCONST char Far local3[] = "\
@@ -236,7 +232,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 #endif
 #endif /* ?WIN32 */
 #endif /* ?OS2 || ?WIN32 */
-#else /* !DOS_FLX_OS2_W32 */
+#else /* !DOS_OS2_W32 */
 #ifdef VMS
    static ZCONST char Far local2[] = " -X  restore owner/ACL protection info";
 #ifdef MORE
@@ -289,7 +285,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 #endif /* ?AMIGA */
 #endif /* ?BEO_UNX */
 #endif /* ?VMS */
-#endif /* ?DOS_FLX_OS2_W32 */
+#endif /* ?DOS_OS2_W32 */
 #endif /* !SFX */
 
 #ifndef NO_ZIPINFO
@@ -721,7 +717,7 @@ int unzip(__G__ argc, argv)
 #ifndef NO_ZIPINFO
     char *p;
 #endif
-#if (defined(DOS_FLX_NLM_OS2_W32) || !defined(SFX))
+#if (defined(DOS_NLM_OS2_W32) || !defined(SFX))
     int i;
 #endif
     int retcode, error=FALSE;
@@ -1065,7 +1061,7 @@ int unzip(__G__ argc, argv)
     maining options and file specifications.
   ---------------------------------------------------------------------------*/
 
-#ifdef DOS_FLX_NLM_OS2_W32
+#ifdef DOS_NLM_OS2_W32
     /* convert MSDOS-style 'backward slash' directory separators to Unix-style
      * 'forward slashes' for user's convenience (include zipfile name itself)
      */
@@ -1084,7 +1080,7 @@ int unzip(__G__ argc, argv)
         }
         ++G.pfnames;
     }
-#endif /* DOS_FLX_NLM_OS2_W32 */
+#endif /* DOS_NLM_OS2_W32 */
 
 #ifndef SFX
     G.wildzipfn = *argv++;
@@ -1613,14 +1609,14 @@ int uz_opts(__G__ pargc, pargv)
                     qlflag ^= strtol(s, &s, 10);
                     break;    /* we XOR this as we can config qlflags */
 #endif
-#ifdef DOS_FLX_NLM_OS2_W32
+#ifdef DOS_NLM_OS2_W32
                 case ('s'):    /* spaces in filenames:  allow by default */
                     if (negative)
                         uO.sflag = FALSE, negative = 0;
                     else
                         uO.sflag = TRUE;
                     break;
-#endif /* DOS_FLX_NLM_OS2_W32 */
+#endif /* DOS_NLM_OS2_W32 */
 #ifdef VMS
                 /* VMS:  extract "text" files in Stream_LF format (-a[a]) */
                 case ('S'):
@@ -1893,7 +1889,7 @@ opts_done:  /* yes, very ugly...but only used by UnZipSFX with -x xlist */
 #  ifdef DOS_OS2_W32
 #    define LOCAL "s$"
 #  endif
-#  if (defined(FLEXOS) || defined(NLM))
+#  if (defined(NLM))
 #    define LOCAL "s"
 #  endif
 #  ifdef AMIGA

@@ -1659,16 +1659,16 @@ static int extract_or_test_member(__G)    /* return PK-type error code */
 #else
             G.outfile = stdout;
 #endif
-#ifdef DOS_FLX_NLM_OS2_W32
-#if (defined(__HIGHC__) && !defined(FLEXOS))
+#ifdef DOS_NLM_OS2_W32
+#if defined(__HIGHC__)
             setmode(G.outfile, _BINARY);
-#else /* !(defined(__HIGHC__) && !defined(FLEXOS)) */
+#else /* !defined(__HIGHC__) */
             setmode(fileno(G.outfile), O_BINARY);
-#endif /* ?(defined(__HIGHC__) && !defined(FLEXOS)) */
+#endif /* ?defined(__HIGHC__) */
 #           define NEWLINE "\r\n"
-#else /* !DOS_FLX_NLM_OS2_W32 */
+#else /* !DOS_NLM_OS2_W32 */
 #           define NEWLINE "\n"
-#endif /* ?DOS_FLX_NLM_OS2_W32 */
+#endif /* ?DOS_NLM_OS2_W32 */
 #ifdef VMS
             /* VMS:  required even for stdout! */
             if ((r = open_outfile(__G)) != 0)

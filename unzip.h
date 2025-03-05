@@ -504,7 +504,7 @@ typedef struct _UzpOpts {
 #endif /* !FUNZIP */
     int qflag;          /* -q: produce a lot less output */
 #ifndef FUNZIP
-#if (defined(MSDOS) || defined(FLEXOS) || defined(OS2) || defined(WIN32))
+#if (defined(MSDOS) || defined(OS2) || defined(WIN32))
     int sflag;          /* -s: convert spaces in filenames to underscores */
 #endif
 #if (defined(NLM))

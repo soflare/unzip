@@ -464,7 +464,6 @@ int process_zipfiles(__G)    /* return PK-type error code */
 
 #if defined(UNIX) || defined(QDOS)
    /* only Unix has case-sensitive filesystems */
-   /* Well FlexOS (sometimes) also has them,  but support is per media */
    /* and a pig to code for,  so treat as case insensitive for now */
    /* we do this under QDOS to check for .zip as well as _zip */
             if ((error = do_seekable(__G__ 0)) == PK_NOZIP || error == IZ_DIR) {
