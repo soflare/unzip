@@ -506,14 +506,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    THEOS section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef THEOS
-#  include "theos/thscfg.h"
-#endif
-
-/*---------------------------------------------------------------------------
     TOPS-20 section:
   ---------------------------------------------------------------------------*/
 
@@ -737,10 +729,6 @@
 #  define BEO_UNX
 #endif
 
-#if (defined(BEO_UNX) || defined(THEOS))
-#  define BEO_THS_UNX
-#endif
-
 /* clean up with a few defaults */
 #ifndef DIR_END
 #  define DIR_END       '/'     /* last char before program name or filename */
@@ -808,7 +796,7 @@
 #      define PCHAR_SPRINTF  /* undetermined actual return value */
 #    endif
 #  endif
-#  if (defined(__osf__) || defined(_AIX) || defined(CMS_MVS) || defined(THEOS))
+#  if (defined(__osf__) || defined(_AIX) || defined(CMS_MVS))
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI/Posix */
 #  endif
 #  if defined(sun)
@@ -1744,7 +1732,6 @@
 #define EF_SPARK     0x4341    /* David Pilling's Acorn/SparkFS ("AC") */
 #define EF_TANDEM    0x4154    /* Tandem NSK ("TA") */
 #define EF_THEOS     0x6854    /* Jean-Michel Dubois' Theos "Th" */
-#define EF_THEOSO    0x4854    /* old Theos port */
 #define EF_MD5       0x4b46    /* Fred Kantor's MD5 ("FK") */
 #define EF_ASIUNIX   0x756e    /* ASi's Unix ("nu") */
 
@@ -2637,12 +2624,7 @@ char    *GetLoadPath     OF((__GPRO));                              /* local */
 #endif
 
 #ifdef DEBUG
-#  if (defined(THEOS) && defined(NO_BOGUS_SPC))
-#    define NO_DEBUG_IN_MACROS
-#    define Trace(x)   _fprintf x
-#  else
-#    define Trace(x)   fprintf x
-#  endif
+#  define Trace(x)   fprintf x
 #else
 #  define Trace(x)
 #endif

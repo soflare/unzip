@@ -75,8 +75,6 @@
 #define UNZIP_INTERNAL
 #include "unzip.h"
 
-#ifndef THEOS   /* the Theos port defines its own variant of match() */
-
 #if 0  /* this is not useful until it matches Amiga names insensitively */
 #ifdef AMIGA        /* some other platforms might also want to use this */
 #  define ANSI_CHARSET       /* MOVE INTO UNZIP.H EVENTUALLY */
@@ -372,9 +370,6 @@ static int namecmp(s1, s2)
     }
 } /* end function namecmp() */
 
-#endif /* !THEOS */
-
-
 
 
 int iswild(p)        /* originally only used for stat()-bug workaround in */
@@ -383,9 +378,6 @@ int iswild(p)        /* originally only used for stat()-bug workaround in */
     for (; *p; INCSTR(p))
         if (*p == '\\' && *(p+1))
             ++p;
-#ifdef THEOS
-        else if (*p == '?' || *p == '*' || *p=='#'|| *p == '@')
-#else /* !THEOS */
 #ifdef VMS
         else if (*p == '%' || *p == '*')
 #else /* !VMS */
@@ -395,7 +387,6 @@ int iswild(p)        /* originally only used for stat()-bug workaround in */
         else if (*p == '?' || *p == '*' || *p == '[')
 #endif /* ?AMIGA */
 #endif /* ?VMS */
-#endif /* ?THEOS */
 #ifdef QDOS
             return (int)p;
 #else

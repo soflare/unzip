@@ -149,7 +149,7 @@ static ZCONST char Far CannotOpenZipfile[] =
 
 #if (!defined(VMS) && !defined(AOS_VS) && !defined(CMS_MVS) && !defined(MACOS))
 #if (!defined(TANDEM))
-#if (defined(BEO_THS_UNX) || defined(DOS_FLX_NLM_OS2_W32))
+#if (defined(BEO_UNX) || defined(DOS_FLX_NLM_OS2_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
 #ifdef UNIXBACKUP
@@ -157,7 +157,7 @@ static ZCONST char Far CannotOpenZipfile[] =
      "error:  cannot rename old %s\n        %s\n";
    static ZCONST char Far BackupSuffix[] = "~";
 #endif
-#endif /* BEO_THS_UNX || DOS_FLX_NLM_OS2_W32 */
+#endif /* BEO_UNX || DOS_FLX_NLM_OS2_W32 */
 #ifdef NOVELL_BUG_FAILSAFE
    static ZCONST char Far NovellBug[] =
      "error:  %s: stat() says does not exist, but fopen() found anyway\n";
@@ -277,7 +277,7 @@ int open_outfile(__G)           /* return 1 if fail */
 #ifdef QDOS
     QFilename(__G__ G.filename);
 #endif
-#if (defined(DOS_FLX_NLM_OS2_W32) || defined(BEO_THS_UNX))
+#if (defined(DOS_FLX_NLM_OS2_W32) || defined(BEO_UNX))
 #ifdef BORLAND_STAT_BUG
     /* Borland 5.0's stat() barfs if the filename has no extension and the
      * file doesn't exist. */
@@ -391,7 +391,7 @@ int open_outfile(__G)           /* return 1 if fail */
               FnFilter1(G.filename)));
         }
     }
-#endif /* DOS_FLX_NLM_OS2_W32 || BEO_THS_UNX */
+#endif /* DOS_FLX_NLM_OS2_W32 || BEO_UNX */
 #ifdef RISCOS
     if (SWI_OS_File_7(G.filename,0xDEADDEAD,0xDEADDEAD,G.lrec.ucsize)!=NULL) {
         Info(slide, 1, ((char *)slide, LoadFarString(CannotCreateFile),
@@ -1527,9 +1527,6 @@ void UZ_EXP UzpMorePause(pG, prompt, flag)
         do {
             c = (uch)FGETCH(0);
         } while (
-#ifdef THEOS
-                 c != 17 &&     /* standard QUIT key */
-#endif
                  c != '\r' && c != '\n' && c != ' ' && c != 'q' && c != 'Q');
     } else
         c = (uch)FGETCH(0);
@@ -1539,9 +1536,6 @@ void UZ_EXP UzpMorePause(pG, prompt, flag)
     fflush(stderr);
 
     if (
-#ifdef THEOS
-        (c == 17) ||            /* standard QUIT key */
-#endif
         (ToLower(c) == 'q')) {
         DESTROYGLOBALS();
         EXIT(PK_COOL);

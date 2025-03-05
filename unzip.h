@@ -234,7 +234,7 @@ freely, subject to the above disclaimer and the following restrictions:
 #    define MODERN
 #  endif
 #endif
-#if (defined(MACOS) || defined(ATARI_ST) || defined(RISCOS) || defined(THEOS))
+#if (defined(MACOS) || defined(ATARI_ST) || defined(RISCOS))
 #  ifndef PROTO
 #    define PROTO
 #  endif
@@ -538,7 +538,7 @@ typedef struct _UzpOpts {
 #if (defined(__BEOS__) || defined(UNIX))
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #else
-#if (defined(TANDEM) || defined(THEOS))
+#if (defined(TANDEM))
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #else
 #if (defined(OS2) || defined(VMS) || defined(WIN32))

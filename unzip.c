@@ -53,8 +53,7 @@
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
               Atari, Windows 3.x/95/NT/CE, Macintosh, Human68K, Acorn RISC OS,
-              BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS, Tandem NSK, Theos and
-              TOPS-20.
+              BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS, Tandem NSK and TOPS-20.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -419,10 +418,6 @@ static ZCONST char Far ZipInfoUsageLine3[] = "miscellaneous options:\n\
 #  endif
 #  if defined(WIN32) && defined(NO_W32TIMES_IZFIX)
      static ZCONST char Far W32NoIZTimeFix[] = "NO_W32TIMES_IZFIX";
-#  endif
-#  ifdef OLD_THEOS_EXTRA
-     static ZCONST char Far OldTheosExtra[] =
-     "OLD_THEOS_EXTRA (handle also old Theos port extra field)";
 #  endif
 #  ifdef OS2_EAS
      static ZCONST char Far OS2ExtAttrib[] = "OS2_EAS";
@@ -896,22 +891,6 @@ int unzip(__G__ argc, argv)
 #endif
 
 /*---------------------------------------------------------------------------
-    Theos initialization code.
-  ---------------------------------------------------------------------------*/
-
-#ifdef THEOS
-    /* The easiest way found to force creation of libraries when selected
-     * members are to be unzipped. Explicitly add libraries names to the
-     * arguments list before the first member of the library.
-     */
-    if (! _setargv(&argc, &argv)) {
-        Info(slide, 0x401, ((char *)slide, "cannot process argv\n"));
-        retcode = PK_MEM;
-        goto cleanup_and_exit;
-    }
-#endif
-
-/*---------------------------------------------------------------------------
     Sanity checks.  Commentary by Otis B. Driftwood and Fiorello:
 
     D:  It's all right.  That's in every contract.  That's what they
@@ -1041,13 +1020,8 @@ int unzip(__G__ argc, argv)
     }
     ++p;
 
-#ifdef THEOS
-    if (strncmp(p, "ZIPINFO.",8) == 0 || strstr(p, ".ZIPINFO:") != NULL ||
-        strncmp(p, "II.",3) == 0 || strstr(p, ".II:") != NULL ||
-#else
     if (STRNICMP(p, LoadFarStringSmall(Zipnfo), 7) == 0 ||
         STRNICMP(p, "ii", 2) == 0 ||
-#endif
         (argc > 1 && strncmp(argv[1], "-Z", 2) == 0))
     {
         uO.zipinfo_mode = TRUE;
@@ -2420,11 +2394,6 @@ static void show_version_info(__G)
 #if defined(WIN32) && defined(NO_W32TIMES_IZFIX)
         Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
           LoadFarStringSmall(W32NoIZTimeFix)));
-        ++numopts;
-#endif
-#ifdef OLD_THEOS_EXTRA
-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
-          LoadFarStringSmall(OldTheosExtra)));
         ++numopts;
 #endif
 #ifdef OS2_EAS

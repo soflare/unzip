@@ -165,17 +165,6 @@
 #  define HAVE_WORKING_GETCH
 #endif
 
-/* The THEOS C runtime library supplies the function conmask() to toggle
- * terminal input echo on (conmask("e")) and off (conmask("n")).  But,
- * since THEOS C RTL also contains a working non-echo getch() function,
- * the echo toggles are not needed.
- */
-#ifdef THEOS
-#  define echoff(f)
-#  define echon()
-#  define HAVE_WORKING_GETCH
-#endif
-
 /* VMS has a single echo() function in ttyio.c to toggle terminal
  * input echo on and off.
  */
