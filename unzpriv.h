@@ -385,14 +385,6 @@
 #endif /* MTS */
 
  /*---------------------------------------------------------------------------
-    Novell Netware NLM section
-  ---------------------------------------------------------------------------*/
-
-#ifdef NLM
-#  include "netware/nlmcfg.h"
-#endif
-
- /*---------------------------------------------------------------------------
     QDOS section
   ---------------------------------------------------------------------------*/
 
@@ -601,14 +593,6 @@
 #  define DOS_W32_OS2          /* historical:  don't use */
 #endif
 
-#if (defined(DOS_OS2) || defined(NLM))
-#  define DOS_NLM_OS2
-#endif
-
-#if (defined(DOS_OS2_W32) || defined(NLM))
-#  define DOS_NLM_OS2_W32
-#endif
-
 #if (defined(TOPS20) || defined(VMS))
 #  define T20_VMS
 #endif
@@ -660,7 +644,7 @@
 #endif
 
 
-#if (defined(DOS_NLM_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
+#if (defined(DOS_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -677,7 +661,7 @@
 #  if (defined(SYSV) || defined(CONVEX) || defined(NeXT) || defined(BSD4_4))
 #    define INT_SPRINTF      /* sprintf() returns int:  SysVish/Posix */
 #  endif
-#  if (defined(DOS_NLM_OS2_W32) || defined(VMS) || defined(AMIGA))
+#  if (defined(DOS_OS2_W32) || defined(VMS) || defined(AMIGA))
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI */
 #  endif
 #  if (defined(ultrix) || defined(__ultrix)) /* Ultrix 4.3 and newer */
@@ -725,7 +709,7 @@
 #define MSG_NO_WDLL(f) (f & 0x1000)   /* bit 12:  1 = skip if Windows DLL */
 
 #if (defined(MORE) && !defined(SCREENLINES))
-#  ifdef DOS_NLM_OS2_W32
+#  ifdef DOS_OS2_W32
 #    define SCREENLINES 25  /* can be (should be) a function instead */
 #  else
 #    define SCREENLINES 24  /* VT-100s are assumed to be minimal hardware */
@@ -1027,7 +1011,7 @@
  * define some or all of the following:  NAME_MAX, PATH_MAX, _POSIX_NAME_MAX,
  * _POSIX_PATH_MAX.
  */
-#ifdef DOS_NLM_OS2_W32
+#ifdef DOS_OS2_W32
 #  include <limits.h>
 #endif
 

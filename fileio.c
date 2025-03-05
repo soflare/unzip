@@ -148,7 +148,7 @@ static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
 #if (!defined(VMS) && !defined(CMS_MVS) && !defined(MACOS))
-#if (defined(BEO_UNX) || defined(DOS_NLM_OS2_W32))
+#if (defined(BEO_UNX) || defined(DOS_OS2_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
 #ifdef UNIXBACKUP
@@ -156,7 +156,7 @@ static ZCONST char Far CannotOpenZipfile[] =
      "error:  cannot rename old %s\n        %s\n";
    static ZCONST char Far BackupSuffix[] = "~";
 #endif
-#endif /* BEO_UNX || DOS_NLM_OS2_W32 */
+#endif /* BEO_UNX || DOS_OS2_W32 */
 #ifdef NOVELL_BUG_FAILSAFE
    static ZCONST char Far NovellBug[] =
      "error:  %s: stat() says does not exist, but fopen() found anyway\n";
@@ -274,7 +274,7 @@ int open_outfile(__G)           /* return 1 if fail */
 #ifdef QDOS
     QFilename(__G__ G.filename);
 #endif
-#if (defined(DOS_NLM_OS2_W32) || defined(BEO_UNX))
+#if (defined(DOS_OS2_W32) || defined(BEO_UNX))
 #ifdef BORLAND_STAT_BUG
     /* Borland 5.0's stat() barfs if the filename has no extension and the
      * file doesn't exist. */
@@ -374,10 +374,6 @@ int open_outfile(__G)           /* return 1 if fail */
                   FnFilter1(G.filename)));
             }
 #endif /* DOS_OS2_W32 */
-#ifdef NLM
-            /* Give the file read/write permission (non-POSIX shortcut) */
-            chmod(G.filename, 0);
-#endif /* NLM */
             if (unlink(G.filename) != 0) {
                 Info(slide, 0x401, ((char *)slide,
                   LoadFarString(CannotDeleteOldFile),
@@ -388,7 +384,7 @@ int open_outfile(__G)           /* return 1 if fail */
               FnFilter1(G.filename)));
         }
     }
-#endif /* DOS_NLM_OS2_W32 || BEO_UNX */
+#endif /* DOS_OS2_W32 || BEO_UNX */
 #ifdef RISCOS
     if (SWI_OS_File_7(G.filename,0xDEADDEAD,0xDEADDEAD,G.lrec.ucsize)!=NULL) {
         Info(slide, 1, ((char *)slide, LoadFarString(CannotCreateFile),
@@ -474,10 +470,10 @@ int open_outfile(__G)           /* return 1 if fail */
 #endif /* !TOPS20 */
 
 #ifdef USE_FWRITE
-#ifdef DOS_NLM_OS2_W32
+#ifdef DOS_OS2_W32
     /* 16-bit MSC: buffer size must be strictly LESS than 32K (WSIZE):  bogus */
     setbuf(G.outfile, (char *)NULL);   /* make output unbuffered */
-#else /* !DOS_NLM_OS2_W32 */
+#else /* !DOS_OS2_W32 */
 #ifndef RISCOS
 #ifdef _IOFBF  /* make output fully buffered (works just about like write()) */
     setvbuf(G.outfile, (char *)slide, _IOFBF, WSIZE);
@@ -485,7 +481,7 @@ int open_outfile(__G)           /* return 1 if fail */
     setbuf(G.outfile, (char *)slide);
 #endif
 #endif /* !RISCOS */
-#endif /* ?DOS_NLM_OS2_W32 */
+#endif /* ?DOS_OS2_W32 */
 #endif /* USE_FWRITE */
 #ifdef OS2_W32
     /* preallocate the final file size to prevent file fragmentation */

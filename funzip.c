@@ -343,13 +343,13 @@ char **argv;
   }
   else
   {
-#ifdef DOS_NLM_OS2_W32
+#ifdef DOS_OS2_W32
 #if defined(__HIGHC__)
     setmode(stdin, _BINARY);
 #else
     setmode(0, O_BINARY);  /* some buggy C libraries require BOTH setmode() */
 #endif                     /*  call AND the fdopen() in binary mode :-( */
-#endif /* DOS_NLM_OS2_W32 */
+#endif /* DOS_OS2_W32 */
 
 #ifdef RISCOS
     G.in = stdin;
@@ -359,13 +359,13 @@ char **argv;
 #endif
   }
 
-#ifdef DOS_NLM_OS2_W32
+#ifdef DOS_OS2_W32
 #if defined(__HIGHC__)
   setmode(stdout, _BINARY);
 #else
   setmode(1, O_BINARY);
 #endif
-#endif /* DOS_NLM_OS2_W32 */
+#endif /* DOS_OS2_W32 */
 
 #ifdef RISCOS
   out = stdout;

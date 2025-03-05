@@ -315,11 +315,11 @@ typedef struct Globals {
 #endif /* !FUNZIP */
     z_uint4 keys[3];   /* crypt static: keys defining pseudo-random sequence */
 
-#if (!defined(DOS_NLM_OS2_W32) && !defined(AMIGA) && !defined(RISCOS))
+#if (!defined(DOS_OS2_W32) && !defined(AMIGA) && !defined(RISCOS))
 #if (!defined(MACOS) && !defined(ATARI) && !defined(VMS))
     int echofd;        /* ttyio static: file descriptor whose echo is off */
 #endif /* !(MACOS || ATARI || VMS) */
-#endif /* !(DOS_NLM_OS2_W32 || AMIGA || RISCOS) */
+#endif /* !(DOS_OS2_W32 || AMIGA || RISCOS) */
 
     unsigned hufts;    /* track memory usage */
 

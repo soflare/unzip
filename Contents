@@ -60,7 +60,6 @@ at the end contain their own Contents listings:
   cmsmvs/       support files for compiling under VM/CMS and MVS
   macos/        support files for compiling under Macintosh OS
   msdos/        support files for compiling under MS-DOS
-  netware/      support files for compiling for Novell Netware NLM
   os2/          support files for compiling under OS/2 (includes DLL stuff)
   qdos/         support files for compiling under SMS/QDOS
   tops20/       support files for compiling under TOPS-20
