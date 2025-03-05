@@ -222,11 +222,6 @@ On VMS, see also \fB\-S\fP.
 for \fB\-\-\-a\fP.
 .TP
 .B \-b
-[Tandem] force the creation files with filecode type 180 ('C') when
-extracting Zip entries marked as "text". (On Tandem, \fB\-a\fP is enabled
-by default, see above).
-.TP
-.B \-b
 [VMS] auto-convert binary files (see \fB\-a\fP above) to fixed-length,
 512-byte record format.  Doubling the option (\fB\-bb\fP) forces all files
 to be extracted in this format. When extracting to standard output
@@ -467,7 +462,7 @@ For systems allowing `/' as regular filename character, the -W option
 would not work as expected on a wildcard zipfile specification.)
 .TP
 .B \-X
-[VMS, Unix, OS/2, NT, Tandem] restore owner/protection info (UICs and ACL
+[VMS, Unix, OS/2, NT] restore owner/protection info (UICs and ACL
 entries) under VMS, or user and group info (UID/GID) under Unix, or access
 control lists (ACLs) under certain network-enabled versions of OS/2
 (Warp Server with IBM LAN Server/Requester 3.0 to 5.0; Warp Connect with
@@ -504,7 +499,7 @@ in this extension list are swapped in front of the base name of the extracted
 file.
 .TP
 .B \-:
-[all but Acorn, VM/CMS, MVS, Tandem] allows to extract archive members into
+[all but Acorn, VM/CMS, MVS] allows to extract archive members into
 locations outside of the current `` extraction root folder''. For security
 reasons, \fIunzip\fP normally removes ``parent dir'' path components
 (``../'') from the names of extracted file.  This safety feature (new for

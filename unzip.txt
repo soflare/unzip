@@ -201,10 +201,6 @@ MODIFIERS
        -b     [general] treat all files as binary (no text conversions).  This
               is a shortcut for ---a.
 
-       -b     [Tandem]  force  the creation files with filecode type 180 ('C')
-              when extracting Zip entries marked as "text". (On Tandem, -a  is
-              enabled by default, see above).
-
        -b     [VMS]  auto-convert binary files (see -a above) to fixed-length,
               512-byte record format.  Doubling the option  (-bb)  forces  all
               files  to  be extracted in this format. When extracting to stan-
@@ -448,8 +444,8 @@ MODIFIERS
               allowing `/' as regular filename character, the -W option  would
               not work as expected on a wildcard zipfile specification.)
 
-       -X     [VMS,  Unix,  OS/2,  NT,  Tandem]  restore owner/protection info
-              (UICs and ACL  entries)  under  VMS,  or  user  and  group  info
+       -X     [VMS,  Unix,  OS/2,  NT]  restore  owner/protection  info  (UICs
+              and   ACL   entries)   under   VMS,   or  user  and  group  info
               (UID/GID)  under Unix, or access control lists (ACLs) under cer-
               tain network-enabled versions of OS/2 (Warp Server with IBM  LAN
               Server/Requester 3.0 to 5.0; Warp Connect with IBM Peer 1.0), or
@@ -483,8 +479,8 @@ MODIFIERS
               that  match  one of the items in this extension list are swapped
               in front of the base name of the extracted file.
 
-       -:     [all but Acorn, VM/CMS, MVS, Tandem] allows to  extract  archive
-              members into locations outside of the current `` extraction root
+       -:     [all but Acorn, VM/CMS, MVS] allows to extract  archive  members
+              into   locations   outside  of  the  current  ``extraction  root
               folder''. For security reasons, unzip normally removes  ``parent
               dir''  path  components  (``../'')  from  the names of extracted
               file.  This safety feature (new for version 5.50) prevents unzip

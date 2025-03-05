@@ -79,16 +79,6 @@
 #define AMI_IEXECUTE   00002       /* executable image, a loadable runfile */
 #define AMI_IDELETE    00001       /* can be deleted */
 
-#ifndef NSK_UNSTRUCTURED
-# define NSK_UNSTRUCTURED   0
-#endif
-#ifndef NSK_OBJECTFILECODE
-# define NSK_OBJECTFILECODE 100
-#endif
-#ifndef NSK_EDITFILECODE
-# define NSK_EDITFILECODE   101
-#endif
-
 #define LFLAG  3   /* short "ls -l" type listing */
 
 static int   zi_long   OF((__GPRO__ zusz_t *pEndprev, int error_in_archive));
@@ -342,16 +332,6 @@ static ZCONST char Far QDOSdata[] = ".\n\
     The QDOS extra field subtype is `%c%c%c%c'";
 static ZCONST char Far AOSVSdata[] = ".\n\
     The AOS/VS extra field revision is %d.%d";
-static ZCONST char Far TandemUnstr[] = "Unstructured";
-static ZCONST char Far TandemRel[]   = "Relative";
-static ZCONST char Far TandemEntry[] = "Entry Sequenced";
-static ZCONST char Far TandemKey[]   = "Key Sequenced";
-static ZCONST char Far TandemEdit[]  = "Edit";
-static ZCONST char Far TandemObj[]  = "Object";
-static ZCONST char Far *TandemFileformat[6] =
-  {TandemUnstr, TandemRel, TandemEntry, TandemKey, TandemEdit, TandemObj};
-static ZCONST char Far Tandemdata[] = ".\n\
-    The file was originally a Tandem %s file, with file code %u";
 static ZCONST char Far MD5data[] = ".\n\
     The 128-bit MD5 signature is %s";
 #ifdef CMS_MVS
@@ -1636,28 +1616,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                     if (eb_datalen >= 5) {
                         Info(slide, 0, ((char *)slide, LoadFarString(AOSVSdata),
                           ((int)(uch)ef_ptr[4])/10, ((int)(uch)ef_ptr[4])%10));
-                    } else {
-                        goto ef_default_display;
-                    }
-                    break;
-                case EF_TANDEM:
-                    if (eb_datalen == 20) {
-                        unsigned type, code;
-
-                        type = (ef_ptr[18] & 0x60) >> 5;
-                        code = makeword(ef_ptr);
-                        /* Arrg..., Tandem e.f. uses BigEndian byte-order */
-                        code = ((code << 8) & 0xff00) | ((code >> 8) & 0x00ff);
-                        if (type == NSK_UNSTRUCTURED) {
-                            if (code == NSK_EDITFILECODE)
-                                type = 4;
-                            else if (code == NSK_OBJECTFILECODE)
-                                type = 5;
-                        }
-                        Info(slide, 0, ((char *)slide,
-                          LoadFarString(Tandemdata),
-                          LoadFarStringSmall(TandemFileformat[type]),
-                          code));
                     } else {
                         goto ef_default_display;
                     }

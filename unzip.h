@@ -130,10 +130,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  define OS2
 #endif
 
-#if (defined(__TANDEM) && !defined(TANDEM))
-#  define TANDEM
-#endif
-
 #if (defined(__VMS) && !defined(VMS))
 #  define VMS
 #endif
@@ -467,9 +463,6 @@ typedef struct _UzpOpts {
 #ifdef VMS
     int bflag;          /* -b: force fixed record format for binary files */
 #endif
-#ifdef TANDEM
-    int bflag;          /* -b: create text files in 'C' format (180)*/
-#endif
 #if defined(UNIX) || defined(OS2) || defined(WIN32)
     int B_flag;         /* -B: back up existing files by renaming to *~##### */
 #else
@@ -510,9 +503,6 @@ typedef struct _UzpOpts {
     int overwrite_all;  /* -o: OK to overwrite files without prompting */
 #endif /* !FUNZIP */
     int qflag;          /* -q: produce a lot less output */
-#ifdef TANDEM
-    int rflag;          /* -r: remove file extensions */
-#endif
 #ifndef FUNZIP
 #if (defined(MSDOS) || defined(FLEXOS) || defined(OS2) || defined(WIN32))
     int sflag;          /* -s: convert spaces in filenames to underscores */
@@ -538,12 +528,8 @@ typedef struct _UzpOpts {
 #if (defined(__BEOS__) || defined(UNIX))
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #else
-#if (defined(TANDEM))
-    int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
-#else
 #if (defined(OS2) || defined(VMS) || defined(WIN32))
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
-#endif
 #endif
 #endif
 #ifdef VMS
@@ -553,7 +539,7 @@ typedef struct _UzpOpts {
 #ifdef VMS
     int ods2_flag;      /* -2: force names to conform to ODS2 */
 #endif
-#if (!defined(RISCOS) && !defined(CMS_MVS) && !defined(TANDEM))
+#if (!defined(RISCOS) && !defined(CMS_MVS))
     int ddotflag;       /* -:: don't skip over "../" path elements */
 #endif
 #ifdef UNIX

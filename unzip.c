@@ -53,7 +53,7 @@
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
               Atari, Windows 3.x/95/NT/CE, Macintosh, Human68K, Acorn RISC OS,
-              BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS, Tandem NSK and TOPS-20.
+              BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS and TOPS-20.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -263,17 +263,6 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
   -K  keep setuid/setgid/tacky permissions\n";
 #endif
 #else /* !BEO_UNX */
-#ifdef TANDEM
-   static ZCONST char Far local2[] = "\
- -X  restore Tandem User ID                 -r  remove file extensions\n\
-  -b  create 'C' (180) text files          ";
-#ifdef MORE
-   static ZCONST char Far local3[] = " \
-                                            -M  pipe through \"more\" pager\n";
-#else
-   static ZCONST char Far local3[] = "\n";
-#endif
-#else /* !TANDEM */
 #ifdef AMIGA
    static ZCONST char Far local2[] = " -N  restore comments as filenotes";
 #ifdef MORE
@@ -298,7 +287,6 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 #endif
 #endif /* ?MACOS */
 #endif /* ?AMIGA */
-#endif /* ?TANDEM */
 #endif /* ?BEO_UNX */
 #endif /* ?VMS */
 #endif /* ?DOS_FLX_OS2_W32 */
@@ -1348,7 +1336,7 @@ int uz_opts(__G__ pargc, pargv)
 #endif
                 case ('b'):
                     if (negative) {
-#if (defined(TANDEM) || defined(VMS))
+#if (defined(VMS))
                         uO.bflag = MAX(uO.bflag-negative,0);
 #endif
                         negative = 0;   /* do nothing:  "-b" is default */
@@ -1356,9 +1344,6 @@ int uz_opts(__G__ pargc, pargv)
 #ifdef VMS
                         if (uO.aflag == 0)
                            ++uO.bflag;
-#endif
-#ifdef TANDEM
-                        ++uO.bflag;
 #endif
                         uO.aflag = 0;
                     }
@@ -1633,14 +1618,6 @@ int uz_opts(__G__ pargc, pargv)
                     qlflag ^= strtol(s, &s, 10);
                     break;    /* we XOR this as we can config qlflags */
 #endif
-#ifdef TANDEM
-                case ('r'):    /* remove file extensions */
-                    if (negative)
-                        uO.rflag = FALSE, negative = 0;
-                    else
-                        uO.rflag = TRUE;
-                    break;
-#endif /* TANDEM */
 #ifdef DOS_FLX_NLM_OS2_W32
                 case ('s'):    /* spaces in filenames:  allow by default */
                     if (negative)
@@ -1785,7 +1762,7 @@ int uz_opts(__G__ pargc, pargv)
                         ++uO.volflag;
                     break;
 #endif /* DOS_H68_OS2_W32 */
-#if (!defined(RISCOS) && !defined(CMS_MVS) && !defined(TANDEM))
+#if (!defined(RISCOS) && !defined(CMS_MVS))
                 case (':'):    /* allow "parent dir" path components */
                     if (negative) {
                         uO.ddotflag = MAX(uO.ddotflag-negative,0);
@@ -1793,7 +1770,7 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.ddotflag;
                     break;
-#endif /* !RISCOS && !CMS_MVS && !TANDEM */
+#endif /* !RISCOS && !CMS_MVS */
 #ifdef UNIX
                 case ('^'):    /* allow control chars in filenames */
                     if (negative) {
@@ -2123,7 +2100,7 @@ static void help_extended(__G)
   "unzip modifiers:",
   "  -a   Convert text files to local OS format.  Convert line ends, EOF",
   "         marker, and from or to EBCDIC character set as needed.",
-  "  -b   Treat all files as binary.  [Tandem] Force filecode 180 ('C').",
+  "  -b   Treat all files as binary.",
   "         [VMS] Autoconvert binary files.  -bb forces convert of all files.",
   "  -B   [UNIXBACKUP compile option enabled] Save a backup copy of each",
   "         overwritten file in foo~ or foo~99999 format.",
@@ -2161,17 +2138,17 @@ static void help_extended(__G)
   "  -W   [Only if WILD_STOP_AT_DIR] Modify pattern matching so ? and * do not",
   "         match directory separator /, but ** does.  Allows matching at specific",
   "         directory levels.",
-  "  -X   [VMS, Unix, OS/2, NT, Tandem] Restore UICs and ACL entries under VMS,",
-  "         or UIDs/GIDs under Unix, or ACLs under certain network-enabled",
-  "         versions of OS/2, or security ACLs under Windows NT.  Can require",
-  "         user privileges.",
+  "  -X   [VMS, Unix, OS/2, NT] Restore UICs and ACL entries under VMS, or",
+  "         UIDs/GIDs under Unix, or ACLs under certain network-enabled versions",
+  "         of OS/2, or security ACLs under Windows NT.  Can require user",
+  "         privileges.",
   "  -XX  [NT] Extract NT security ACLs after trying to enable additional",
   "         system privileges.",
   "  -Y   [VMS] Treat archived name endings of .nnn as VMS version numbers.",
   "  -$   [MS-DOS, OS/2, NT] Restore volume label if extraction medium is",
   "         removable.  -$$ allows fixed media (hard drives) to be labeled.",
   "  -/ e [Acorn] Use e as extension list.",
-  "  -:   [All but Acorn, VM/CMS, MVS, Tandem] Allow extract archive members into",
+  "  -:   [All but Acorn, VM/CMS, MVS] Allow extract archive members into",
   "         locations outside of current extraction root folder.  This allows",
   "         paths such as ../foo to be extracted above the current extraction",
   "         directory, which can be a security problem.",

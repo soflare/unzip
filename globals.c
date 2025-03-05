@@ -174,9 +174,6 @@ Uz_Globs *globalsCtor()
     uO.aflag=1;
     uO.C_flag=1;
 #endif
-#ifdef TANDEM
-    uO.aflag=1;     /* default to '-a' auto create Text Files as type 101 */
-#endif
 #ifdef VMS
 # if (!defined(NO_TIMESTAMPS))
     uO.D_flag=1;    /* default to '-D', no restoration of dir timestamps */

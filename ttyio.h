@@ -158,13 +158,6 @@
 #  define echon()
 #endif
 
-#ifdef TANDEM
-#  define echoff(f)
-#  define echon()
-#  define getch() zgetch() /* defined in TANDEMC */
-#  define HAVE_WORKING_GETCH
-#endif
-
 /* VMS has a single echo() function in ttyio.c to toggle terminal
  * input echo on and off.
  */
