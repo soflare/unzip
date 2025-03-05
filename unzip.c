@@ -53,7 +53,7 @@
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
               Atari, Windows 3.x/95/NT/CE, Macintosh, Acorn RISC OS, BeOS,
-              SMS/QDOS, VM/CMS, MVS, AOS/VS and TOPS-20.
+              SMS/QDOS, VM/CMS, MVS and TOPS-20.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)

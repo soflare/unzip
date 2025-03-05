@@ -255,16 +255,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    AOS/VS section (somewhat similar to Unix, apparently):
-  ---------------------------------------------------------------------------*/
-
-#ifdef AOS_VS
-#  ifdef __FILEIO_C
-#    include "aosvs/aosvs.h"
-#  endif
-#endif
-
-/*---------------------------------------------------------------------------
     Atari ST section:
   ---------------------------------------------------------------------------*/
 
@@ -566,14 +556,12 @@
 #  endif
    typedef size_t extent;
 #else /* !MODERN */
-#  ifndef AOS_VS         /* mostly modern? */
-     Z_OFF_T lseek();
-#    ifdef VAXC          /* not fully modern, but has stdlib.h and void */
-#      include <stdlib.h>
-#    else
-       char *malloc();
-#    endif /* ?VAXC */
-#  endif /* !AOS_VS */
+   Z_OFF_T lseek();
+#  ifdef VAXC          /* not fully modern, but has stdlib.h and void */
+#    include <stdlib.h>
+#  else
+     char *malloc();
+#  endif /* ?VAXC */
    typedef unsigned int extent;
 #endif /* ?MODERN */
 
@@ -677,7 +665,7 @@
 #    define HAVE_UNLINK
 #  endif
 #endif
-#if (defined(AOS_VS) || defined(ATARI)) /* GRR: others? */
+#if defined(ATARI) /* GRR: others? */
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -1632,7 +1620,6 @@
 #define EF_NTSD      0x4453    /* NT security descriptor ("SD") */
 #define EF_BEOS      0x6542    /* BeOS ("Be") */
 #define EF_QDOS      0xfb4a    /* SMS/QDOS ("J\373") */
-#define EF_AOSVS     0x5356    /* AOS/VS ("VS") */
 #define EF_SPARK     0x4341    /* David Pilling's Acorn/SparkFS ("AC") */
 #define EF_TANDEM    0x4154    /* Tandem NSK ("TA") */
 #define EF_THEOS     0x6854    /* Jean-Michel Dubois' Theos "Th" */

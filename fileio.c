@@ -15,7 +15,7 @@
   of the stuff has to do with opening, closing, reading and/or writing files.
 
   Contains:  open_input_file()
-             open_outfile()           (not: VMS, AOS/VS, CMSMVS, MACOS)
+             open_outfile()           (not: VMS, CMSMVS, MACOS)
              undefer_input()
              defer_leftover_input()
              readbuf()
@@ -147,7 +147,7 @@ static int disk_error OF((__GPRO));
 static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
-#if (!defined(VMS) && !defined(AOS_VS) && !defined(CMS_MVS) && !defined(MACOS))
+#if (!defined(VMS) && !defined(CMS_MVS) && !defined(MACOS))
 #if (defined(BEO_UNX) || defined(DOS_NLM_OS2_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
@@ -163,7 +163,7 @@ static ZCONST char Far CannotOpenZipfile[] =
 #endif
    static ZCONST char Far CannotCreateFile[] =
      "error:  cannot create %s\n        %s\n";
-#endif /* !VMS && !AOS_VS && !CMS_MVS && !MACOS */
+#endif /* !VMS && !CMS_MVS && !MACOS */
 
 static ZCONST char Far ReadError[] = "error:  zipfile read error\n";
 static ZCONST char Far FilenameTooLongTrunc[] =
@@ -258,7 +258,7 @@ int open_input_file(__G)    /* return 1 if open failed */
 
 
 
-#if (!defined(VMS) && !defined(AOS_VS) && !defined(CMS_MVS) && !defined(MACOS))
+#if (!defined(VMS) && !defined(CMS_MVS) && !defined(MACOS))
 
 /***************************/
 /* Function open_outfile() */
@@ -448,7 +448,7 @@ int open_outfile(__G)           /* return 1 if fail */
     Trace((stderr, "open_outfile:  doing fopen(%s) for writing\n",
       FnFilter1(G.filename)));
     {
-#if defined(BE_UNX) || defined(AOS_VS) || defined(QDOS)
+#if defined(BE_UNX) || defined(QDOS)
         mode_t umask_sav = umask(0077);
 #endif
 #if defined(SYMLINKS) || defined(QLZIP)
@@ -459,7 +459,7 @@ int open_outfile(__G)           /* return 1 if fail */
 #else
         G.outfile = zfopen(G.filename, FOPW);
 #endif
-#if defined(BE_UNX) || defined(AOS_VS) || defined(QDOS)
+#if defined(BE_UNX) || defined(QDOS)
         umask(umask_sav);
 #endif
     }
@@ -495,7 +495,7 @@ int open_outfile(__G)           /* return 1 if fail */
 
 } /* end function open_outfile() */
 
-#endif /* !VMS && !AOS_VS && !CMS_MVS && !MACOS */
+#endif /* !VMS && !CMS_MVS && !MACOS */
 
 
 
@@ -1877,26 +1877,6 @@ int check_for_newer(__G__ filename)  /* return 1 if existing file is newer */
 #ifdef USE_EF_UT_TIME
     iztimes z_utime;
 #endif
-#ifdef AOS_VS
-    long    dyy, dmm, ddd, dhh, dmin, dss;
-
-
-    dyy = (lrec.last_mod_dos_datetime >> 25) + 1980;
-    dmm = (lrec.last_mod_dos_datetime >> 21) & 0x0f;
-    ddd = (lrec.last_mod_dos_datetime >> 16) & 0x1f;
-    dhh = (lrec.last_mod_dos_datetime >> 11) & 0x1f;
-    dmin = (lrec.last_mod_dos_datetime >> 5) & 0x3f;
-    dss = (lrec.last_mod_dos_datetime & 0x1f) * 2;
-
-    /* under AOS/VS, file times can only be set at creation time,
-     * with the info in a special DG format.  Make sure we can create
-     * it here - we delete it later & re-create it, whether or not
-     * it exists now.
-     */
-    if (!zvs_create(filename, (((ulg)dgdate(dmm, ddd, dyy)) << 16) |
-        (dhh*1800L + dmin*30L + dss/2L), -1L, -1L, (char *) -1, -1, -1, -1))
-        return DOES_NOT_EXIST;
-#endif /* AOS_VS */
 
     Trace((stderr, "check_for_newer:  doing stat(%s)\n", FnFilter1(filename)));
     if (SSTAT(filename, &G.statbuf)) {

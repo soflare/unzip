@@ -278,7 +278,6 @@ static ZCONST char Far efACL[] = "OS/2 ACL";
 static ZCONST char Far efNTSD[] = "Security Descriptor";
 static ZCONST char Far efBeOS[] = "BeOS";
 static ZCONST char Far efQDOS[] = "SMS/QDOS";
-static ZCONST char Far efAOSVS[] = "AOS/VS";
 static ZCONST char Far efSpark[] = "Acorn SparkFS";
 static ZCONST char Far efMD5[] = "Fred Kantor MD5";
 static ZCONST char Far efASiUnix[] = "ASi Unix";
@@ -330,8 +329,6 @@ static ZCONST char Far BeOSdata[] = ".\n\
  /* The associated file has type code `%c%c%c%c' and creator code `%c%c%c%c'" */
 static ZCONST char Far QDOSdata[] = ".\n\
     The QDOS extra field subtype is `%c%c%c%c'";
-static ZCONST char Far AOSVSdata[] = ".\n\
-    The AOS/VS extra field revision is %d.%d";
 static ZCONST char Far MD5data[] = ".\n\
     The 128-bit MD5 signature is %s";
 #ifdef CMS_MVS
@@ -1328,9 +1325,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                 case EF_QDOS:
                     ef_fieldname = efQDOS;
                     break;
-                case EF_AOSVS:
-                    ef_fieldname = efAOSVS;
-                    break;
                 case EF_SPARK:   /* from RISC OS */
                     ef_fieldname = efSpark;
                     break;
@@ -1608,14 +1602,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                     if (eb_datalen >= 4) {
                         Info(slide, 0, ((char *)slide, LoadFarString(QDOSdata),
                           ef_ptr[0], ef_ptr[1], ef_ptr[2], ef_ptr[3]));
-                    } else {
-                        goto ef_default_display;
-                    }
-                    break;
-                case EF_AOSVS:
-                    if (eb_datalen >= 5) {
-                        Info(slide, 0, ((char *)slide, LoadFarString(AOSVSdata),
-                          ((int)(uch)ef_ptr[4])/10, ((int)(uch)ef_ptr[4])%10));
                     } else {
                         goto ef_default_display;
                     }
