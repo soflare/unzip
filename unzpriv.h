@@ -298,48 +298,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    Human68k/X680x0 section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef __human68k__
-   /* DO NOT DEFINE DOS_OS2 HERE!  If Human68k is so much */
-   /*  like MS-DOS and/or OS/2, create DOS_H68_OS2 macro. */
-#  if (!defined(_MBCS) && !defined(NO_MBCS))
-     /* enable MBCS support by default for this system */
-#    define _MBCS
-#  endif
-#  if (defined(_MBCS) && defined(NO_MBCS))
-     /* disable MBCS support when explicitely requested */
-#    undef _MBCS
-#  endif
-#  include <time.h>
-#  include <fcntl.h>
-#  include <io.h>
-#  include <conio.h>
-#  include <sys/stat.h>
-#  ifdef HAVE_MBSTRING_H
-#    include <mbstring.h>
-#  endif
-#  ifdef HAVE_MBCTYPE_H
-#    include <mbctype.h>
-#  else
-#    ifndef _ismbblead
-#      define _ismbblead(c) (0x80 <= (c) && ((c) < 0xa0 || 0xe0 <= (c)))
-#    endif
-#  endif
-#  ifndef DATE_FORMAT
-#    define DATE_FORMAT DF_YMD   /* Japanese standard */
-#  endif
-#  define lenEOL        1
-#  define PutNativeEOL  *q++ = native(LF);
-#  define INT_SPRINTF
-#  define SYMLINKS
-#  ifdef SFX
-#    define MAIN main_sfx
-#  endif
-#endif
-
-/*---------------------------------------------------------------------------
     Mac section:
   ---------------------------------------------------------------------------*/
 
@@ -659,10 +617,6 @@
 #  define DOS_W32_OS2          /* historical:  don't use */
 #endif
 
-#if (defined(DOS_OS2_W32) || defined(__human68k__))
-#  define DOS_H68_OS2_W32
-#endif
-
 #if (defined(DOS_OS2) || defined(FLEXOS))
 #  define DOS_FLX_OS2
 #endif
@@ -671,8 +625,8 @@
 #  define DOS_FLX_OS2_W32
 #endif
 
-#if (defined(DOS_H68_OS2_W32) || defined(FLEXOS))
-#  define DOS_FLX_H68_OS2_W32
+#if (defined(DOS_OS2_W32) || defined(FLEXOS))
+#  define DOS_FLX_OS2_W32
 #endif
 
 #if (defined(DOS_FLX_OS2) || defined(NLM))
@@ -683,8 +637,8 @@
 #  define DOS_FLX_NLM_OS2_W32
 #endif
 
-#if (defined(DOS_FLX_H68_OS2_W32) || defined(NLM))
-#  define DOS_FLX_H68_NLM_OS2_W32
+#if (defined(DOS_FLX_OS2_W32) || defined(NLM))
+#  define DOS_FLX_NLM_OS2_W32
 #endif
 
 #if (defined(TOPS20) || defined(VMS))

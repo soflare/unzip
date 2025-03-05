@@ -513,7 +513,7 @@ typedef struct _UzpOpts {
 #ifdef VMS
     int S_flag;         /* -S: use Stream_LF for text files (-a[a]) */
 #endif
-#if (defined(MSDOS) || defined(__human68k__) || defined(OS2) || defined(WIN32))
+#if (defined(MSDOS) || defined(OS2) || defined(WIN32))
     int volflag;        /* -$: extract volume labels */
 #endif
     int tflag;          /* -t: test (unzip) or totals line (zipinfo) */

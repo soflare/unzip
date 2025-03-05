@@ -40,21 +40,15 @@
 #  endif
 #endif
 
-#if (defined(DOS_OS2_W32) || defined(__human68k__))
-#  ifndef DOS_H68_OS2_W32
-#    define DOS_H68_OS2_W32
-#  endif
-#endif
-
 #if (defined(DOS_OS2_W32) || defined(FLEXOS))
 #  ifndef DOS_FLX_OS2_W32
 #    define DOS_FLX_OS2_W32
 #  endif
 #endif
 
-#if (defined(DOS_H68_OS2_W32) || defined(FLEXOS))
-#  ifndef DOS_FLX_H68_OS2_W32
-#    define DOS_FLX_H68_OS2_W32
+#if (defined(DOS_OS2_W32) || defined(FLEXOS))
+#  ifndef DOS_FLX_OS2_W32
+#    define DOS_FLX_OS2_W32
 #  endif
 #endif
 
@@ -117,7 +111,7 @@
 #  define HAVE_WORKING_GETCH
 #endif
 
-#ifdef DOS_H68_OS2_W32
+#ifdef DOS_OS2_W32
 #  define echoff(f)
 #  define echon()
 #  ifdef WIN32
@@ -139,7 +133,7 @@
 #    endif /* ?__EMX__ */
 #  endif /* ?WIN32 */
 #  define HAVE_WORKING_GETCH
-#endif /* DOS_H68_OS2_W32 */
+#endif /* DOS_OS2_W32 */
 
 #ifdef FLEXOS
 #  define echoff(f)

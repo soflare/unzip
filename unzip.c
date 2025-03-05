@@ -52,8 +52,8 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
-              Atari, Windows 3.x/95/NT/CE, Macintosh, Human68K, Acorn RISC OS,
-              BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS and TOPS-20.
+              Atari, Windows 3.x/95/NT/CE, Macintosh, Acorn RISC OS, BeOS,
+              SMS/QDOS, VM/CMS, MVS, AOS/VS and TOPS-20.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -189,7 +189,7 @@ static ZCONST char Far IgnoreOOptionMsg[] =
 #endif /* ?TIMESTAMP */
 
 /* local2[] and local3[]:  modifier options */
-#ifdef DOS_FLX_H68_OS2_W32
+#ifdef DOS_FLX_OS2_W32
 #ifdef FLEXOS
    static ZCONST char Far local2[] = "";
 #else
@@ -721,7 +721,7 @@ int unzip(__G__ argc, argv)
 #ifndef NO_ZIPINFO
     char *p;
 #endif
-#if (defined(DOS_FLX_H68_NLM_OS2_W32) || !defined(SFX))
+#if (defined(DOS_FLX_NLM_OS2_W32) || !defined(SFX))
     int i;
 #endif
     int retcode, error=FALSE;
@@ -1065,7 +1065,7 @@ int unzip(__G__ argc, argv)
     maining options and file specifications.
   ---------------------------------------------------------------------------*/
 
-#ifdef DOS_FLX_H68_NLM_OS2_W32
+#ifdef DOS_FLX_NLM_OS2_W32
     /* convert MSDOS-style 'backward slash' directory separators to Unix-style
      * 'forward slashes' for user's convenience (include zipfile name itself)
      */
@@ -1075,10 +1075,6 @@ int unzip(__G__ argc, argv)
     /* argc does not include the zipfile specification */
     for (G.pfnames = argv, i = argc+1;  i > 0;  --i) {
 #endif
-#ifdef __human68k__
-        extern char *_toslash(char *);
-        _toslash(*G.pfnames);
-#else /* !__human68k__ */
         char *q = *G.pfnames;
 
         while (*q != '\0') {
@@ -1086,10 +1082,9 @@ int unzip(__G__ argc, argv)
                 *q = '/';
             INCSTR(q);
         }
-#endif /* ?__human68k__ */
         ++G.pfnames;
     }
-#endif /* DOS_FLX_H68_NLM_OS2_W32 */
+#endif /* DOS_FLX_NLM_OS2_W32 */
 
 #ifndef SFX
     G.wildzipfn = *argv++;
@@ -1753,7 +1748,7 @@ int uz_opts(__G__ pargc, pargv)
                         uO.ods2_flag = TRUE;
                     break;
 #endif /* VMS */
-#ifdef DOS_H68_OS2_W32
+#ifdef DOS_OS2_W32
                 case ('$'):
                     if (negative) {
                         uO.volflag = MAX(uO.volflag-negative,0);
@@ -1761,7 +1756,7 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.volflag;
                     break;
-#endif /* DOS_H68_OS2_W32 */
+#endif /* DOS_OS2_W32 */
 #if (!defined(RISCOS) && !defined(CMS_MVS))
                 case (':'):    /* allow "parent dir" path components */
                     if (negative) {
