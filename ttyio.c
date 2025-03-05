@@ -50,7 +50,7 @@
 #  define GLOBAL(g) G.g
 #endif
 
-#if (defined(__ATHEOS__) || defined(__BEOS__))  /* why yes, we do */
+#if (defined(__BEOS__))  /* why yes, we do */
 #  define HAVE_TERMIOS_H
 #endif
 
@@ -337,7 +337,7 @@ void Echon(__G)
 
 #if (defined(UNZIP) && !defined(FUNZIP))
 
-#ifdef ATH_BEO_UNX
+#ifdef BEO_UNX
 #ifdef MORE
 
 /*
@@ -477,7 +477,7 @@ int zgetch(__G__ f)
 }
 
 
-#else /* !ATH_BEO_UNX */
+#else /* !BEO_UNX */
 #ifndef VMS     /* VMS supplies its own variant of getch() */
 
 
@@ -504,7 +504,7 @@ int zgetch(__G__ f)
 }
 
 #endif /* !VMS */
-#endif /* ?ATH_BEO_UNX */
+#endif /* ?BEO_UNX */
 
 #endif /* UNZIP && !FUNZIP */
 #endif /* !HAVE_WORKING_GETCH */
@@ -589,7 +589,7 @@ char *getp(__G__ m, p, n)
 #else /* !HAVE_WORKING_GETCH */
 
 
-#if (defined(ATH_BEO_UNX) || defined(__MINT__))
+#if (defined(BEO_UNX) || defined(__MINT__))
 
 #ifndef _PATH_TTY
 #  ifdef __MINT__
@@ -646,7 +646,7 @@ char *getp(__G__ m, p, n)
 
 } /* end function getp() */
 
-#endif /* ATH_BEO_UNX || __MINT__ */
+#endif /* BEO_UNX || __MINT__ */
 
 
 

@@ -53,8 +53,8 @@
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
               Atari, Windows 3.x/95/NT/CE, Macintosh, Human68K, Acorn RISC OS,
-              AtheOS, BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS, Tandem NSK, Theos
-              and TOPS-20.
+              BeOS, SMS/QDOS, VM/CMS, MVS, AOS/VS, Tandem NSK, Theos and
+              TOPS-20.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -254,7 +254,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 \n\n";
 #endif
 #else /* !VMS */
-#ifdef ATH_BEO_UNX
+#ifdef BEO_UNX
    static ZCONST char Far local2[] = " -X  restore UID/GID info";
 #ifdef MORE
    static ZCONST char Far local3[] = "\
@@ -263,7 +263,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local3[] = "\
   -K  keep setuid/setgid/tacky permissions\n";
 #endif
-#else /* !ATH_BEO_UNX */
+#else /* !BEO_UNX */
 #ifdef TANDEM
    static ZCONST char Far local2[] = "\
  -X  restore Tandem User ID                 -r  remove file extensions\n\
@@ -300,7 +300,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 #endif /* ?MACOS */
 #endif /* ?AMIGA */
 #endif /* ?TANDEM */
-#endif /* ?ATH_BEO_UNX */
+#endif /* ?BEO_UNX */
 #endif /* ?VMS */
 #endif /* ?DOS_FLX_OS2_W32 */
 #endif /* !SFX */
@@ -1523,16 +1523,16 @@ int uz_opts(__G__ pargc, pargv)
                     else
                         uO.jflag = TRUE;
                     break;
-#if (defined(ATH_BEO) || defined(MACOS))
-                case ('J'):    /* Junk AtheOS, BeOS or MacOS file attributes */
+#if (defined(__BEOS__) || defined(MACOS))
+                case ('J'):    /* Junk BeOS or MacOS file attributes */
                     if( negative ) {
                         uO.J_flag = FALSE, negative = 0;
                     } else {
                         uO.J_flag = TRUE;
                     }
                     break;
-#endif /* ATH_BEO || MACOS */
-#ifdef ATH_BEO_UNX
+#endif /* __BEOS__ || MACOS */
+#ifdef BEO_UNX
                 case ('K'):
                     if (negative) {
                         uO.K_flag = FALSE, negative = 0;
@@ -1540,7 +1540,7 @@ int uz_opts(__G__ pargc, pargv)
                         uO.K_flag = TRUE;
                     }
                     break;
-#endif /* ATH_BEO_UNX */
+#endif /* BEO_UNX */
 #ifndef SFX
                 case ('l'):
                     if (negative) {
@@ -2165,7 +2165,7 @@ static void help_extended(__G)
   "         standard header.",
   "  -j   Junk paths and deposit all files in extraction directory.",
   "  -J   [BeOS] Junk file attributes.  [MacOS] Ignore MacOS specific info.",
-  "  -K   [AtheOS, BeOS, Unix] Restore SUID/SGID/Tacky file attributes.",
+  "  -K   [BeOS, Unix] Restore SUID/SGID/Tacky file attributes.",
   "  -L   Convert to lowercase any names from uppercase only file system.",
   "  -LL  Convert all files to lowercase.",
   "  -M   Pipe all output through internal pager similar to Unix more(1).",

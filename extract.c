@@ -2038,7 +2038,6 @@ static int TestExtraField(__G__ ef, ef_len)
             case EF_ACL:
             case EF_MAC3:
             case EF_BEOS:
-            case EF_ATHEOS:
                 switch (ebID) {
                   case EF_OS2:
                   case EF_ACL:
@@ -2054,7 +2053,6 @@ static int TestExtraField(__G__ ef, ef_len)
                         eb_cmpr_offs = EB_MAC3_HLEN;
                     break;
                   case EF_BEOS:
-                  case EF_ATHEOS:
                     if (ebLen >= EB_BEOS_HLEN &&
                         (*(ef+(EB_HEADSIZE+EB_FLGS_OFFS)) & EB_BE_FL_UNCMPR) &&
                         (makelong(ef+EB_HEADSIZE) == ebLen - EB_BEOS_HLEN))

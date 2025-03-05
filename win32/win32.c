@@ -431,7 +431,6 @@ static int FindSDExtraField(__GPRO__
             case EF_VMCMS:
             case EF_MVS:
             case EF_ACL:
-            case EF_ATHEOS:
             case EF_BEOS:
             case EF_QDOS:
             case EF_AOSVS:

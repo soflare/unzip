@@ -290,14 +290,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    AtheOS section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef __ATHEOS__
-#  include "atheos/athcfg.h"
-#endif
-
-/*---------------------------------------------------------------------------
     BeOS section:
   ---------------------------------------------------------------------------*/
 
@@ -741,16 +733,12 @@
 #  define DOS_T20_VMS
 #endif
 
-#if (defined(__ATHEOS__) || defined(__BEOS__))
-#  define ATH_BEO
+#if (defined(__BEOS__) || defined(UNIX))
+#  define BEO_UNX
 #endif
 
-#if (defined(ATH_BEO) || defined(UNIX))
-#  define ATH_BEO_UNX
-#endif
-
-#if (defined(ATH_BEO_UNX) || defined(THEOS))
-#  define ATH_BEO_THS_UNX
+#if (defined(BEO_UNX) || defined(THEOS))
+#  define BEO_THS_UNX
 #endif
 
 /* clean up with a few defaults */
@@ -792,7 +780,7 @@
 #endif
 
 
-#if (defined(DOS_FLX_NLM_OS2_W32) || defined(ATH_BEO_UNX) || defined(RISCOS))
+#if (defined(DOS_FLX_NLM_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -1683,8 +1671,7 @@
 #define TANDEM_           17   /* Tandem NSK */
 #define THEOS_            18   /* THEOS */
 #define MAC_OSX_          19   /* Mac OS/X (Darwin) */
-#define ATHEOS_           30   /* AtheOS */
-#define NUM_HOSTS         31   /* index of last system + 1 */
+#define NUM_HOSTS         20   /* index of last system + 1 */
 /* don't forget to update zipinfo.c appropiately if NUM_HOSTS changes! */
 
 #define STORED            0    /* compression methods */
@@ -1751,7 +1738,6 @@
 #define EF_MVS       0x470f    /* Info-ZIP's MVS ("\017G") */
 #define EF_ACL       0x4c41    /* (OS/2) access control list ("AL") */
 #define EF_NTSD      0x4453    /* NT security descriptor ("SD") */
-#define EF_ATHEOS    0x7441    /* AtheOS ("At") */
 #define EF_BEOS      0x6542    /* BeOS ("Be") */
 #define EF_QDOS      0xfb4a    /* SMS/QDOS ("J\373") */
 #define EF_AOSVS     0x5356    /* AOS/VS ("VS") */
@@ -1792,8 +1778,8 @@
 #define EB_FLGS_OFFS      4    /* offset of flags area in generic compressed
                                   extra field blocks (BEOS, MAC, and others) */
 #define EB_OS2_HLEN       4    /* size of OS2/ACL compressed data header */
-#define EB_BEOS_HLEN      5    /* length of BeOS&AtheOS e.f attribute header */
-#define EB_BE_FL_UNCMPR   0x01 /* "BeOS&AtheOS attribs uncompr." bit flag */
+#define EB_BEOS_HLEN      5    /* length of BeOS e.f attribute header */
+#define EB_BE_FL_UNCMPR   0x01 /* "BeOS attribs uncompr." bit flag */
 #define EB_MAC3_HLEN      14   /* length of Mac3 attribute block header */
 #define EB_SMARTZIP_HLEN  64   /* fixed length of the SmartZip extra field */
 #define EB_M3_FL_DATFRK   0x01 /* "this entry is data fork" flag */
@@ -2594,12 +2580,12 @@ int      mapname         OF((__GPRO__ int renamed));                /* local */
 int      checkdir        OF((__GPRO__ char *pathcomp, int flag));   /* local */
 char    *do_wild         OF((__GPRO__ ZCONST char *wildzipfn));     /* local */
 char    *GetLoadPath     OF((__GPRO));                              /* local */
-#if (defined(MORE) && (defined(ATH_BEO_UNX) || defined(QDOS) || defined(VMS)))
+#if (defined(MORE) && (defined(BEO_UNX) || defined(QDOS) || defined(VMS)))
    int screensize        OF((int *tt_rows, int *tt_cols));          /* local */
 # if defined(VMS)
    int screenlinewrap    OF((void));                                /* local */
 # endif
-#endif /* MORE && (ATH_BEO_UNX || QDOS || VMS) */
+#endif /* MORE && (BEO_UNX || QDOS || VMS) */
 #ifdef OS2_W32
    int   SetFileSize     OF((FILE *file, zusz_t filesize));         /* local */
 #endif
@@ -2745,7 +2731,7 @@ char    *GetLoadPath     OF((__GPRO));                              /* local */
    /* This macro defines the Zip "made by" hosts that are considered
       to support storing symbolic link entries. */
 #  define SYMLINK_HOST(hn) ((hn) == UNIX_ || (hn) == ATARI_ || \
-      (hn) == ATHEOS_ || (hn) == BEOS_ || (hn) == VMS_)
+      (hn) == BEOS_ || (hn) == VMS_)
 #endif
 
 #ifndef TEST_NTSD               /* "NTSD valid?" checking function */

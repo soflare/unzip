@@ -292,7 +292,7 @@ in the Zip archive (and do not require privileges or impose a security risk).
 By specifying \fB\-D\fP, \fIunzip\fP is told to suppress restoration of
 timestamps for directories explicitly created from Zip archive entries.
 This option only applies to ports that support setting timestamps for
-directories (currently ATheOS, BeOS, MacOS, OS/2, Unix, VMS, Win32, for other
+directories (currently BeOS, MacOS, OS/2, Unix, VMS, Win32, for other
 \fIunzip\fP ports, \fB\-D\fP has no effect).
 The duplicated option \fB\-DD\fP forces suppression of timestamp restoration
 for all extracted entries (files and directories).  This option results in
@@ -339,7 +339,7 @@ restored, just the file's data.
 is skipped. Data-fork and resource-fork are restored as separate files.
 .TP
 .B \-K
-[AtheOS, BeOS, Unix only] retain SUID/SGID/Tacky file attributes.  Without
+[BeOS, Unix only] retain SUID/SGID/Tacky file attributes.  Without
 this flag, these attribute bits are cleared for security reasons.
 .TP
 .B \-L

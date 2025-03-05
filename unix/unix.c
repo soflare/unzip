@@ -372,7 +372,6 @@ int mapattr(__G)
         case VMS_:
         case ACORN_:
         case ATARI_:
-        case ATHEOS_:
         case BEOS_:
         case QDOS_:
         case TANDEM_:

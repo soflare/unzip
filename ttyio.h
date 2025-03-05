@@ -58,9 +58,9 @@
 #  endif
 #endif
 
-#if (defined(__ATHEOS__) || defined(__BEOS__) || defined(UNIX))
-#  ifndef ATH_BEO_UNX
-#    define ATH_BEO_UNX
+#if (defined(__BEOS__) || defined(UNIX))
+#  ifndef BEO_UNX
+#    define BEO_UNX
 #  endif
 #endif
 

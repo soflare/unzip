@@ -184,7 +184,6 @@ static ZCONST char Far OS_QDOS[] = "SMS/QDOS";
 static ZCONST char Far OS_Acorn[] = "Acorn RISC OS";
 static ZCONST char Far OS_MVS[] = "MVS";
 static ZCONST char Far OS_VFAT[] = "Win32 VFAT";
-static ZCONST char Far OS_AtheOS[] = "AtheOS";
 static ZCONST char Far OS_BeOS[] = "BeOS";
 static ZCONST char Far OS_Tandem[] = "Tandem NSK";
 static ZCONST char Far OS_Theos[] = "Theos";
@@ -332,7 +331,6 @@ static ZCONST char Far efVMCMS[] = "VM/CMS";
 static ZCONST char Far efMVS[] = "MVS";
 static ZCONST char Far efACL[] = "OS/2 ACL";
 static ZCONST char Far efNTSD[] = "Security Descriptor";
-static ZCONST char Far efAtheOS[] = "AtheOS";
 static ZCONST char Far efBeOS[] = "BeOS";
 static ZCONST char Far efQDOS[] = "SMS/QDOS";
 static ZCONST char Far efAOSVS[] = "AOS/VS";
@@ -382,8 +380,6 @@ static ZCONST char Far MacOS_RF[] = "Resource-fork";
 static ZCONST char Far MacOS_DF[] = "Data-fork";
 static ZCONST char Far MacOSMAC3flags[] = ".\n\
     File is marked as %s, File Dates are in %d Bit";
-static ZCONST char Far AtheOSdata[] = ".\n\
-    The local extra field has %lu bytes of %scompressed AtheOS file attributes";
 static ZCONST char Far BeOSdata[] = ".\n\
     The local extra field has %lu bytes of %scompressed BeOS file attributes";
  /* The associated file has type code `%c%c%c%c' and creator code `%c%c%c%c'" */
@@ -1001,9 +997,7 @@ static int zi_long(__G__ pEndprev, error_in_archive)
     static ZCONST char Far *os[NUM_HOSTS] = {
         OS_FAT, OS_Amiga, OS_VMS, OS_Unix, OS_VMCMS, OS_AtariST, OS_HPFS,
         OS_Macintosh, OS_ZSystem, OS_CPM, OS_TOPS20, OS_NTFS, OS_QDOS,
-        OS_Acorn, OS_VFAT, OS_MVS, OS_BeOS, OS_Tandem, OS_Theos, OS_MacDarwin,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        OS_AtheOS
+        OS_Acorn, OS_VFAT, OS_MVS, OS_BeOS, OS_Tandem, OS_Theos, OS_MacDarwin
     };
     static ZCONST char Far *method[NUM_METHODS] = {
         MthdNone, MthdShrunk, MthdRedF1, MthdRedF2, MthdRedF3, MthdRedF4,
@@ -1458,9 +1452,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                 case EF_MVS:
                     ef_fieldname = efMVS;
                     break;
-                case EF_ATHEOS:
-                    ef_fieldname = efAtheOS;
-                    break;
                 case EF_BEOS:
                     ef_fieldname = efBeOS;
                     break;
@@ -1726,17 +1717,13 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                     }
                     break;
 #endif /* CMS_MVS */
-                case EF_ATHEOS:
                 case EF_BEOS:
                     if (eb_datalen >= EB_BEOS_HLEN) {
                         ulg eb_uc = makelong(ef_ptr);
                         unsigned eb_is_uc =
                           *(ef_ptr+EB_FLGS_OFFS) & EB_BE_FL_UNCMPR;
 
-                        if (eb_id == EF_ATHEOS)
-                            ef_fieldname = AtheOSdata;
-                        else
-                            ef_fieldname = BeOSdata;
+                        ef_fieldname = BeOSdata;
                         Info(slide, 0, ((char *)slide,
                           LoadFarString(ef_fieldname),
                           eb_uc, eb_is_uc ? "un" : nullStr));
@@ -1887,8 +1874,7 @@ static int zi_short(__G)   /* return PK-type error code */
     static ZCONST char Far os[NUM_HOSTS+1][4] = {
         "fat", "ami", "vms", "unx", "cms", "atr", "hpf", "mac", "zzz",
         "cpm", "t20", "ntf", "qds", "aco", "vft", "mvs", "be ", "nsk",
-        "ths", "osx", "???", "???", "???", "???", "???", "???", "???",
-        "???", "???", "???", "ath", "???"
+        "ths", "osx", "???"
     };
 #ifdef OLD_THEOS_EXTRA
     static ZCONST char Far os_TheosOld[] = "tho";

@@ -208,7 +208,7 @@ freely, subject to the above disclaimer and the following restrictions:
 /* use prototypes and ANSI libraries if __STDC__, or MS-DOS, or OS/2, or Win32,
  * or IBM C Set/2, or Borland C, or Watcom C, or GNU gcc (emx or Cygwin),
  * or Macintosh, or Sequent, or Atari, or IBM RS/6000, or Silicon Graphics,
- * or Convex?, or AtheOS, or BeOS.
+ * or Convex?, or BeOS.
  */
 #if (defined(__STDC__) || defined(MSDOS) || defined(OS2) || defined(WIN32))
 #  ifndef PROTO
@@ -251,7 +251,7 @@ freely, subject to the above disclaimer and the following restrictions:
 #    define MODERN
 #  endif
 #endif
-#if (defined(CMS_MVS) || defined(__ATHEOS__) || defined(__BEOS__))
+#if (defined(CMS_MVS) || defined(__BEOS__))
 /* || defined(CONVEX) ? */
 #  ifndef PROTO
 #    define PROTO
@@ -495,10 +495,10 @@ typedef struct _UzpOpts {
     int scanimage;      /* -I: scan image files */
 #endif
     int jflag;          /* -j: junk pathnames (unzip) */
-#if (defined(__ATHEOS__) || defined(__BEOS__) || defined(MACOS))
-    int J_flag;         /* -J: ignore AtheOS/BeOS/MacOS e. f. info (unzip) */
+#if (defined(__BEOS__) || defined(MACOS))
+    int J_flag;         /* -J: ignore BeOS/MacOS e. f. info (unzip) */
 #endif
-#if (defined(__ATHEOS__) || defined(__BEOS__) || defined(UNIX))
+#if (defined(__BEOS__) || defined(UNIX))
     int K_flag;         /* -K: keep setuid/setgid/tacky permissions */
 #endif
     int lflag;          /* -12slmv: listing format (zipinfo) */
@@ -535,7 +535,7 @@ typedef struct _UzpOpts {
     int vflag;          /* -v: (verbosely) list directory */
     int V_flag;         /* -V: don't strip VMS version numbers */
     int W_flag;         /* -W: wildcard '*' won't match '/' dir separator */
-#if (defined (__ATHEOS__) || defined(__BEOS__) || defined(UNIX))
+#if (defined(__BEOS__) || defined(UNIX))
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #else
 #if (defined(TANDEM) || defined(THEOS))

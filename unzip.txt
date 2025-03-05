@@ -272,8 +272,8 @@ MODIFIERS
               told  to  suppress  restoration  of  timestamps  for directories
               explicitly created from Zip archive entries.  This  option  only
               applies to ports that support setting timestamps for directories
-              (currently ATheOS, BeOS, MacOS,  OS/2,  Unix,  VMS,  Win32,  for
-              other unzip ports, -D has no effect).  The duplicated option -DD
+              (currently BeOS,  MacOS,  OS/2,  Unix,  VMS,  Win32,  for  other
+              unzip ports, -D  has  no  effect).  The  duplicated  option  -DD
               forces suppression of timestamp restoration  for  all  extracted
               entries (files and directories).  This option results in setting
               the timestamps for all extracted entries to the current time.
@@ -316,9 +316,9 @@ MODIFIERS
               info  is  skipped.  Data-fork  and resource-fork are restored as
               separate files.
 
-       -K     [AtheOS,  BeOS,   Unix   only]   retain   SUID/SGID/Tacky   file
-              attributes.  Without this flag, these attribute bits are cleared
-              for security reasons.
+       -K     [BeOS,   Unix  only]  retain  SUID/SGID/Tacky  file  attributes.
+              Without this flag, these attribute bits are cleared for security
+              reasons.
 
        -L     convert to lowercase any filename originating on  an  uppercase-
               only operating system or file system.  (This was unzip's default

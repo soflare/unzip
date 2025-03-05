@@ -1723,7 +1723,7 @@ int process_cdir_file_hdr(__G)    /* return PK-type error code */
                 break;
 
             default:     /* AMIGA_, FS_HPFS_, FS_NTFS_, MAC_, UNIX_, ATARI_, */
-                break;   /*  FS_VFAT_, ATHEOS_, BEOS_ (Z_SYSTEM_), THEOS_: */
+                break;   /*  FS_VFAT_, BEOS_ (Z_SYSTEM_), THEOS_: */
                          /*  no conversion */
         }
     else if (uO.L_flag > 1)   /* let -LL force lower case for all names */
