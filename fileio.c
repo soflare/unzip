@@ -15,7 +15,7 @@
   of the stuff has to do with opening, closing, reading and/or writing files.
 
   Contains:  open_input_file()
-             open_outfile()           (not: VMS, CMSMVS, MACOS)
+             open_outfile()           (not: VMS, MACOS)
              undefer_input()
              defer_leftover_input()
              readbuf()
@@ -31,8 +31,8 @@
              UzpMorePause()
              UzpPassword()            (non-WINDLL)
              handler()
-             dos_to_unix_time()       (non-VMS, non-VM/CMS, non-MVS)
-             check_for_newer()        (non-VMS, non-OS/2, non-VM/CMS, non-MVS)
+             dos_to_unix_time()       (non-VMS)
+             check_for_newer()        (non-VMS, non-OS/2)
              do_string()
              makeword()
              makelong()
@@ -147,7 +147,7 @@ static int disk_error OF((__GPRO));
 static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
-#if (!defined(VMS) && !defined(CMS_MVS) && !defined(MACOS))
+#if (!defined(VMS) && !defined(MACOS))
 #if (defined(BEO_UNX) || defined(DOS_OS2_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
@@ -163,7 +163,7 @@ static ZCONST char Far CannotOpenZipfile[] =
 #endif
    static ZCONST char Far CannotCreateFile[] =
      "error:  cannot create %s\n        %s\n";
-#endif /* !VMS && !CMS_MVS && !MACOS */
+#endif /* !VMS && !MACOS */
 
 static ZCONST char Far ReadError[] = "error:  zipfile read error\n";
 static ZCONST char Far FilenameTooLongTrunc[] =
@@ -228,15 +228,11 @@ int open_input_file(__G)    /* return 1 if open failed */
 #ifdef MACOS
     G.zipfd = open(G.zipfn, 0);
 #else /* !MACOS */
-#ifdef CMS_MVS
-    G.zipfd = vmmvs_open_infile(__G);
-#else /* !CMS_MVS */
 #ifdef USE_STRM_INPUT
     G.zipfd = fopen(G.zipfn, FOPR);
 #else /* !USE_STRM_INPUT */
     G.zipfd = open(G.zipfn, O_RDONLY | O_BINARY);
 #endif /* ?USE_STRM_INPUT */
-#endif /* ?CMS_MVS */
 #endif /* ?MACOS */
 #endif /* ?VMS */
 
@@ -258,7 +254,7 @@ int open_input_file(__G)    /* return 1 if open failed */
 
 
 
-#if (!defined(VMS) && !defined(CMS_MVS) && !defined(MACOS))
+#if (!defined(VMS) && !defined(MACOS))
 
 /***************************/
 /* Function open_outfile() */
@@ -465,7 +461,7 @@ int open_outfile(__G)           /* return 1 if fail */
 
 } /* end function open_outfile() */
 
-#endif /* !VMS && !CMS_MVS && !MACOS */
+#endif /* !VMS && !MACOS */
 
 
 
@@ -1631,7 +1627,7 @@ void handler(signal)   /* upon interrupt, turn on echo and exit cleanly */
 
 
 
-#if (!defined(VMS) && !defined(CMS_MVS))
+#if !defined(VMS)
 #if (!defined(OS2) || defined(TIMESTAMP))
 
 #if (!defined(HAVE_MKTIME) || defined(WIN32))
@@ -1804,11 +1800,11 @@ time_t dos_to_unix_time(dosdatetime)
 } /* end function dos_to_unix_time() */
 
 #endif /* !OS2 || TIMESTAMP */
-#endif /* !VMS && !CMS_MVS */
+#endif /* !VMS */
 
 
 
-#if (!defined(VMS) && !defined(OS2) && !defined(CMS_MVS))
+#if (!defined(VMS) && !defined(OS2))
 
 /******************************/
 /* Function check_for_newer() */  /* used for overwriting/freshening/updating */
@@ -1903,7 +1899,7 @@ int check_for_newer(__G__ filename)  /* return 1 if existing file is newer */
 
 } /* end function check_for_newer() */
 
-#endif /* !VMS && !OS2 && !CMS_MVS */
+#endif /* !VMS && !OS2 */
 
 
 

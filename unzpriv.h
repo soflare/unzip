@@ -375,15 +375,6 @@
 #endif /* UNIX */
 
 /*---------------------------------------------------------------------------
-    VM/CMS and MVS section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef CMS_MVS
-#  include "vmmvs.h"
-#  define CLOSE_INFILE()  close_infile(__G)
-#endif
-
-/*---------------------------------------------------------------------------
     VMS section:
   ---------------------------------------------------------------------------*/
 
@@ -586,7 +577,7 @@
 #      define PCHAR_SPRINTF  /* undetermined actual return value */
 #    endif
 #  endif
-#  if (defined(__osf__) || defined(_AIX) || defined(CMS_MVS))
+#  if (defined(__osf__) || defined(_AIX))
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI/Posix */
 #  endif
 #  if defined(sun)
@@ -860,22 +851,6 @@
 #  define FOPWR "w+","ctx=stm","rfm=fix","mrs=512"
 #endif /* VMS */
 
-#ifdef CMS_MVS
-/* Binary files must be RECFM=F,LRECL=1 for ftell() to get correct pos */
-/* ...unless byteseek is used.  Let's try that for a while.            */
-#  define FOPR "rb,byteseek"
-#  define FOPM "r+b,byteseek"
-#  ifdef MVS
-#    define FOPW "wb,recfm=u,lrecl=32760,byteseek" /* New binary files */
-#    define FOPWE "wb"                             /* Existing binary files */
-#    define FOPWT "w,lrecl=133"                    /* New text files */
-#    define FOPWTE "w"                             /* Existing text files */
-#  else
-#    define FOPW "wb,recfm=v,lrecl=32760"
-#    define FOPWT "w"
-#  endif
-#endif /* CMS_MVS */
-
 /* Defaults when nothing special has been defined previously. */
 #ifdef MODERN
 #  ifndef FOPR
@@ -1073,11 +1048,7 @@
 #endif /* UNIX && S_IFLNK && !MTS */
 
 #ifndef S_ISDIR
-#  ifdef CMS_MVS
-#    define S_ISDIR(m)  (FALSE)
-#  else
-#    define S_ISDIR(m)  (((m) & S_IFMT) == S_IFDIR)
-# endif
+#  define S_ISDIR(m)  (((m) & S_IFMT) == S_IFDIR)
 #endif
 
 #ifndef IS_VOLID
@@ -2056,7 +2027,7 @@ int      seek_zipf            OF((__GPRO__ zoff_t abs_offset));
 /* static int  disk_error     OF((__GPRO)); */
 void     handler              OF((int signal));
 time_t   dos_to_unix_time     OF((ulg dos_datetime));
-int      check_for_newer      OF((__GPRO__ char *filename)); /* os2,vmcms,vms */
+int      check_for_newer      OF((__GPRO__ char *filename)); /* os2,vms */
 int      do_string            OF((__GPRO__ unsigned int length, int option));
 ush      makeword             OF((ZCONST uch *b));
 ulg      makelong             OF((ZCONST uch *sig));
@@ -2241,16 +2212,6 @@ int    huft_build                OF((__GPRO__ ZCONST unsigned *b, unsigned n,
    void   QFilename           (__GPRO__ char *);
    char  *Qstrfix             (char *);
    int    QReturn             (int zip_error);
-#endif
-
-/*---------------------------------------------------------------------------
-    VM/CMS- and MVS-only functions:
-  ---------------------------------------------------------------------------*/
-
-#ifdef CMS_MVS
-   extent getVMMVSexfield     OF((char *type, uch *ef_block, unsigned datalen));
-   FILE  *vmmvs_open_infile   OF((__GPRO));                       /* vmmvs.c */
-   void   close_infile        OF((__GPRO));                       /* vmmvs.c */
 #endif
 
 /*---------------------------------------------------------------------------

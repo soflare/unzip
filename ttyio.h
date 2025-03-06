@@ -46,12 +46,6 @@
 #  endif
 #endif
 
-#if (defined(VM_CMS) || defined(MVS))
-#  ifndef CMS_MVS
-#    define CMS_MVS
-#  endif
-#endif
-
 
 /* Function prototypes */
 
@@ -95,16 +89,6 @@
 #  endif /* ?WIN32 */
 #  define HAVE_WORKING_GETCH
 #endif /* DOS_OS2_W32 */
-
-/* For VM/CMS and MVS, we do not (yet) have any support to switch terminal
- * input echo on and off. The following "fake" definitions allow inclusion
- * of crypt support and UnZip's "pause prompting" features, but without
- * any echo suppression.
- */
-#ifdef CMS_MVS
-#  define echoff(f)
-#  define echon()
-#endif
 
 /* VMS has a single echo() function in ttyio.c to toggle terminal
  * input echo on and off.

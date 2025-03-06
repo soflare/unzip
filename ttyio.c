@@ -20,7 +20,7 @@
              Echoff()       (Unix only)
              screensize()   (Unix only)
              zgetch()       (Unix, VMS, and non-Unix/VMS versions)
-             getp()         ("PC," Unix/Be, VMS/VMCMS/MVS)
+             getp()         ("PC," Unix/Be, VMS)
 
   ---------------------------------------------------------------------------*/
 
@@ -145,24 +145,22 @@
 #        define GTTY(f,s) ioctl(f,TCGETA,(zvoid *)s)
 #        define STTY(f,s) ioctl(f,TCSETAW,(zvoid *)s)
 #      else /* !USE_SYSV_TERMIO */
-#        ifndef CMS_MVS
-#          if (!defined(MINIX) && !defined(GOT_IOCTL_H))
-#            include <sys/ioctl.h>
-#          endif
-#          include <sgtty.h>
-#          define GTTY gtty
-#          define STTY stty
-#          ifdef UNZIP
-             /*
-              * XXX : Are these declarations needed at all ????
-              */
-             /*
-              * GRR: let's find out...   Hmmm, appears not...
-             int gtty OF((int, struct sgttyb *));
-             int stty OF((int, struct sgttyb *));
-              */
-#          endif
-#        endif /* !CMS_MVS */
+#        if (!defined(MINIX) && !defined(GOT_IOCTL_H))
+#          include <sys/ioctl.h>
+#        endif
+#        include <sgtty.h>
+#        define GTTY gtty
+#        define STTY stty
+#        ifdef UNZIP
+           /*
+            * XXX : Are these declarations needed at all ????
+            */
+           /*
+            * GRR: let's find out...   Hmmm, appears not...
+           int gtty OF((int, struct sgttyb *));
+           int stty OF((int, struct sgttyb *));
+            */
+#        endif
 #      endif /* ?USE_SYSV_TERMIO */
 #    endif /* ?HAVE_TERMIOS_H */
 #    ifndef NO_FCNTL_H
@@ -290,9 +288,6 @@ int tt_getch()
 #else /* !VMS:  basically Unix */
 
 
-/* For VM/CMS and MVS, non-echo terminal input is not (yet?) supported. */
-#ifndef CMS_MVS
-
 #ifdef ZIP                      /* moved to globals.h for UnZip */
    static int echofd=(-1);      /* file descriptor whose echo is off */
 #endif
@@ -328,7 +323,6 @@ void Echon(__G)
     }
 }
 
-#endif /* !CMS_MVS */
 #endif /* ?VMS */
 
 
@@ -643,7 +637,7 @@ char *getp(__G__ m, p, n)
 
 
 
-#if (defined(VMS) || defined(CMS_MVS))
+#if defined(VMS)
 
 char *getp(__G__ m, p, n)
     __GDEF
@@ -692,7 +686,7 @@ char *getp(__G__ m, p, n)
 
 } /* end function getp() */
 
-#endif /* VMS || CMS_MVS */
+#endif /* VMS */
 #endif /* ?HAVE_WORKING_GETCH */
 #endif /* CRYPT */
 #endif /* CRYPT || (UNZIP && !FUNZIP) */

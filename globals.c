@@ -170,10 +170,6 @@ Uz_Globs *globalsCtor()
     memzero(&G, sizeof(Uz_Globs));
 
 #ifndef FUNZIP
-#ifdef CMS_MVS
-    uO.aflag=1;
-    uO.C_flag=1;
-#endif
 #ifdef VMS
 # if (!defined(NO_TIMESTAMPS))
     uO.D_flag=1;    /* default to '-D', no restoration of dir timestamps */

@@ -85,12 +85,6 @@
 #  endif
 #endif
 
-#if defined(VM_CMS) || defined(MVS)
-#  ifndef CMS_MVS
-#    define CMS_MVS
-#  endif
-#endif
-
 /* To allow combining of Zip and UnZip static libraries in a single binary,
  * the Zip and UnZip versions of the crypt core functions have to be named
  * differently.

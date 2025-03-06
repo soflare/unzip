@@ -52,7 +52,7 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS,
-              Windows 3.x/95/NT/CE, Macintosh, BeOS, SMS/QDOS, VM/CMS and MVS.
+              Windows 3.x/95/NT/CE, Macintosh, BeOS and SMS/QDOS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -260,7 +260,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local2[] = " -M  pipe through \"more\" pager";
    static ZCONST char Far local3[] = "\n";
 #else
-   static ZCONST char Far local2[] = "";   /* Mac, CMS/MVS etc. */
+   static ZCONST char Far local2[] = "";   /* Mac, etc. */
    static ZCONST char Far local3[] = "";
 #endif
 #endif /* ?MACOS */
@@ -547,17 +547,10 @@ Usage: unzip %s[-opts[modifiers]] file[.zip] [list] [-d exdir]\n \
  Default action is to extract files in list, to exdir;\n\
   file[.zip] may be a wildcard.  %s\n";
 #else /* !MACOS */
-#ifdef VM_CMS
-static ZCONST char Far UnzipUsageLine2[] = "\
-Usage: unzip %s[-opts[modifiers]] file[.zip] [list] [-x xlist] [-d fm]\n \
- Default action is to extract files in list, except those in xlist, to disk fm;\
-\n  file[.zip] may be a wildcard.  %s\n";
-#else /* !VM_CMS */
 static ZCONST char Far UnzipUsageLine2[] = "\
 Usage: unzip %s[-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]\n \
  Default action is to extract files in list, except those in xlist, to exdir;\n\
   file[.zip] may be a wildcard.  %s\n";
-#endif /* ?VM_CMS */
 #endif /* ?MACOS */
 
 #ifdef NO_ZIPINFO
@@ -583,21 +576,12 @@ static ZCONST char Far UnzipUsageLine3[] = "\n\
   -u  update files, create if necessary      -z  display archive comment only\n\
   -v  list verbosely/show version info     %s\n";
 #else /* !MACOS */
-#ifdef VM_CMS
-static ZCONST char Far UnzipUsageLine3[] = "\n\
-  -p  extract files to pipe, no messages     -l  list files (short format)\n\
-  -f  freshen existing files, create none    -t  test compressed archive data\n\
-  -u  update files, create if necessary      -z  display archive comment only\n\
-  -v  list verbosely/show version info     %s\n\
-  -x  exclude files that follow (in xlist)   -d  extract files onto disk fm\n";
-#else /* !VM_CMS */
 static ZCONST char Far UnzipUsageLine3[] = "\n\
   -p  extract files to pipe, no messages     -l  list files (short format)\n\
   -f  freshen existing files, create none    -t  test compressed archive data\n\
   -u  update files, create if necessary      -z  display archive comment only\n\
   -v  list verbosely/show version info     %s\n\
   -x  exclude files that follow (in xlist)   -d  extract files into exdir\n";
-#endif /* ?VM_CMS */
 #endif /* ?MACOS */
 
 /* There is not enough space on a standard 80x25 Windows console screen for
@@ -1079,11 +1063,7 @@ int unzip(__G__ argc, argv)
         G.pfnames = argv;
         while (*++pp) {
             Trace((stderr, "pp - argv = %d\n", pp-argv));
-#ifdef CMS_MVS
-            if (!uO.exdir && STRNICMP(*pp, "-d", 2) == 0) {
-#else
             if (!uO.exdir && strncmp(*pp, "-d", 2) == 0) {
-#endif
                 int firstarg = (pp == argv);
 
                 uO.exdir = (*pp) + 2;
@@ -1246,11 +1226,7 @@ int uz_opts(__G__ pargc, pargv)
     while (++argv, (--argc > 0 && *argv != NULL && **argv == '-')) {
         s = *argv + 1;
         while ((c = *s++) != 0) {    /* "!= 0":  prevent Turbo C warning */
-#ifdef CMS_MVS
-            switch (tolower(c))
-#else
             switch (c)
-#endif
             {
                 case ('-'):
                     ++negative;
@@ -1307,14 +1283,12 @@ int uz_opts(__G__ pargc, pargv)
 #endif
                     }
                     break;
-#ifndef CMS_MVS
                 case ('C'):    /* -C:  match filenames case-insensitively */
                     if (negative)
                         uO.C_flag = FALSE, negative = 0;
                     else
                         uO.C_flag = TRUE;
                     break;
-#endif /* !CMS_MVS */
 #if (!defined(SFX) || defined(SFX_EXDIR))
                 case ('d'):
                     if (negative) {   /* negative not allowed with -d exdir */
@@ -1435,7 +1409,6 @@ int uz_opts(__G__ pargc, pargv)
                         ++uO.vflag;
                     break;
 #endif /* !SFX */
-#ifndef CMS_MVS
                 case ('L'):    /* convert (some) filenames to lowercase */
                     if (negative) {
                         uO.L_flag = MAX(uO.L_flag-negative,0);
@@ -1443,11 +1416,7 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.L_flag;
                     break;
-#endif /* !CMS_MVS */
 #ifdef MORE
-#ifdef CMS_MVS
-                case ('m'):
-#endif
                 case ('M'):    /* send all screen output through "more" fn. */
 /* GRR:  eventually check for numerical argument => height */
                     if (negative)
@@ -1582,14 +1551,12 @@ int uz_opts(__G__ pargc, pargv)
                         uO.U_flag++;
                     break;
 #else /* !UNICODE_SUPPORT */
-#ifndef CMS_MVS
                 case ('U'):    /* obsolete; to be removed in version 6.0 */
                     if (negative)
                         uO.L_flag = TRUE, negative = 0;
                     else
                         uO.L_flag = FALSE;
                     break;
-#endif /* !CMS_MVS */
 #endif /* ?UNICODE_SUPPORT */
 #ifndef SFX
                 case ('v'):    /* verbose */
@@ -1602,14 +1569,12 @@ int uz_opts(__G__ pargc, pargv)
                         uO.vflag = 2;
                     break;
 #endif /* !SFX */
-#ifndef CMS_MVS
                 case ('V'):    /* Version (retain VMS/DEC-20 file versions) */
                     if (negative)
                         uO.V_flag = FALSE, negative = 0;
                     else
                         uO.V_flag = TRUE;
                     break;
-#endif /* !CMS_MVS */
 #ifdef WILD_STOP_AT_DIR
                 case ('W'):    /* Wildcard interpretation (stop at '/'?) */
                     if (negative)
@@ -1680,7 +1645,6 @@ int uz_opts(__G__ pargc, pargv)
                         ++uO.volflag;
                     break;
 #endif /* DOS_OS2_W32 */
-#if !defined(CMS_MVS)
                 case (':'):    /* allow "parent dir" path components */
                     if (negative) {
                         uO.ddotflag = MAX(uO.ddotflag-negative,0);
@@ -1688,7 +1652,6 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.ddotflag;
                     break;
-#endif /* !CMS_MVS */
 #ifdef UNIX
                 case ('^'):    /* allow control chars in filenames */
                     if (negative) {
@@ -2056,10 +2019,10 @@ static void help_extended(__G)
   "  -Y   [VMS] Treat archived name endings of .nnn as VMS version numbers.",
   "  -$   [MS-DOS, OS/2, NT] Restore volume label if extraction medium is",
   "         removable.  -$$ allows fixed media (hard drives) to be labeled.",
-  "  -:   [All but VM/CMS, MVS] Allow extract archive members into locations",
-  "         outside of current extraction root folder.  This allows paths such as",
-  "         ../foo to be extracted above the current extraction directory, which",
-  "         can be a security problem.",
+  "  -:   Allow extract archive members into locations outside of current",
+  "         extraction root folder.  This allows paths such as ../foo to be",
+  "         extracted above the current extraction directory, which can be a",
+  "         security problem.",
   "  -^   [Unix] Allow control characters in names of extracted entries.  Usually",
   "         this is not a good thing and should be avoided.",
   "  -2   [VMS] Force unconditional conversion of names to ODS-compatible names.",

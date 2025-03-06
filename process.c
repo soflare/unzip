@@ -311,7 +311,7 @@ int process_zipfiles(__G)    /* return PK-type error code */
    name (_tzset() or something similar), an appropiate "#define tzset ..."
    should be added to the system specifc configuration section.  */
 #if (!defined(VMS) && !defined(MACOS) && !defined(QDOS))
-#if (!defined(BSD) && !defined(MTS) && !defined(CMS_MVS))
+#if (!defined(BSD) && !defined(MTS))
     tzset();
 #endif
 #endif

@@ -457,23 +457,23 @@ MODIFIERS
               (-$$) allows fixed media (hard disks) to be  labelled  as  well.
               By default, volume labels are ignored.
 
-       -:     [all but VM/CMS, MVS] allows to  extract  archive  members  into
-              locations    outside   of   the   current   ``extraction    root
-              folder''. For security reasons, unzip normally removes  ``parent
-              dir''  path  components  (``../'')  from  the names of extracted
-              file.  This safety feature (new for version 5.50) prevents unzip
-              from  accidentally  writing files to ``sensitive'' areas outside
-              the active extraction folder tree  head.   The  -:  option  lets
-              unzip  switch  back  to its previous, more liberal behaviour, to
-              allow exact extraction of (older)  archives  that  used  ``../''
-              components  to  create  multiple directory trees at the level of
-              the current extraction folder.   This  option  does  not  enable
-              writing  explicitly  to  the root directory (``/'').  To achieve
-              this, it is necessary to set the  extraction  target  folder  to
-              root (e.g. -d / ).  However, when the -: option is specified, it
-              is still possible to implicitly write to the root  directory  by
-              specifying   enough  ``../''  path  components  within  the  zip
-              archive.  Use this option with extreme caution.
+       -:     allows to extract archive members into locations outside of  the
+              current ``extraction root folder''.  For security reasons, unzip
+              normally removes ``parent dir'' path components  (``../'')  from
+              the  names  of  extracted  file.  This  safety  feature (new for
+              version  5.50) prevents unzip from accidentally writing files to
+              ``sensitive''  areas  outside  the active extraction folder tree
+              head.   The  -:  option  lets unzip switch back to its previous,
+              more  liberal  behaviour,  to  allow exact extraction of (older)
+              archives   that  used  ``../''  components  to  create  multiple
+              directory  trees  at the level of the current extraction folder.
+              This  option  does  not  enable  writing  explicitly to the root
+              directory  (``/'').  To achieve this, it is necessary to set the
+              extraction  target  folder  to root (e.g. -d / ).  However, when
+              the  -:  option is specified, it is still possible to implicitly
+              write  to  the  root directory by specifying enough ``../'' path
+              components within the zip archive.  Use this option with extreme
+              caution.
 
        -^     [Unix only] allow control characters in names of  extracted  ZIP
               archive  entries.   On Unix, a file name may contain any (8-bit)

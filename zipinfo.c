@@ -316,11 +316,6 @@ static ZCONST char Far QDOSdata[] = ".\n\
     The QDOS extra field subtype is `%c%c%c%c'";
 static ZCONST char Far MD5data[] = ".\n\
     The 128-bit MD5 signature is %s";
-#ifdef CMS_MVS
-   static ZCONST char Far VmMvsExtraField[] = ".\n\
-    The stored file open mode (FLDATA TYPE) is \"%s\"";
-   static ZCONST char Far VmMvsInvalid[] = "[invalid]";
-#endif /* CMS_MVS */
 
 static ZCONST char Far First20[] = ".  The first\n    20 are:  ";
 static ZCONST char Far ColonIndent[] = ":\n   ";
@@ -397,14 +392,12 @@ int zi_opts(__G__ pargc, pargv)
                     else
                         uO.lflag = 2;
                     break;
-#ifndef CMS_MVS
                 case ('C'):    /* -C:  match filenames case-insensitively */
                     if (negative)
                         uO.C_flag = FALSE, negative = 0;
                     else
                         uO.C_flag = TRUE;
                     break;
-#endif /* !CMS_MVS */
                 case 'h':      /* header line */
                     if (negative)
                         hflag_2 = hflag_slmv = FALSE, negative = 0;
@@ -1524,20 +1517,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                         goto ef_default_display;
                     }
                     break;
-#ifdef CMS_MVS
-                case EF_VMCMS:
-                case EF_MVS:
-                    {
-                        char type[100];
-
-                        Info(slide, 0, ((char *)slide,
-                             LoadFarString(VmMvsExtraField),
-                             (getVMMVSexfield(type, ef_ptr-EB_HEADSIZE,
-                             (unsigned)eb_datalen) > 0)?
-                             type : LoadFarStringSmall(VmMvsInvalid)));
-                    }
-                    break;
-#endif /* CMS_MVS */
                 case EF_BEOS:
                     if (eb_datalen >= EB_BEOS_HLEN) {
                         ulg eb_uc = makelong(ef_ptr);

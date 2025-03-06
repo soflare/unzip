@@ -122,10 +122,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  endif
 #endif /* CONVEX || MINIX || _AIX || __QNX__ */
 
-#if (defined(VM_CMS) || defined(MVS))
-#  define CMS_MVS
-#endif
-
 #if (defined(__OS2__) && !defined(OS2))
 #  define OS2
 #endif
@@ -236,7 +232,7 @@ freely, subject to the above disclaimer and the following restrictions:
 #    define MODERN
 #  endif
 #endif
-#if (defined(CMS_MVS) || defined(__BEOS__))
+#if defined(__BEOS__)
 /* || defined(CONVEX) ? */
 #  ifndef PROTO
 #    define PROTO
@@ -514,9 +510,7 @@ typedef struct _UzpOpts {
 #ifdef VMS
     int ods2_flag;      /* -2: force names to conform to ODS2 */
 #endif
-#if !defined(CMS_MVS)
     int ddotflag;       /* -:: don't skip over "../" path elements */
-#endif
 #ifdef UNIX
     int cflxflag;       /* -^: allow control chars in extracted filenames */
 #endif
