@@ -75,12 +75,6 @@
 #define UNZIP_INTERNAL
 #include "unzip.h"
 
-#if 0  /* this is not useful until it matches Amiga names insensitively */
-#ifdef AMIGA        /* some other platforms might also want to use this */
-#  define ANSI_CHARSET       /* MOVE INTO UNZIP.H EVENTUALLY */
-#endif
-#endif /* 0 */
-
 #ifdef ANSI_CHARSET
 #  ifdef ToLower
 #    undef ToLower
@@ -192,21 +186,11 @@ static int recmatch(p, s, ic __WDL)
 #endif
 
     /* '*' matches any number of characters, including zero */
-#ifdef AMIGA
-    if (c == '#' && *p == '?')     /* "#?" is Amiga-ese for "*" */
-        c = '*', p++;
-#endif /* AMIGA */
     if (c == '*') {
 #ifdef WILD_STOP_AT_DIR
         if (sepc) {
           /* check for single "*" or double "**" */
-#  ifdef AMIGA
-          if ((c = p[0]) == '#' && p[1] == '?') /* "#?" is Amiga-ese for "*" */
-            c = '*', p++;
-          if (c != '*') {
-#  else /* !AMIGA */
           if (*p != '*') {
-#  endif /* ?AMIGA */
             /* single "*": this doesn't match the dirsep character */
             for (; *s && *s != (uch)sepc; INCSTR(s))
                 if ((c = recmatch(p, s, ic, sepc)) != 0)
@@ -381,11 +365,7 @@ int iswild(p)        /* originally only used for stat()-bug workaround in */
 #ifdef VMS
         else if (*p == '%' || *p == '*')
 #else /* !VMS */
-#ifdef AMIGA
-        else if (*p == '?' || *p == '*' || (*p=='#' && p[1]=='?') || *p == '[')
-#else /* !AMIGA */
         else if (*p == '?' || *p == '*' || *p == '[')
-#endif /* ?AMIGA */
 #endif /* ?VMS */
 #ifdef QDOS
             return (int)p;

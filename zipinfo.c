@@ -67,18 +67,6 @@
 #define VMS_IWOTH      UNX_IWOTH   /* VMS write/other */
 #define VMS_IXOTH      UNX_IXOTH   /* VMS execute/other */
 
-#define AMI_IFMT       06000       /* Amiga file type mask */
-#define AMI_IFDIR      04000       /* Amiga directory */
-#define AMI_IFREG      02000       /* Amiga regular file */
-#define AMI_IHIDDEN    00200       /* to be supported in AmigaDOS 3.x */
-#define AMI_ISCRIPT    00100       /* executable script (text command file) */
-#define AMI_IPURE      00040       /* allow loading into resident memory */
-#define AMI_IARCHIVE   00020       /* not modified since bit was last set */
-#define AMI_IREAD      00010       /* can be opened for reading */
-#define AMI_IWRITE     00004       /* can be opened for writing */
-#define AMI_IEXECUTE   00002       /* executable image, a loadable runfile */
-#define AMI_IDELETE    00001       /* can be deleted */
-
 #define LFLAG  3   /* short "ls -l" type listing */
 
 static int   zi_long   OF((__GPRO__ zusz_t *pEndprev, int error_in_archive));
@@ -234,8 +222,6 @@ static ZCONST char Far ApparentFileType[] =
   "  apparent file type:                             %s\n";
 static ZCONST char Far VMSFileAttributes[] =
   "  VMS file attributes (%06o octal):             %s\n";
-static ZCONST char Far AmigaFileAttributes[] =
-  "  Amiga file attributes (%06o octal):           %s\n";
 static ZCONST char Far UnixFileAttributes[] =
   "  Unix file attributes (%06o octal):            %s\n";
 static ZCONST char Far NonMSDOSFileAttributes[] =
@@ -1122,24 +1108,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
         Info(slide, 0, ((char *)slide, LoadFarString(VMSFileAttributes), xattr,
           attribs));
 
-    } else if (hostnum == AMIGA_) {
-        switch (xattr & AMI_IFMT) {
-            case AMI_IFDIR:  attribs[0] = 'd';  break;
-            case AMI_IFREG:  attribs[0] = '-';  break;
-            default:         attribs[0] = '?';  break;
-        }
-        attribs[1] = (xattr & AMI_IHIDDEN)?   'h' : '-';
-        attribs[2] = (xattr & AMI_ISCRIPT)?   's' : '-';
-        attribs[3] = (xattr & AMI_IPURE)?     'p' : '-';
-        attribs[4] = (xattr & AMI_IARCHIVE)?  'a' : '-';
-        attribs[5] = (xattr & AMI_IREAD)?     'r' : '-';
-        attribs[6] = (xattr & AMI_IWRITE)?    'w' : '-';
-        attribs[7] = (xattr & AMI_IEXECUTE)?  'e' : '-';
-        attribs[8] = (xattr & AMI_IDELETE)?   'd' : '-';
-        attribs[9] = 0;   /* better dlm the string */
-        Info(slide, 0, ((char *)slide, LoadFarString(AmigaFileAttributes),
-          xattr, attribs));
-
     } else if ((hostnum != FS_FAT_) && (hostnum != FS_HPFS_) &&
                (hostnum != FS_NTFS_) && (hostnum != FS_VFAT_) &&
                (hostnum != ACORN_) &&
@@ -1784,22 +1752,6 @@ static int zi_short(__G)   /* return PK-type error code */
             break;
 
         case AMIGA_:
-            switch (xattr & AMI_IFMT) {
-                case AMI_IFDIR:  attribs[0] = 'd';  break;
-                case AMI_IFREG:  attribs[0] = '-';  break;
-                default:         attribs[0] = '?';  break;
-            }
-            attribs[1] = (xattr & AMI_IHIDDEN)?   'h' : '-';
-            attribs[2] = (xattr & AMI_ISCRIPT)?   's' : '-';
-            attribs[3] = (xattr & AMI_IPURE)?     'p' : '-';
-            attribs[4] = (xattr & AMI_IARCHIVE)?  'a' : '-';
-            attribs[5] = (xattr & AMI_IREAD)?     'r' : '-';
-            attribs[6] = (xattr & AMI_IWRITE)?    'w' : '-';
-            attribs[7] = (xattr & AMI_IEXECUTE)?  'e' : '-';
-            attribs[8] = (xattr & AMI_IDELETE)?   'd' : '-';
-            sprintf(&attribs[12], "%u.%u", hostver/10, hostver%10);
-            break;
-
         case FS_VFAT_:
         case FS_FAT_:
         case FS_HPFS_:

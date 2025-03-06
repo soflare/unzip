@@ -54,7 +54,6 @@ at the end contain their own Contents listings:
   zip.h         dummy header for use with crypt.c (required*)
   zipinfo.c     UnZip listing routines, ZipInfo mode (required)
   acorn/        support files for compiling under Acorn RISC OS
-  amiga/        support files for compiling under AmigaDOS
   beos/         support files for compiling under BeOS
   cmsmvs/       support files for compiling under VM/CMS and MVS
   macos/        support files for compiling under Macintosh OS

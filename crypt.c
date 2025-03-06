@@ -79,9 +79,6 @@
 #  ifndef ZCR_SEED2
 #    define ZCR_SEED2 (unsigned)3141592654L     /* use PI as default pattern */
 #  endif
-#  ifdef GLOBAL         /* used in Amiga system headers, maybe others too */
-#    undef GLOBAL
-#  endif
 #  define GLOBAL(g) g
 #else /* !ZIP */
 #  define GLOBAL(g) G.g

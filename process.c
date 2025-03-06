@@ -81,10 +81,10 @@ static ZCONST char Far CannotAllocateBuffers[] =
      static ZCONST char Far WarnInvalidTZ[] =
        "Warning: TZ environment variable not found, cannot use UTC times!!\n";
 # endif
-# if !(defined(UNIX) || defined(AMIGA))
+# if !defined(UNIX)
    static ZCONST char Far CannotFindWildcardMatch[] =
      "%s:  cannot find any matches for wildcard specification \"%s\".\n";
-# endif /* !(UNIX || AMIGA) */
+# endif /* !UNIX */
    static ZCONST char Far FilesProcessOK[] =
      "%d archive%s successfully processed.\n";
    static ZCONST char Far ArchiveWarning[] =
@@ -424,7 +424,7 @@ int process_zipfiles(__G)    /* return PK-type error code */
     if ((NumWinFiles + NumWarnFiles + NumLoseFiles) == 0  &&
         (NumMissDirs + NumMissFiles) == 1  &&  lastzipfn != (char *)NULL)
     {
-#if (!defined(UNIX) && !defined(AMIGA)) /* filenames with wildcard characters */
+#if !defined(UNIX) /* filenames with wildcard characters */
         if (iswild(G.wildzipfn)) {
             if (iswild(lastzipfn)) {
                 NumMissDirs = NumMissFiles = 0;
@@ -1725,7 +1725,6 @@ int process_cdir_file_hdr(__G)    /* return PK-type error code */
     else if (uO.L_flag > 1)   /* let -LL force lower case for all names */
         G.pInfo->lcflag = 1;
 
-    /* do Amigas (AMIGA_) also have volume labels? */
     if (IS_VOLID(G.crec.external_file_attributes) &&
         (G.pInfo->hostnum == FS_FAT_ || G.pInfo->hostnum == FS_HPFS_ ||
          G.pInfo->hostnum == FS_NTFS_ || G.pInfo->hostnum == ATARI_))

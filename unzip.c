@@ -51,7 +51,7 @@
 
   ---------------------------------------------------------------------------
 
-  Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS, Amiga,
+  Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS,
               Windows 3.x/95/NT/CE, Macintosh, Acorn RISC OS, BeOS, SMS/QDOS,
               VM/CMS and MVS.
 
@@ -259,15 +259,6 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
   -K  keep setuid/setgid/tacky permissions\n";
 #endif
 #else /* !BEO_UNX */
-#ifdef AMIGA
-   static ZCONST char Far local2[] = " -N  restore comments as filenotes";
-#ifdef MORE
-   static ZCONST char Far local3[] = " \
-                                            -M  pipe through \"more\" pager\n";
-#else
-   static ZCONST char Far local3[] = "\n";
-#endif
-#else /* !AMIGA */
 #ifdef MACOS
    static ZCONST char Far local2[] = " -E  show Mac info during extraction";
    static ZCONST char Far local3[] = " \
@@ -282,7 +273,6 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local3[] = "";
 #endif
 #endif /* ?MACOS */
-#endif /* ?AMIGA */
 #endif /* ?BEO_UNX */
 #endif /* ?VMS */
 #endif /* ?DOS_OS2_W32 */
@@ -364,9 +354,6 @@ static ZCONST char Far ZipInfoUsageLine3[] = "miscellaneous options:\n\
 #  endif
 #  ifdef ASM_CRC
      static ZCONST char Far AsmCRC[] = "ASM_CRC";
-#  endif
-#  ifdef ASM_INFLATECODES
-     static ZCONST char Far AsmInflateCodes[] = "ASM_INFLATECODES";
 #  endif
 #  ifdef CHECK_VERSIONS
      static ZCONST char Far Check_Versions[] = "CHECK_VERSIONS";
@@ -821,7 +808,7 @@ int unzip(__G__ argc, argv)
 #ifdef SIGTERM                 /* some systems really have no SIGTERM */
     SET_SIGHANDLER(SIGTERM, handler);
 #endif
-#if defined(SIGABRT) && !(defined(AMIGA) && defined(__SASC))
+#if defined(SIGABRT)
     SET_SIGHANDLER(SIGABRT, handler);
 #endif
 #ifdef SIGBREAK
@@ -1519,14 +1506,6 @@ int uz_opts(__G__ pargc, pargv)
                     else
                         uO.overwrite_none = TRUE;
                     break;
-#ifdef AMIGA
-                case ('N'):    /* restore comments as filenotes */
-                    if (negative)
-                        uO.N_flag = FALSE, negative = 0;
-                    else
-                        uO.N_flag = TRUE;
-                    break;
-#endif /* AMIGA */
                 case ('o'):    /* OK to overwrite files without prompting */
                     if (negative) {
                         uO.overwrite_all = MAX(uO.overwrite_all-negative,0);
@@ -1881,9 +1860,6 @@ opts_done:  /* yes, very ugly...but only used by UnZipSFX with -x xlist */
 #  ifdef DOS_OS2_W32
 #    define LOCAL "s$"
 #  endif
-#  ifdef AMIGA
-#    define LOCAL "N"
-#  endif
    /* Default for all other systems: */
 #  ifndef LOCAL
 #    define LOCAL ""
@@ -2101,7 +2077,6 @@ static void help_extended(__G)
   "  -LL  Convert all files to lowercase.",
   "  -M   Pipe all output through internal pager similar to Unix more(1).",
   "  -n   Never overwrite existing files.  Skip extracting that file, no prompt.",
-  "  -N   [Amiga] Extract file comments as Amiga filenotes.",
   "  -o   Overwrite existing files without prompting.  Useful with -f.  Use with",
   "         care.",
   "  -P p Use password p to decrypt files.  THIS IS INSECURE!  Some OS show",
@@ -2291,11 +2266,6 @@ static void show_version_info(__G)
 #ifdef ASM_CRC
         Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
           LoadFarStringSmall(AsmCRC)));
-        ++numopts;
-#endif
-#ifdef ASM_INFLATECODES
-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
-          LoadFarStringSmall(AsmInflateCodes)));
         ++numopts;
 #endif
 #ifdef CHECK_VERSIONS

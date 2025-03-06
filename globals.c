@@ -197,11 +197,11 @@ Uz_Globs *globalsCtor()
     G.decr_passwd = UzpPassword;
 #endif /* !FUNZIP */
 
-#if (!defined(DOS_OS2_W32) && !defined(AMIGA) && !defined(RISCOS))
+#if (!defined(DOS_OS2_W32) && !defined(RISCOS))
 #if (!defined(MACOS) && !defined(VMS))
     G.echofd = -1;
 #endif /* !(MACOS || VMS) */
-#endif /* !(DOS_OS2_W32 || AMIGA || RISCOS) */
+#endif /* !(DOS_OS2_W32 || RISCOS) */
 
 #ifdef SYSTEM_SPECIFIC_CTOR
     SYSTEM_SPECIFIC_CTOR(__G);

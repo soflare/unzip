@@ -42,9 +42,6 @@
 #endif
 
 #ifdef ZIP
-#  ifdef GLOBAL          /* used in Amiga system headers, maybe others too */
-#    undef GLOBAL
-#  endif
 #  define GLOBAL(g) g
 #else
 #  define GLOBAL(g) G.g

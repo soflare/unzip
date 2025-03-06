@@ -354,11 +354,6 @@ MODIFIERS
               files,  skip  extraction of the current file, skip extraction of
               all existing files, or rename the current file.
 
-       -N     [Amiga] extract file comments as Amiga filenotes.  File comments
-              are created with the -c option of zip(1L), or with the -N option
-              of the Amiga port of zip(1L), which  stores  filenotes  as  com-
-              ments.
-
        -o     overwrite existing files without prompting.  This is a dangerous
               option, so use it with care.  (It is often used  with  -f,  how-
               ever,  and  is  the  only  way  to overwrite directory EAs under

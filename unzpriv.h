@@ -245,14 +245,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    Amiga section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef AMIGA
-#  include "amiga/amiga.h"
-#endif
-
-/*---------------------------------------------------------------------------
     BeOS section:
   ---------------------------------------------------------------------------*/
 
@@ -593,7 +585,7 @@
 #  if (defined(SYSV) || defined(CONVEX) || defined(NeXT) || defined(BSD4_4))
 #    define INT_SPRINTF      /* sprintf() returns int:  SysVish/Posix */
 #  endif
-#  if (defined(DOS_OS2_W32) || defined(VMS) || defined(AMIGA))
+#  if (defined(DOS_OS2_W32) || defined(VMS))
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI */
 #  endif
 #  if (defined(ultrix) || defined(__ultrix)) /* Ultrix 4.3 and newer */
@@ -801,11 +793,7 @@
 #  else
 #    define OUTBUFSIZ (lenEOL*WSIZE) /* more efficient text conversion */
 #    define TRANSBUFSIZ (lenEOL*OUTBUFSIZ)
-#    ifdef AMIGA
-       typedef short shrint;
-#    else
-       typedef int  shrint;          /* for efficiency/speed, we hope... */
-#    endif
+     typedef int  shrint;          /* for efficiency/speed, we hope... */
 #  endif /* ?MED_MEM */
 #  define RAWBUFSIZ OUTBUFSIZ
 #endif /* ?SMALL_MEM */
@@ -1407,9 +1395,6 @@
 #define DS_FN_L           6             /* read filename from local header */
 #define EXTRA_FIELD       3             /* copy extra field into buffer */
 #define DS_EF             3
-#ifdef AMIGA
-#  define FILENOTE        4             /* convert file comment to filenote */
-#endif
 #if (defined(SFX) && defined(CHEAP_SFX_AUTORUN))
 #  define CHECK_AUTORUN   7             /* copy command, display remainder */
 #  define CHECK_AUTORUN_Q 8             /* copy command, skip remainder */
