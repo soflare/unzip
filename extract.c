@@ -2157,7 +2157,6 @@ static int TestExtraField(__G__ ef, ef_len)
             case EF_IZUNIX:
             case EF_VMCMS:
             case EF_MVS:
-            case EF_SPARK:
             case EF_TANDEM:
             case EF_THEOS:
             case EF_AV:

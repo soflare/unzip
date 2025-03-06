@@ -305,17 +305,6 @@ systems.)
 .B \-E
 [MacOS only] display contents of MacOS extra field during restore operation.
 .TP
-.B \-F
-[Acorn only] suppress removal of NFS filetype extension from stored filenames.
-.TP
-.B \-F
-[non-Acorn systems supporting long filenames with embedded commas,
-and only if compiled with ACORN_FTYPE_NFS defined] translate
-filetype information from ACORN RISC OS extra field blocks into a
-NFS filetype extension and append it to the names of the extracted files.
-(When the stored filename appears to already have an appended NFS filetype
-extension, it is replaced by the info from the extra field.)
-.TP
 .B \-i
 [MacOS only] ignore filenames stored in MacOS extra fields. Instead, the
 most compatible filename stored in the generic part of the entry's header
@@ -486,15 +475,10 @@ decimal  number) as if they were VMS version numbers (``;nnn'').
 removable (e.g., a diskette).  Doubling the option (\fB\-$$\fP) allows fixed
 media (hard disks) to be labelled as well.  By default, volume labels are
 ignored.
-.IP \fB\-/\fP\ \fIextensions\fP
-[Acorn only] overrides the extension list supplied by Unzip$Ext environment
-variable. During extraction, filename extensions that match one of the items
-in this extension list are swapped in front of the base name of the extracted
-file.
 .TP
 .B \-:
-[all but Acorn, VM/CMS, MVS] allows to extract archive members into
-locations outside of the current `` extraction root folder''. For security
+[all but VM/CMS, MVS] allows to extract archive members into locations
+outside of the current `` extraction root folder''. For security
 reasons, \fIunzip\fP normally removes ``parent dir'' path components
 (``../'') from the names of extracted file.  This safety feature (new for
 version 5.50) prevents \fIunzip\fP from accidentally writing files to

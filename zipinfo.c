@@ -264,7 +264,6 @@ static ZCONST char Far efACL[] = "OS/2 ACL";
 static ZCONST char Far efNTSD[] = "Security Descriptor";
 static ZCONST char Far efBeOS[] = "BeOS";
 static ZCONST char Far efQDOS[] = "SMS/QDOS";
-static ZCONST char Far efSpark[] = "Acorn SparkFS";
 static ZCONST char Far efMD5[] = "Fred Kantor MD5";
 static ZCONST char Far efASiUnix[] = "ASi Unix";
 static ZCONST char Far efTandem[] = "Tandem NSK";
@@ -1288,9 +1287,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                     break;
                 case EF_QDOS:
                     ef_fieldname = efQDOS;
-                    break;
-                case EF_SPARK:   /* from RISC OS */
-                    ef_fieldname = efSpark;
                     break;
                 case EF_MD5:
                     ef_fieldname = efMD5;

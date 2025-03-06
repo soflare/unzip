@@ -161,19 +161,6 @@ static void map2fat         (char *pathcomp, char **pEndFAT);
    int _CRT_glob = 0;   /* suppress command line globbing by C RTL */
 #endif
 
-#ifdef ACORN_FTYPE_NFS
-/* Acorn bits for NFS filetyping */
-typedef struct {
-  uch ID[2];
-  uch size[2];
-  uch ID_2[4];
-  uch loadaddr[4];
-  uch execaddr[4];
-  uch attr[4];
-} RO_extra_block;
-
-#endif /* ACORN_FTYPE_NFS */
-
 /* static int created_dir;      */     /* used by mapname(), checkdir() */
 /* static int renamed_fullpath; */     /* ditto */
 /* static int fnlen;            */     /* ditto */
@@ -434,7 +421,6 @@ static int FindSDExtraField(__GPRO__
             case EF_BEOS:
             case EF_QDOS:
             case EF_AOSVS:
-            case EF_SPARK:
             case EF_MD5:
             case EF_ASIUNIX:
                 break;          /* shut up for other known e.f. blocks  */
@@ -1662,10 +1648,6 @@ int mapname(__G__ renamed)
     char pathcomp[FILNAMSIZ];   /* path-component buffer */
     char *pp, *cp=NULL;         /* character pointers */
     char *lastsemi = NULL;      /* pointer to last semi-colon in pathcomp */
-#ifdef ACORN_FTYPE_NFS
-    char *lastcomma=(char *)NULL;  /* pointer to last comma in pathcomp */
-    RO_extra_block *ef_spark;      /* pointer Acorn FTYPE ef block */
-#endif
     int killed_ddot = FALSE;    /* is set when skipping "../" pathcomp */
     int error;
     register unsigned workch;   /* hold the character being tested */
@@ -1762,14 +1744,6 @@ int mapname(__G__ renamed)
                 lastsemi = pp;    /* remove VMS version later... */
                 *pp++ = ';';      /*  but keep semicolon for now */
                 break;
-
-#ifdef ACORN_FTYPE_NFS
-            case ',':             /* NFS filetype extension */
-                lastcomma = pp;
-                *pp++ = ',';      /* keep for now; may need to remove */
-                break;            /*  later, if requested */
-#endif
-
             case ' ':             /* keep spaces unless specifically */
                 /* NT cannot create filenames with spaces on FAT volumes */
                 if (uO.sflag || IsVolumeOldFAT(__G__ G.filename))
@@ -1864,26 +1838,6 @@ int mapname(__G__ renamed)
         if (*pp == '\0')          /* only digits between ';' and end:  nuke */
             *lastsemi = '\0';
     }
-
-#ifdef ACORN_FTYPE_NFS
-    /* translate Acorn filetype information if asked to do so */
-    if (uO.acorn_nfs_ext &&
-        (ef_spark = (RO_extra_block *)
-                    getRISCOSexfield(G.extra_field, G.lrec.extra_field_length))
-        != (RO_extra_block *)NULL)
-    {
-        /* file *must* have a RISC OS extra field */
-        long ft = (long)makelong(ef_spark->loadaddr);
-        /*32-bit*/
-        if (lastcomma) {
-            pp = lastcomma + 1;
-            while (isxdigit((uch)(*pp))) ++pp;
-            if (pp == lastcomma+4 && *pp == '\0') *lastcomma='\0'; /* nuke */
-        }
-        if ((ft & 1<<31)==0) ft=0x000FFD00;
-        sprintf(pathcomp+strlen(pathcomp), ",%03x", (int)(ft>>8) & 0xFFF);
-    }
-#endif /* ACORN_FTYPE_NFS */
 
     maskDOSdevice(__G__ pathcomp);
 
@@ -2326,20 +2280,10 @@ int checkdir(__G__ pathcomp, flag)
 
     if (FUNCTION == INIT) {
         Trace((stderr, "initializing buildpathHPFS and buildpathFAT to "));
-#ifdef ACORN_FTYPE_NFS
-        if ((G.buildpathHPFS = (char *)malloc(G.fnlen+G.rootlen+
-                                              (uO.acorn_nfs_ext ? 5 : 1)))
-#else
         if ((G.buildpathHPFS = (char *)malloc(G.fnlen+G.rootlen+1))
-#endif
             == NULL)
             return MPN_NOMEM;
-#ifdef ACORN_FTYPE_NFS
-        if ((G.buildpathFAT = (char *)malloc(G.fnlen+G.rootlen+
-                                             (uO.acorn_nfs_ext ? 5 : 1)))
-#else
         if ((G.buildpathFAT = (char *)malloc(G.fnlen+G.rootlen+1))
-#endif
             == NULL) {
             free(G.buildpathHPFS);
             return MPN_NOMEM;

@@ -52,8 +52,7 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS,
-              Windows 3.x/95/NT/CE, Macintosh, Acorn RISC OS, BeOS, SMS/QDOS,
-              VM/CMS and MVS.
+              Windows 3.x/95/NT/CE, Macintosh, BeOS, SMS/QDOS, VM/CMS and MVS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -112,9 +111,6 @@ static void  show_version_info  OF((__GPRO));
    static ZCONST char Far EnvUnZip2[] = ENV_UNZIP2;
    static ZCONST char Far EnvZipInfo[] = ENV_ZIPINFO;
    static ZCONST char Far EnvZipInfo2[] = ENV_ZIPINFO2;
-#ifdef RISCOS
-   static ZCONST char Far EnvUnZipExts[] = ENV_UNZIPEXTS;
-#endif /* RISCOS */
   static ZCONST char Far NoMemEnvArguments[] =
     "envargs:  cannot get memory for arguments";
 #endif /* !_WIN32_WCE */
@@ -162,10 +158,6 @@ static ZCONST char Far IgnoreOOptionMsg[] =
  (Quote names to preserve case, unless SET PROC/PARS=EXT)\n";
 #else /* !VMS */
    static ZCONST char Far Example3[] = "ReadMe";
-#ifdef RISCOS
-   static ZCONST char Far Example2[] =
-"  unzip foo -d RAM:$   => extract all files from foo into RAMDisc\n";
-#else /* !RISCOS */
 #if (defined(OS2) || (defined(DOS_OS2_W32) && defined(MORE)))
    static ZCONST char Far Example2[] =
      "";                /* no room:  too many local3[] items */
@@ -177,7 +169,6 @@ static ZCONST char Far IgnoreOOptionMsg[] =
  unzip -p foo | more  => send contents of foo.zip via pipe into program more\n";
 #endif /* ?MACOS */
 #endif /* ?OS2 */
-#endif /* ?RISCOS */
 #endif /* ?VMS */
 
 /* local1[]:  command options */
@@ -349,9 +340,6 @@ static ZCONST char Far ZipInfoUsageLine3[] = "miscellaneous options:\n\
    static ZCONST char Far EnvOptFormat[] = "%16s:  %.1024s\n";
 #endif
    static ZCONST char Far None[] = "[none]";
-#  ifdef ACORN_FTYPE_NFS
-     static ZCONST char Far AcornFtypeNFS[] = "ACORN_FTYPE_NFS";
-#  endif
 #  ifdef ASM_CRC
      static ZCONST char Far AsmCRC[] = "ASM_CRC";
 #  endif
@@ -846,14 +834,6 @@ int unzip(__G__ argc, argv)
 #endif
 
 /*---------------------------------------------------------------------------
-    Acorn RISC OS initialization code.
-  ---------------------------------------------------------------------------*/
-
-#ifdef RISCOS
-    set_prefix();
-#endif
-
-/*---------------------------------------------------------------------------
     Sanity checks.  Commentary by Otis B. Driftwood and Fiorello:
 
     D:  It's all right.  That's in every contract.  That's what they
@@ -949,11 +929,6 @@ int unzip(__G__ argc, argv)
     error = uz_opts(__G__ &argc, &argv);   /* UnZipSFX call only */
 
 #else /* !SFX */
-
-#ifdef RISCOS
-    /* get the extensions to swap from environment */
-    getRISCOSexts(ENV_UNZIPEXTS);
-#endif
 
 #ifdef MSDOS
     /* extract MKS extended argument list from environment (before envargs!) */
@@ -1280,17 +1255,6 @@ int uz_opts(__G__ pargc, pargv)
                 case ('-'):
                     ++negative;
                     break;
-#ifdef RISCOS
-                case ('/'):
-                    if (negative) {   /* negative not allowed with -/ swap */
-                        Info(slide, 0x401, ((char *)slide,
-                          "error:  must give extensions list"));
-                        return(PK_PARAM);  /* don't extract here by accident */
-                    }
-                    exts2swap = s; /* override Unzip$Exts */
-                    s += strlen(s);
-                    break;
-#endif
                 case ('a'):
                     if (negative) {
                         uO.aflag = MAX(uO.aflag-negative,0);
@@ -1417,14 +1381,6 @@ int uz_opts(__G__ pargc, pargv)
                     else
                         uO.fflag = uO.uflag = TRUE;
                     break;
-#if (defined(RISCOS) || defined(ACORN_FTYPE_NFS))
-                case ('F'):    /* Acorn filetype & NFS extension handling */
-                    if (negative)
-                        uO.acorn_nfs_ext = FALSE, negative = 0;
-                    else
-                        uO.acorn_nfs_ext = TRUE;
-                    break;
-#endif /* RISCOS || ACORN_FTYPE_NFS */
                 case ('h'):    /* just print help message and quit */
                     if (showhelp == 0) {
 #ifndef SFX
@@ -1724,7 +1680,7 @@ int uz_opts(__G__ pargc, pargv)
                         ++uO.volflag;
                     break;
 #endif /* DOS_OS2_W32 */
-#if (!defined(RISCOS) && !defined(CMS_MVS))
+#if !defined(CMS_MVS)
                 case (':'):    /* allow "parent dir" path components */
                     if (negative) {
                         uO.ddotflag = MAX(uO.ddotflag-negative,0);
@@ -1732,7 +1688,7 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.ddotflag;
                     break;
-#endif /* !RISCOS && !CMS_MVS */
+#endif /* !CMS_MVS */
 #ifdef UNIX
                 case ('^'):    /* allow control chars in filenames */
                     if (negative) {
@@ -2066,8 +2022,6 @@ static void help_extended(__G)
   "  -DD  Skip restoration of timestamps for all entries.",
   "  -E   [MacOS (not Unix Apple)]  Display contents of MacOS extra field during",
   "         restore.",
-  "  -F   [Acorn] Suppress removal of NFS filetype extension.  [Non-Acorn if",
-  "         ACORN_FTYPE_NFS] Translate filetype and append to name.",
   "  -i   [MacOS] Ignore filenames in MacOS extra field.  Instead, use name in",
   "         standard header.",
   "  -j   Junk paths and deposit all files in extraction directory.",
@@ -2102,11 +2056,10 @@ static void help_extended(__G)
   "  -Y   [VMS] Treat archived name endings of .nnn as VMS version numbers.",
   "  -$   [MS-DOS, OS/2, NT] Restore volume label if extraction medium is",
   "         removable.  -$$ allows fixed media (hard drives) to be labeled.",
-  "  -/ e [Acorn] Use e as extension list.",
-  "  -:   [All but Acorn, VM/CMS, MVS] Allow extract archive members into",
-  "         locations outside of current extraction root folder.  This allows",
-  "         paths such as ../foo to be extracted above the current extraction",
-  "         directory, which can be a security problem.",
+  "  -:   [All but VM/CMS, MVS] Allow extract archive members into locations",
+  "         outside of current extraction root folder.  This allows paths such as",
+  "         ../foo to be extracted above the current extraction directory, which",
+  "         can be a security problem.",
   "  -^   [Unix] Allow control characters in names of extracted entries.  Usually",
   "         this is not a good thing and should be avoided.",
   "  -2   [VMS] Force unconditional conversion of names to ODS-compatible names.",
@@ -2258,11 +2211,6 @@ static void show_version_info(__G)
           LoadFarString(UnzipUsageLine2v)));
         version(__G);
         Info(slide, 0, ((char *)slide, LoadFarString(CompileOptions)));
-#ifdef ACORN_FTYPE_NFS
-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
-          LoadFarStringSmall(AcornFtypeNFS)));
-        ++numopts;
-#endif
 #ifdef ASM_CRC
         Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
           LoadFarStringSmall(AsmCRC)));
@@ -2536,13 +2484,6 @@ static void show_version_info(__G)
           LoadFarStringSmall2(None) : envptr));
 #endif /* __GO32__ && !(__DJGPP__ >= 2) */
 #endif /* !__RSXNT__ */
-#ifdef RISCOS
-        envptr = getenv(LoadFarStringSmall(EnvUnZipExts));
-        Info(slide, 0, ((char *)slide, LoadFarString(EnvOptFormat),
-          LoadFarStringSmall(EnvUnZipExts),
-          (envptr == (char *)NULL || *envptr == 0)?
-          LoadFarStringSmall2(None) : envptr));
-#endif /* RISCOS */
 #endif /* !_WIN32_WCE */
     }
 } /* end function show_version() */

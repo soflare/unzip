@@ -53,7 +53,6 @@ at the end contain their own Contents listings:
   unzvers.h     header with UnZip/UnZipSFX and ZipInfo version info (required)
   zip.h         dummy header for use with crypt.c (required*)
   zipinfo.c     UnZip listing routines, ZipInfo mode (required)
-  acorn/        support files for compiling under Acorn RISC OS
   beos/         support files for compiling under BeOS
   cmsmvs/       support files for compiling under VM/CMS and MVS
   macos/        support files for compiling under Macintosh OS

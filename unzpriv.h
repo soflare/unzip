@@ -29,9 +29,7 @@
 
 /* GRR 960204:  MORE defined here in preparation for removal altogether */
 #ifndef MORE
-# ifndef RISCOS
 #  define MORE
-# endif
 #endif
 
 /* fUnZip should never need to be reentrant */
@@ -234,14 +232,6 @@
 #    define REDIRECTPRINT(buf,size)  0
 #    define FINISH_REDIRECT()        close_redirect(__G)
 #  endif
-#endif
-
-/*---------------------------------------------------------------------------
-    Acorn RISCOS section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef RISCOS
-#  include "acorn/riscos.h"
 #endif
 
 /*---------------------------------------------------------------------------
@@ -573,7 +563,7 @@
 #endif
 
 
-#if (defined(DOS_OS2_W32) || defined(BEO_UNX) || defined(RISCOS))
+#if defined(DOS_OS2_W32) || defined(BEO_UNX)
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -627,7 +617,6 @@
 #define MSG_MNEWLN(f)  (f & 0x0080)   /* bit 7:  1 = trailing NL for prompts */
 /* the following are subject to change */
 #define MSG_NO_WGUI(f) (f & 0x0100)   /* bit 8:  1 = skip if Windows GUI */
-#define MSG_NO_AGUI(f) (f & 0x0200)   /* bit 9:  1 = skip if Acorn GUI */
 #define MSG_NO_DLL2(f) (f & 0x0400)   /* bit 10:  1 = skip if OS/2 DLL */
 #define MSG_NO_NDLL(f) (f & 0x0800)   /* bit 11:  1 = skip if WIN32 DLL */
 #define MSG_NO_WDLL(f) (f & 0x1000)   /* bit 12:  1 = skip if Windows DLL */
@@ -1356,11 +1345,7 @@
 #  define ZSUFX         "_zip"
 #  define ALT_ZSUFX     ".zip"
 #else
-#  ifdef RISCOS
-#    define ZSUFX       "/zip"
-#  else
-#    define ZSUFX       ".zip"
-#  endif
+#  define ZSUFX         ".zip"
 #  define ALT_ZSUFX     ".ZIP"   /* Unix-only so far (only case-sensitive fs) */
 #endif
 
@@ -1517,7 +1502,6 @@
 #define EF_NTSD      0x4453    /* NT security descriptor ("SD") */
 #define EF_BEOS      0x6542    /* BeOS ("Be") */
 #define EF_QDOS      0xfb4a    /* SMS/QDOS ("J\373") */
-#define EF_SPARK     0x4341    /* David Pilling's Acorn/SparkFS ("AC") */
 #define EF_TANDEM    0x4154    /* Tandem NSK ("TA") */
 #define EF_THEOS     0x6854    /* Jean-Michel Dubois' Theos "Th" */
 #define EF_MD5       0x4b46    /* Fred Kantor's MD5 ("FK") */
@@ -1616,11 +1600,6 @@
 #  define ENV_UNZIP       "UNZIP_OPTS"     /* names of environment variables */
 #  define ENV_ZIPINFO     "ZIPINFO_OPTS"
 #endif /* VMS */
-#ifdef RISCOS
-#  define ENV_UNZIP       "Unzip$Options"
-#  define ENV_ZIPINFO     "Zipinfo$Options"
-#  define ENV_UNZIPEXTS   "Unzip$Exts"
-#endif /* RISCOS */
 #ifndef ENV_UNZIP
 #  define ENV_UNZIP       "UNZIP"          /* the standard names */
 #  define ENV_ZIPINFO     "ZIPINFO"
@@ -2024,9 +2003,6 @@ int      getZip64Data            OF((__GPRO__ ZCONST uch *ef_buf,
 unsigned ef_scan_for_izux        OF((ZCONST uch *ef_buf, unsigned ef_len,
                                      int ef_is_c, ulg dos_mdatetime,
                                      iztimes *z_utim, ulg *z_uidgid));
-#if (defined(RISCOS) || defined(ACORN_FTYPE_NFS))
-   zvoid *getRISCOSexfield       OF((ZCONST uch *ef_buf, unsigned ef_len));
-#endif
 
 #ifndef SFX
 

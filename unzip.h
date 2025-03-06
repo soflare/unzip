@@ -183,10 +183,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  define LINUX
 #endif
 
-#ifdef __riscos
-#  define RISCOS
-#endif
-
 #if (defined(THINK_C) || defined(MPW))
 #  define MACOS
 #endif
@@ -223,7 +219,7 @@ freely, subject to the above disclaimer and the following restrictions:
 #    define MODERN
 #  endif
 #endif
-#if (defined(MACOS) || defined(RISCOS))
+#if defined(MACOS)
 #  ifndef PROTO
 #    define PROTO
 #  endif
@@ -468,15 +464,9 @@ typedef struct _UzpOpts {
     int E_flag;         /* -E: [MacOS] show Mac extra field during restoring */
 #endif
     int fflag;          /* -f: "freshen" (extract only newer files) */
-#if (defined(RISCOS) || defined(ACORN_FTYPE_NFS))
-    int acorn_nfs_ext;  /* -F: RISC OS types & NFS filetype extensions */
-#endif
     int hflag;          /* -h: header line (zipinfo) */
 #ifdef MACOS
     int i_flag;         /* -i: [MacOS] ignore filenames stored in Mac e.f. */
-#endif
-#ifdef RISCOS
-    int scanimage;      /* -I: scan image files */
 #endif
     int jflag;          /* -j: junk pathnames (unzip) */
 #if (defined(__BEOS__) || defined(MACOS))
@@ -524,7 +514,7 @@ typedef struct _UzpOpts {
 #ifdef VMS
     int ods2_flag;      /* -2: force names to conform to ODS2 */
 #endif
-#if (!defined(RISCOS) && !defined(CMS_MVS))
+#if !defined(CMS_MVS)
     int ddotflag;       /* -:: don't skip over "../" path elements */
 #endif
 #ifdef UNIX

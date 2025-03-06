@@ -385,13 +385,6 @@ int open_outfile(__G)           /* return 1 if fail */
         }
     }
 #endif /* DOS_OS2_W32 || BEO_UNX */
-#ifdef RISCOS
-    if (SWI_OS_File_7(G.filename,0xDEADDEAD,0xDEADDEAD,G.lrec.ucsize)!=NULL) {
-        Info(slide, 1, ((char *)slide, LoadFarString(CannotCreateFile),
-          FnFilter1(G.filename), strerror(errno)));
-        return 1;
-    }
-#endif /* RISCOS */
 #ifdef MTS
     if (uO.aflag)
         G.outfile = zfopen(G.filename, FOPWT);
@@ -457,13 +450,11 @@ int open_outfile(__G)           /* return 1 if fail */
     /* 16-bit MSC: buffer size must be strictly LESS than 32K (WSIZE):  bogus */
     setbuf(G.outfile, (char *)NULL);   /* make output unbuffered */
 #else /* !DOS_OS2_W32 */
-#ifndef RISCOS
 #ifdef _IOFBF  /* make output fully buffered (works just about like write()) */
     setvbuf(G.outfile, (char *)slide, _IOFBF, WSIZE);
 #else
     setbuf(G.outfile, (char *)slide);
 #endif
-#endif /* !RISCOS */
 #endif /* ?DOS_OS2_W32 */
 #endif /* USE_FWRITE */
 #ifdef OS2_W32
@@ -1259,12 +1250,6 @@ int UZ_EXP UzpMessagePrnt(pG, buf, size, flag)
     if (MSG_NO_WGUI(flag))
         return 0;
 #endif
-/*
-#ifdef ACORN_GUI
-    if (MSG_NO_AGUI(flag))
-        return 0;
-#endif
- */
 #ifdef DLL                 /* don't display message if data is redirected */
     if (((Uz_Globs *)pG)->redirect_data &&
         !((Uz_Globs *)pG)->redirect_text)
@@ -1694,7 +1679,7 @@ time_t dos_to_unix_time(dosdatetime)
     int leap;
     unsigned days;
     struct tm *tm;
-#if (!defined(MACOS) && !defined(RISCOS) && !defined(QDOS))
+#if (!defined(MACOS) && !defined(QDOS))
 #ifdef WIN32
     TIME_ZONE_INFORMATION tzinfo;
     DWORD res;
@@ -1709,7 +1694,7 @@ time_t dos_to_unix_time(dosdatetime)
 #endif /* ?(BSD || MTS || __GO32__) */
 #endif /* !BSD4_4 */
 #endif /* ?WIN32 */
-#endif /* !MACOS && !RISCOS && !QDOS */
+#endif /* !MACOS && !QDOS */
 
 
     /* dissect date */
@@ -1748,7 +1733,7 @@ time_t dos_to_unix_time(dosdatetime)
     Adjust for local standard timezone offset.
   ---------------------------------------------------------------------------*/
 
-#if (!defined(MACOS) && !defined(RISCOS) && !defined(QDOS))
+#if (!defined(MACOS) && !defined(QDOS))
 #ifdef WIN32
     /* account for timezone differences */
     res = GetTimeZoneInformation(&tzinfo);
@@ -1804,7 +1789,7 @@ time_t dos_to_unix_time(dosdatetime)
 #ifdef WIN32
     }
 #endif
-#endif /* !MACOS && !RISCOS && !QDOS */
+#endif /* !MACOS && !QDOS */
 
 #endif /* ?HAVE_MKTIME */
 
