@@ -60,12 +60,6 @@
 #  define HAVE_WORKING_GETCH
 #endif
 
-#ifdef QDOS
-#  define echoff(f)
-#  define echon()
-#  define HAVE_WORKING_GETCH
-#endif
-
 #ifdef DOS_OS2_W32
 #  define echoff(f)
 #  define echon()

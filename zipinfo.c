@@ -312,8 +312,6 @@ static ZCONST char Far MacOSMAC3flags[] = ".\n\
 static ZCONST char Far BeOSdata[] = ".\n\
     The local extra field has %lu bytes of %scompressed BeOS file attributes";
  /* The associated file has type code `%c%c%c%c' and creator code `%c%c%c%c'" */
-static ZCONST char Far QDOSdata[] = ".\n\
-    The QDOS extra field subtype is `%c%c%c%c'";
 static ZCONST char Far MD5data[] = ".\n\
     The 128-bit MD5 signature is %s";
 
@@ -1533,14 +1531,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                         } else {
                             *pEndprev = 0L; /* no clue about csize of local */
                         }
-                    } else {
-                        goto ef_default_display;
-                    }
-                    break;
-                case EF_QDOS:
-                    if (eb_datalen >= 4) {
-                        Info(slide, 0, ((char *)slide, LoadFarString(QDOSdata),
-                          ef_ptr[0], ef_ptr[1], ef_ptr[2], ef_ptr[3]));
                     } else {
                         goto ef_default_display;
                     }

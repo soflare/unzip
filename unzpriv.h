@@ -339,33 +339,6 @@
 #  define PutNativeEOL  *q++ = native(LF);
 #endif /* MTS */
 
- /*---------------------------------------------------------------------------
-    QDOS section
-  ---------------------------------------------------------------------------*/
-
-#ifdef QDOS
-#  define DIRENT
-#  include <fcntl.h>
-#  include <unistd.h>
-#  include <sys/stat.h>
-#  include <time.h>
-#  include "qdos/izqdos.h"
-#  ifndef DATE_FORMAT
-#    define DATE_FORMAT DF_MDY
-#  endif
-#  define lenEOL        1
-#  define PutNativeEOL  *q++ = native(LF);
-#  define DIR_END       '_'
-#  define RETURN        QReturn
-#  undef PATH_MAX
-#  define PATH_MAX      36
-#  if (!defined(NOTIMESTAMP) && !defined(TIMESTAMP))
-#    define TIMESTAMP
-#  endif
-#  define SCREENSIZE(ttrows, ttcols)  screensize(ttrows, ttcols)
-#  define SCREENWIDTH 80
-#endif
-
 /*---------------------------------------------------------------------------
     Unix section:
   ---------------------------------------------------------------------------*/
@@ -757,15 +730,9 @@
 #  define zfstrcmp(s1, s2)          strcmp((s1), (s2))
 #  define zfmalloc                  malloc
 #  define zffree(x)                 free(x)
-#  ifdef QDOS
-#    define LoadFarString(x)        Qstrfix(x)   /* fix up _ for '.' */
-#    define LoadFarStringSmall(x)   Qstrfix(x)
-#    define LoadFarStringSmall2(x)  Qstrfix(x)
-#  else
-#    define LoadFarString(x)        (char *)(x)
-#    define LoadFarStringSmall(x)   (char *)(x)
-#    define LoadFarStringSmall2(x)  (char *)(x)
-#  endif
+#  define LoadFarString(x)        (char *)(x)
+#  define LoadFarStringSmall(x)   (char *)(x)
+#  define LoadFarStringSmall2(x)  (char *)(x)
 #  ifdef MED_MEM
 #    define OUTBUFSIZ 0xFF80         /* can't malloc arrays of 0xFFE8 or more */
 #    define TRANSBUFSIZ 0xFF80
@@ -1312,13 +1279,8 @@
 #endif
 #define DOSTIME_2038_01_18 ((ulg)0x74320000L)
 
-#ifdef QDOS
-#  define ZSUFX         "_zip"
-#  define ALT_ZSUFX     ".zip"
-#else
-#  define ZSUFX         ".zip"
-#  define ALT_ZSUFX     ".ZIP"   /* Unix-only so far (only case-sensitive fs) */
-#endif
+#define ZSUFX         ".zip"
+#define ALT_ZSUFX     ".ZIP"   /* Unix-only so far (only case-sensitive fs) */
 
 #define CENTRAL_HDR_SIG   "\001\002"   /* the infamous "PK" signature bytes, */
 #define LOCAL_HDR_SIG     "\003\004"   /*  w/o "PK" (so unzip executable not */
@@ -2204,17 +2166,6 @@ int    huft_build                OF((__GPRO__ ZCONST unsigned *b, unsigned n,
 #endif
 
 /*---------------------------------------------------------------------------
-    QDOS-only functions:
-  ---------------------------------------------------------------------------*/
-
-#ifdef QDOS
-   int    QMatch              (uch, uch);
-   void   QFilename           (__GPRO__ char *);
-   char  *Qstrfix             (char *);
-   int    QReturn             (int zip_error);
-#endif
-
-/*---------------------------------------------------------------------------
     VMS-only functions:
   ---------------------------------------------------------------------------*/
 
@@ -2281,12 +2232,12 @@ int      mapname         OF((__GPRO__ int renamed));                /* local */
 int      checkdir        OF((__GPRO__ char *pathcomp, int flag));   /* local */
 char    *do_wild         OF((__GPRO__ ZCONST char *wildzipfn));     /* local */
 char    *GetLoadPath     OF((__GPRO));                              /* local */
-#if (defined(MORE) && (defined(BEO_UNX) || defined(QDOS) || defined(VMS)))
+#if (defined(MORE) && (defined(BEO_UNX) || defined(VMS)))
    int screensize        OF((int *tt_rows, int *tt_cols));          /* local */
 # if defined(VMS)
    int screenlinewrap    OF((void));                                /* local */
 # endif
-#endif /* MORE && (BEO_UNX || QDOS || VMS) */
+#endif /* MORE && (BEO_UNX || VMS) */
 #ifdef OS2_W32
    int   SetFileSize     OF((FILE *file, zusz_t filesize));         /* local */
 #endif

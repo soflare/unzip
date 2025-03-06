@@ -267,9 +267,6 @@ int open_outfile(__G)           /* return 1 if fail */
     if (G.redirect_data)
         return (redirect_outfile(__G) == FALSE);
 #endif
-#ifdef QDOS
-    QFilename(__G__ G.filename);
-#endif
 #if (defined(DOS_OS2_W32) || defined(BEO_UNX))
 #ifdef BORLAND_STAT_BUG
     /* Borland 5.0's stat() barfs if the filename has no extension and the
@@ -417,7 +414,7 @@ int open_outfile(__G)           /* return 1 if fail */
     Trace((stderr, "open_outfile:  doing fopen(%s) for writing\n",
       FnFilter1(G.filename)));
     {
-#if defined(BE_UNX) || defined(QDOS)
+#if defined(BE_UNX)
         mode_t umask_sav = umask(0077);
 #endif
 #if defined(SYMLINKS) || defined(QLZIP)
@@ -428,7 +425,7 @@ int open_outfile(__G)           /* return 1 if fail */
 #else
         G.outfile = zfopen(G.filename, FOPW);
 #endif
-#if defined(BE_UNX) || defined(QDOS)
+#if defined(BE_UNX)
         umask(umask_sav);
 #endif
     }
@@ -1675,7 +1672,7 @@ time_t dos_to_unix_time(dosdatetime)
     int leap;
     unsigned days;
     struct tm *tm;
-#if (!defined(MACOS) && !defined(QDOS))
+#if !defined(MACOS)
 #ifdef WIN32
     TIME_ZONE_INFORMATION tzinfo;
     DWORD res;
@@ -1690,7 +1687,7 @@ time_t dos_to_unix_time(dosdatetime)
 #endif /* ?(BSD || MTS || __GO32__) */
 #endif /* !BSD4_4 */
 #endif /* ?WIN32 */
-#endif /* !MACOS && !QDOS */
+#endif /* !MACOS */
 
 
     /* dissect date */
@@ -1729,7 +1726,7 @@ time_t dos_to_unix_time(dosdatetime)
     Adjust for local standard timezone offset.
   ---------------------------------------------------------------------------*/
 
-#if (!defined(MACOS) && !defined(QDOS))
+#if !defined(MACOS)
 #ifdef WIN32
     /* account for timezone differences */
     res = GetTimeZoneInformation(&tzinfo);
@@ -1785,7 +1782,7 @@ time_t dos_to_unix_time(dosdatetime)
 #ifdef WIN32
     }
 #endif
-#endif /* !MACOS && !QDOS */
+#endif /* !MACOS */
 
 #endif /* ?HAVE_MKTIME */
 

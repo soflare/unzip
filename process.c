@@ -310,7 +310,7 @@ int process_zipfiles(__G)    /* return PK-type error code */
 /* For systems that do not have tzset() but supply this function using another
    name (_tzset() or something similar), an appropiate "#define tzset ..."
    should be added to the system specifc configuration section.  */
-#if (!defined(VMS) && !defined(MACOS) && !defined(QDOS))
+#if (!defined(VMS) && !defined(MACOS))
 #if (!defined(BSD) && !defined(MTS))
     tzset();
 #endif
@@ -450,7 +450,7 @@ int process_zipfiles(__G)    /* return PK-type error code */
              * do_seekable() again with the same zipfile name (and the
              * lastchance flag set), just to trigger the error report...
              */
-#if defined(UNIX) || defined(QDOS)
+#if defined(UNIX)
             char *p =
 #endif
               strcpy(lastzipfn + strlen(lastzipfn), ZSUFX);
@@ -461,10 +461,9 @@ int process_zipfiles(__G)    /* return PK-type error code */
             NumMissDirs = NumMissFiles = 0;
             error_in_archive = PK_COOL;
 
-#if defined(UNIX) || defined(QDOS)
+#if defined(UNIX)
    /* only Unix has case-sensitive filesystems */
    /* and a pig to code for,  so treat as case insensitive for now */
-   /* we do this under QDOS to check for .zip as well as _zip */
             if ((error = do_seekable(__G__ 0)) == PK_NOZIP || error == IZ_DIR) {
                 if (error == IZ_DIR)
                     ++NumMissDirs;
@@ -671,7 +670,7 @@ static int do_seekable(__G__ lastchance)        /* return PK-type error code */
     {
 #ifndef SFX
         if (lastchance && (uO.qflag < 3)) {
-#if defined(UNIX) || defined(QDOS)
+#if defined(UNIX)
             if (G.no_ecrec)
                 Info(slide, 1, ((char *)slide,
                   LoadFarString(CannotFindZipfileDirMsg),
@@ -683,7 +682,7 @@ static int do_seekable(__G__ lastchance)        /* return PK-type error code */
                   LoadFarString(CannotFindEitherZipfile),
                   LoadFarStringSmall((uO.zipinfo_mode ? Zipnfo : Unzip)),
                   G.wildzipfn, G.wildzipfn, G.zipfn));
-#else /* !(UNIX || QDOS) */
+#else /* !UNIX */
             if (G.no_ecrec)
                 Info(slide, 0x401, ((char *)slide,
                   LoadFarString(CannotFindZipfileDirMsg),
@@ -702,7 +701,7 @@ static int do_seekable(__G__ lastchance)        /* return PK-type error code */
                   LoadFarStringSmall((uO.zipinfo_mode ? Zipnfo : Unzip)),
                   G.wildzipfn, G.zipfn));
 #endif /* ?VMS */
-#endif /* ?(UNIX || QDOS) */
+#endif /* ?UNIX */
         }
 #endif /* !SFX */
         return error? IZ_DIR : PK_NOZIP;

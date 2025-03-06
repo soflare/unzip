@@ -52,7 +52,7 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, VMS, OS/2, MS-DOS,
-              Windows 3.x/95/NT/CE, Macintosh, BeOS and SMS/QDOS.
+              Windows 3.x/95/NT/CE, Macintosh and BeOS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -1500,11 +1500,6 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.qflag;
                     break;
-#ifdef QDOS
-                case ('Q'):   /* QDOS flags */
-                    qlflag ^= strtol(s, &s, 10);
-                    break;    /* we XOR this as we can config qlflags */
-#endif
 #ifdef DOS_OS2_W32
                 case ('s'):    /* spaces in filenames:  allow by default */
                     if (negative)

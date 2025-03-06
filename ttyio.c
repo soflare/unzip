@@ -533,7 +533,6 @@ int zgetch(__G__ f)
  */
 
 #ifndef WINDLL   /* WINDLL does not support a console interface */
-#ifndef QDOS     /* QDOS supplies a variant of this function */
 
 /* This is the getp() function for all systems (with TTY type user interface)
  * that supply a working `non-echo' getch() function for "raw" console input.
@@ -573,7 +572,6 @@ char *getp(__G__ m, p, n)
 
 } /* end function getp() */
 
-#endif /* !QDOS */
 #endif /* !WINDLL */
 
 
