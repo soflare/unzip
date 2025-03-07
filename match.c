@@ -61,9 +61,7 @@
   it with a ``\'' (backslash).
 
   Note that "*.*" and "*." are treated specially under MS-DOS if DOSWILD is
-  defined.  See the DOSWILD section below for an explanation.  Note also
-  that with VMSWILD defined, '%' is used instead of '?', and sets (ranges)
-  are delimited by () instead of [].
+  defined.  See the DOSWILD section below for an explanation.
 
   ---------------------------------------------------------------------------*/
 
@@ -85,15 +83,9 @@
 #endif
 #define Case(x)  (ic? ToLower(x) : (x))
 
-#ifdef VMSWILD
-#  define WILDCHAR   '%'
-#  define BEG_RANGE  '('
-#  define END_RANGE  ')'
-#else
-#  define WILDCHAR   '?'
-#  define BEG_RANGE  '['
-#  define END_RANGE  ']'
-#endif
+#define WILDCHAR   '?'
+#define BEG_RANGE  '['
+#define END_RANGE  ']'
 
 #if 0                /* GRR:  add this to unzip.h someday... */
 #if !(defined(MSDOS) && defined(DOSWILD))
@@ -356,11 +348,7 @@ int iswild(p)        /* originally only used for stat()-bug workaround in */
     for (; *p; INCSTR(p))
         if (*p == '\\' && *(p+1))
             ++p;
-#ifdef VMS
-        else if (*p == '%' || *p == '*')
-#else /* !VMS */
         else if (*p == '?' || *p == '*' || *p == '[')
-#endif /* ?VMS */
             return TRUE;
 
     return FALSE;

@@ -273,14 +273,6 @@ static ZCONST char Far efUnknown[] = "unknown";
 static ZCONST char Far OS2EAs[] = ".\n\
     The local extra field has %lu bytes of OS/2 extended attributes.\n\
     (May not match OS/2 \"dir\" amount due to storage method)";
-static ZCONST char Far izVMSdata[] = ".  The extra\n\
-    field is %s and has %u bytes of VMS %s information%s";
-static ZCONST char Far izVMSstored[] = "stored";
-static ZCONST char Far izVMSrleenc[] = "run-length encoded";
-static ZCONST char Far izVMSdeflat[] = "deflated";
-static ZCONST char Far izVMScunknw[] = "compressed(?)";
-static ZCONST char Far *izVMScomp[4] =
-  {izVMSstored, izVMSrleenc, izVMSdeflat, izVMScunknw};
 static ZCONST char Far ACLdata[] = ".\n\
     The local extra field has %lu bytes of access control list information";
 static ZCONST char Far NTSDData[] = ".\n\
@@ -1322,54 +1314,6 @@ static int zi_long(__G__ pEndprev, error_in_archive)
                         Info(slide, 0, ((char *)slide, LoadFarString(NTSDData),
                           makelong(ef_ptr)));
                         *pEndprev = 0L;   /* no clue about csize of local */
-                    } else {
-                        goto ef_default_display;
-                    }
-                    break;
-                case EF_IZVMS:
-                    if (eb_datalen >= 8) {
-                        char *p, q[8];
-                        unsigned compr = makeword(ef_ptr+EB_IZVMS_FLGS)
-                                        & EB_IZVMS_BCMASK;
-
-                        *q = '\0';
-                        if (compr > 3)
-                            compr = 3;
-                        switch (makelong(ef_ptr)) {
-                            case 0x42414656: /* "VFAB" */
-                                p = "FAB"; break;
-                            case 0x4C4C4156: /* "VALL" */
-                                p = "XABALL"; break;
-                            case 0x43484656: /* "VFHC" */
-                                p = "XABFHC"; break;
-                            case 0x54414456: /* "VDAT" */
-                                p = "XABDAT"; break;
-                            case 0x54445256: /* "VRDT" */
-                                p = "XABRDT"; break;
-                            case 0x4F525056: /* "VPRO" */
-                                p = "XABPRO"; break;
-                            case 0x59454B56: /* "VKEY" */
-                                p = "XABKEY"; break;
-                            case 0x56534D56: /* "VMSV" */
-                                p = "version";
-                                if (eb_datalen >= 16) {
-                                    /* put termitation first, for A_TO_N() */
-                                    q[7] = '\0';
-                                    q[0] = ' ';
-                                    q[1] = '(';
-                                    strncpy(q+2,
-                                            (char *)ef_ptr+EB_IZVMS_HLEN, 4);
-                                    A_TO_N(q+2);
-                                    q[6] = ')';
-                                }
-                                break;
-                            default:
-                                p = "unknown";
-                        }
-                        Info(slide, 0, ((char *)slide,
-                          LoadFarString(izVMSdata),
-                          LoadFarStringSmall(izVMScomp[compr]),
-                          makeword(ef_ptr+EB_IZVMS_UCSIZ), p, q));
                     } else {
                         goto ef_default_display;
                     }

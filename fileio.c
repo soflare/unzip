@@ -15,24 +15,24 @@
   of the stuff has to do with opening, closing, reading and/or writing files.
 
   Contains:  open_input_file()
-             open_outfile()           (not: VMS, MACOS)
+             open_outfile()           (non-MACOS)
              undefer_input()
              defer_leftover_input()
              readbuf()
              readbyte()
              fillinbuf()
              seek_zipf()
-             flush()                  (non-VMS)
-             is_vms_varlen_txt()      (non-VMS, VMS_TEXT_CONV only)
-             disk_error()             (non-VMS)
+             flush()
+             is_vms_varlen_txt()      (VMS_TEXT_CONV only)
+             disk_error()
              UzpMessagePrnt()
              UzpMessageNull()         (DLL only)
              UzpInput()
              UzpMorePause()
              UzpPassword()            (non-WINDLL)
              handler()
-             dos_to_unix_time()       (non-VMS)
-             check_for_newer()        (non-VMS, non-OS/2)
+             dos_to_unix_time()
+             check_for_newer()        (non-OS/2)
              do_string()
              makeword()
              makelong()
@@ -104,32 +104,7 @@
 #  endif
 #endif /* ?WINDLL */
 
-/*
-   2005-09-16 SMS.
-   On VMS, when output is redirected to a file, as in a command like
-   "PIPE UNZIP -v > X.OUT", the output file is created with VFC record
-   format, and multiple calls to write() or fwrite() will produce multiple
-   records, even when there's no newline terminator in the buffer.
-   The result is unsightly output with spurious newlines.  Using fprintf()
-   instead of write() here, and disabling a fflush(stdout) in UzpMessagePrnt()
-   below, together seem to solve the problem.
-
-   According to the C RTL manual, "The write and decc$record_write
-   functions always generate at least one record."  Also, "[T]he fwrite
-   function always generates at least <number_items> records."  So,
-   "fwrite(buf, len, 1, strm)" is much better ("1" record) than
-   "fwrite(buf, 1, len, strm)" ("len" (1-character) records, _really_
-   ugly), but neither is better than write().  Similarly, "The fflush
-   function always generates a record if there is unwritten data in the
-   buffer."  Apparently fprintf() buffers the stuff somewhere, and puts
-   out a record (only) when it sees a newline.
-*/
-#ifdef VMS
-#  define WriteTxtErr(buf,len,strm) \
-   ((extent)fprintf(strm, "%.*s", len, buf) != (extent)(len))
-#else
-#  define WriteTxtErr(buf,len,strm)  WriteError(buf,len,strm)
-#endif
+#define WriteTxtErr(buf,len,strm)  WriteError(buf,len,strm)
 
 #if (defined(USE_DEFLATE64) && defined(__16BIT__))
 static int partflush OF((__GPRO__ uch *rawbuf, ulg size, int unshrink));
@@ -147,7 +122,7 @@ static int disk_error OF((__GPRO));
 static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
-#if (!defined(VMS) && !defined(MACOS))
+#if !defined(MACOS)
 #if (defined(BEO_UNX) || defined(DOS_OS2_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
@@ -163,7 +138,7 @@ static ZCONST char Far CannotOpenZipfile[] =
 #endif
    static ZCONST char Far CannotCreateFile[] =
      "error:  cannot create %s\n        %s\n";
-#endif /* !VMS && !MACOS */
+#endif /* !MACOS */
 
 static ZCONST char Far ReadError[] = "error:  zipfile read error\n";
 static ZCONST char Far FilenameTooLongTrunc[] =
@@ -222,9 +197,6 @@ int open_input_file(__G)    /* return 1 if open failed */
      *  translation, which would corrupt the bitstreams
      */
 
-#ifdef VMS
-    G.zipfd = open(G.zipfn, O_RDONLY, 0, OPNZIP_RMS_ARGS);
-#else /* !VMS */
 #ifdef MACOS
     G.zipfd = open(G.zipfn, 0);
 #else /* !MACOS */
@@ -234,7 +206,6 @@ int open_input_file(__G)    /* return 1 if open failed */
     G.zipfd = open(G.zipfn, O_RDONLY | O_BINARY);
 #endif /* ?USE_STRM_INPUT */
 #endif /* ?MACOS */
-#endif /* ?VMS */
 
 #ifdef USE_STRM_INPUT
     if (G.zipfd == NULL)
@@ -254,7 +225,7 @@ int open_input_file(__G)    /* return 1 if open failed */
 
 
 
-#if (!defined(VMS) && !defined(MACOS))
+#if !defined(MACOS)
 
 /***************************/
 /* Function open_outfile() */
@@ -458,7 +429,7 @@ int open_outfile(__G)           /* return 1 if fail */
 
 } /* end function open_outfile() */
 
-#endif /* !VMS && !MACOS */
+#endif /* !MACOS */
 
 
 
@@ -730,8 +701,6 @@ int seek_zipf(__G__ abs_offset)
 
 
 
-
-#ifndef VMS  /* for VMS use code in vms.c */
 
 /********************/
 /* Function flush() */   /* returns PK error codes: */
@@ -1188,8 +1157,6 @@ static int disk_error(__G)
 
 } /* end function disk_error() */
 
-#endif /* !VMS */
-
 
 
 
@@ -1382,9 +1349,7 @@ int UZ_EXP UzpMessagePrnt(pG, buf, size, flag)
 #endif
             if ((error = WriteTxtErr(q, size, outfp)) != 0)
                 return error;
-#ifndef VMS     /* 2005-09-16 SMS.  See note at "WriteTxtErr()", above. */
             fflush(outfp);
-#endif
             if (MSG_STDERR(flag) && ((Uz_Globs *)pG)->UzO.tflag &&
                 !isatty(1) && isatty(2))
             {
@@ -1624,7 +1589,6 @@ void handler(signal)   /* upon interrupt, turn on echo and exit cleanly */
 
 
 
-#if !defined(VMS)
 #if (!defined(OS2) || defined(TIMESTAMP))
 
 #if (!defined(HAVE_MKTIME) || defined(WIN32))
@@ -1797,11 +1761,10 @@ time_t dos_to_unix_time(dosdatetime)
 } /* end function dos_to_unix_time() */
 
 #endif /* !OS2 || TIMESTAMP */
-#endif /* !VMS */
 
 
 
-#if (!defined(VMS) && !defined(OS2))
+#if !defined(OS2)
 
 /******************************/
 /* Function check_for_newer() */  /* used for overwriting/freshening/updating */
@@ -1896,7 +1859,7 @@ int check_for_newer(__G__ filename)  /* return 1 if existing file is newer */
 
 } /* end function check_for_newer() */
 
-#endif /* !VMS && !OS2 */
+#endif /* !OS2 */
 
 
 

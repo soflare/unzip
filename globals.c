@@ -170,11 +170,6 @@ Uz_Globs *globalsCtor()
     memzero(&G, sizeof(Uz_Globs));
 
 #ifndef FUNZIP
-#ifdef VMS
-# if (!defined(NO_TIMESTAMPS))
-    uO.D_flag=1;    /* default to '-D', no restoration of dir timestamps */
-# endif
-#endif
 
     uO.lflag=(-1);
     G.wildzipfn = "";
@@ -194,9 +189,9 @@ Uz_Globs *globalsCtor()
 #endif /* !FUNZIP */
 
 #if !defined(DOS_OS2_W32)
-#if (!defined(MACOS) && !defined(VMS))
+#if !defined(MACOS)
     G.echofd = -1;
-#endif /* !(MACOS || VMS) */
+#endif /* !MACOS */
 #endif /* !DOS_OS2_W32 */
 
 #ifdef SYSTEM_SPECIFIC_CTOR

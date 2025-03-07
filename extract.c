@@ -23,7 +23,7 @@
              test_compr_eb()
              memextract()
              memflush()
-             extract_izvms_block()    (VMS or VMS_TEXT_CONV)
+             extract_izvms_block()    (VMS_TEXT_CONV)
              set_deferred_symlink()   (SYMLINKS only)
              fnfilter()
              dircomp()                (SET_DIR_ATTRIB only)
@@ -103,7 +103,7 @@ static int extract_or_test_member OF((__GPRO));
         int (*test_uc_ebdata)(__GPRO__ uch *eb, unsigned eb_size,
                               uch *eb_ucptr, ulg eb_ucsize)));
 #endif
-#if (defined(VMS) || defined(VMS_TEXT_CONV))
+#if defined(VMS_TEXT_CONV)
    static void decompress_bits OF((uch *outptr, unsigned needlen,
                                    ZCONST uch *bitptr));
 #endif
@@ -222,11 +222,7 @@ static ZCONST char Far SkipVolumeLabel[] =
 
 #ifndef WINDLL
    static ZCONST char Far ReplaceQuery[] =
-# ifdef VMS
-     "new version of %s? [y]es, [n]o, [A]ll, [N]one, [r]ename: ";
-# else
      "replace %s? [y]es, [n]o, [A]ll, [N]one, [r]ename: ";
-# endif
    static ZCONST char Far AssumeNone[] =
      " NULL\n(EOF or read error, treating as \"[N]one\" ...)\n";
    static ZCONST char Far NewNameQuery[] = "new name: ";
@@ -238,11 +234,8 @@ static ZCONST char Far ErrorInArchive[] =
   "At least one %serror was detected in %s.\n";
 static ZCONST char Far ZeroFilesTested[] =
   "Caution:  zero files tested in %s.\n";
-
-#ifndef VMS
-   static ZCONST char Far VMSFormatQuery[] =
-     "\n%s:  stored in VMS format.  Extract anyway? (y/n) ";
-#endif
+static ZCONST char Far VMSFormatQuery[] =
+  "\n%s:  stored in VMS format.  Extract anyway? (y/n) ";
 
 #if CRYPT
    static ZCONST char Far SkipCannotGetPasswd[] =
@@ -911,7 +904,6 @@ static int store_info(__G)   /* return 0 if skipping, 1 if OK */
                   VMS_UNZIP_VERSION / 10, VMS_UNZIP_VERSION % 10));
             return 0;
         }
-#ifndef VMS   /* won't be able to use extra field, but still have data */
         else if (!uO.tflag && !IS_OVERWRT_ALL) { /* if -o, extract anyway */
             Info(slide, 0x481, ((char *)slide, LoadFarString(VMSFormatQuery),
               FnFilter1(G.filename)));
@@ -919,7 +911,6 @@ static int store_info(__G)   /* return 0 if skipping, 1 if OK */
             if ((*G.answerbuf != 'y') && (*G.answerbuf != 'Y'))
                 return 0;
         }
-#endif /* !VMS */
     /* usual file type:  don't need VMS to extract */
     } else if (G.crec.version_needed_to_extract[0] > UNZVERS_SUPPORT) {
         if (!((uO.tflag && uO.qflag) || (!uO.tflag && !QCOND2)))
@@ -1426,27 +1417,6 @@ startover:
                     }
                     break;
             }
-#ifdef VMS
-            /* 2008-07-24 SMS.
-             * On VMS, if the file name includes a version number,
-             * and "-V" ("retain VMS version numbers", V_flag) is in
-             * effect, then the VMS-specific code will handle any
-             * conflicts with an existing file, making this query
-             * redundant.  (Implicit "y" response here.)
-             */
-            if (query && uO.V_flag) {
-                /* Not discarding file versions.  Look for one. */
-                int cndx = strlen(G.filename) - 1;
-
-                while ((cndx > 0) && (isdigit(G.filename[cndx])))
-                    cndx--;
-                if (G.filename[cndx] == ';')
-                    /* File version found; skip the generic query,
-                     * proceeding with its default response "y".
-                     */
-                    query = FALSE;
-            }
-#endif /* VMS */
             if (query) {
 #ifdef WINDLL
                 switch (G.lpUserFunctions->replace != NULL ?
@@ -1651,30 +1621,8 @@ static int extract_or_test_member(__G)    /* return PK-type error code */
 #else /* !DOS_OS2_W32 */
 #           define NEWLINE "\n"
 #endif /* ?DOS_OS2_W32 */
-#ifdef VMS
-            /* VMS:  required even for stdout! */
-            if ((r = open_outfile(__G)) != 0)
-                switch (r) {
-                  case OPENOUT_SKIPOK:
-                    return PK_OK;
-                  case OPENOUT_SKIPWARN:
-                    return PK_WARN;
-                  default:
-                    return PK_DISK;
-                }
-        } else if ((r = open_outfile(__G)) != 0)
-            switch (r) {
-              case OPENOUT_SKIPOK:
-                return PK_OK;
-              case OPENOUT_SKIPWARN:
-                return PK_WARN;
-              default:
-                return PK_DISK;
-            }
-#else /* !VMS */
         } else if (open_outfile(__G))
             return PK_DISK;
-#endif /* ?VMS */
     }
 
 /*---------------------------------------------------------------------------
@@ -1904,10 +1852,6 @@ static int extract_or_test_member(__G)    /* return PK-type error code */
     machines (redundant on 32-bit machines).
   ---------------------------------------------------------------------------*/
 
-#ifdef VMS                  /* VMS:  required even for stdout! (final flush) */
-    if (!uO.tflag)           /* don't close NULL file */
-        close_outfile(__G);
-#else
 #ifdef DLL
     if (!uO.tflag && (!uO.cflag || G.redirect_data)) {
         if (G.redirect_data)
@@ -1919,7 +1863,6 @@ static int extract_or_test_member(__G)    /* return PK-type error code */
     if (!uO.tflag && !uO.cflag)   /* don't close NULL file or stdout */
         close_outfile(__G);
 #endif
-#endif /* VMS */
 
             /* GRR: CONVERT close_outfile() TO NON-VOID:  CHECK FOR ERRORS! */
 
@@ -2348,7 +2291,7 @@ int memflush(__G__ rawbuf, size)
 
 
 
-#if (defined(VMS) || defined(VMS_TEXT_CONV))
+#if defined(VMS_TEXT_CONV)
 
 /************************************/
 /*  Function extract_izvms_block()  */
@@ -2460,7 +2403,7 @@ static void decompress_bits(outptr, needlen, bitptr)
     }
 } /* end function decompress_bits() */
 
-#endif /* VMS || VMS_TEXT_CONV */
+#endif /* VMS_TEXT_CONV */
 
 
 

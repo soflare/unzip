@@ -108,13 +108,8 @@ static ZCONST char Far CannotAllocateBuffers[] =
    static ZCONST char Far CannotFindZipfileDirMsg[] =
      "%s:  cannot find zipfile directory in %s,\n\
         %sand cannot find %s, period.\n";
-# ifdef VMS
-   static ZCONST char Far CannotFindEitherZipfile[] =
-     "%s:  cannot find %s (%s).\n";
-# else /* !VMS */
    static ZCONST char Far CannotFindEitherZipfile[] =
      "%s:  cannot find either %s or %s.\n";
-# endif /* ?VMS */
 # endif /* ?UNIX */
    extern ZCONST char Far Zipnfo[];       /* in unzip.c */
 #ifndef WINDLL
@@ -255,11 +250,9 @@ int process_zipfiles(__G)    /* return PK-type error code */
         return(PK_MEM);
     }
     G.hold = G.inbuf + INBUFSIZ;     /* to check for boundary-spanning sigs */
-#ifndef VMS     /* VMS uses its own buffer scheme for textmode flush(). */
 #ifdef SMALL_MEM
     G.outbuf2 = G.outbuf+RAWBUFSIZ;  /* never changes */
 #endif
-#endif /* !VMS */
 
 #if 0 /* CRC_32_TAB has been NULLified by CONSTRUCTGLOBALS !!!! */
     /* allocate the CRC table later when we know we can read zipfile data */
@@ -310,7 +303,7 @@ int process_zipfiles(__G)    /* return PK-type error code */
 /* For systems that do not have tzset() but supply this function using another
    name (_tzset() or something similar), an appropiate "#define tzset ..."
    should be added to the system specifc configuration section.  */
-#if (!defined(VMS) && !defined(MACOS))
+#if !defined(MACOS)
 #if (!defined(BSD) && !defined(MTS))
     tzset();
 #endif
@@ -437,7 +430,6 @@ int process_zipfiles(__G)    /* return PK-type error code */
         } else
 #endif
         {
-#ifndef VMS
             /* 2004-11-24 SMS.
              * VMS has already tried a default file type of ".zip" in
              * do_wild(), so adding ZSUFX here only causes confusion by
@@ -454,7 +446,6 @@ int process_zipfiles(__G)    /* return PK-type error code */
             char *p =
 #endif
               strcpy(lastzipfn + strlen(lastzipfn), ZSUFX);
-#endif /* !VMS */
 
             G.zipfn = lastzipfn;
 
@@ -596,8 +587,7 @@ void free_G_buffers(__G)     /* releases all memory allocated in global vars */
         G.extra_field = (uch *)NULL;
    }
 
-#if (!defined(VMS) && !defined(SMALL_MEM))
-    /* VMS uses its own buffer scheme for textmode flush() */
+#if !defined(SMALL_MEM)
     if (G.outbuf2) {
         free(G.outbuf2);   /* malloc'd ONLY if unshrink and -a */
         G.outbuf2 = (uch *)NULL;
@@ -689,18 +679,10 @@ static int do_seekable(__G__ lastchance)        /* return PK-type error code */
                   LoadFarStringSmall((uO.zipinfo_mode ? Zipnfo : Unzip)),
                   G.wildzipfn, uO.zipinfo_mode? "  " : "", G.zipfn));
             else
-#ifdef VMS
-                Info(slide, 0x401, ((char *)slide,
-                  LoadFarString(CannotFindEitherZipfile),
-                  LoadFarStringSmall((uO.zipinfo_mode ? Zipnfo : Unzip)),
-                  G.wildzipfn,
-                  (*G.zipfn ? G.zipfn : vms_msg_text())));
-#else /* !VMS */
                 Info(slide, 0x401, ((char *)slide,
                   LoadFarString(CannotFindEitherZipfile),
                   LoadFarStringSmall((uO.zipinfo_mode ? Zipnfo : Unzip)),
                   G.wildzipfn, G.zipfn));
-#endif /* ?VMS */
 #endif /* ?UNIX */
         }
 #endif /* !SFX */
@@ -714,11 +696,6 @@ static int do_seekable(__G__ lastchance)        /* return PK-type error code */
         maybe_exe = TRUE;               /*  find unzip, not unzip.zip; etc. */
 #endif
 #endif /* !SFX */
-
-#ifdef VMS
-    if (check_format(__G))              /* check for variable-length format */
-        return PK_ERR;
-#endif
 
     if (open_input_file(__G))   /* this should never happen, given */
         return PK_NOZIP;        /*  the stat() test above, but... */

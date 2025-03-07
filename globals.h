@@ -252,7 +252,7 @@ typedef struct Globals {
     zoff_t    ziplen;
     zoff_t    cur_zipfile_bufstart; /* extract_or_test, readbuf, ReadByte */
     zoff_t    extra_bytes;          /* used in unzip.c, misc.c */
-    uch       *extra_field;         /* Unix, VMS, Mac, OS/2, ... */
+    uch       *extra_field;         /* Unix, Mac, OS/2, ... */
     uch       *hold;
 
     local_file_hdr  lrec;          /* used in unzip.c, extract.c */
@@ -284,9 +284,7 @@ typedef struct Globals {
     uch      *outbuf;
     uch      *realbuf;
 
-#ifndef VMS                        /* if SMALL_MEM, outbuf2 is initialized in */
     uch      *outbuf2;             /*  process_zipfiles() (never changes); */
-#endif                             /*  else malloc'd ONLY if unshrink and -a */
 #endif /* !FUNZIP */
     uch      *outptr;
     ulg      outcnt;               /* number of chars stored in outbuf */
@@ -312,9 +310,9 @@ typedef struct Globals {
     z_uint4 keys[3];   /* crypt static: keys defining pseudo-random sequence */
 
 #if !defined(DOS_OS2_W32)
-#if (!defined(MACOS) && !defined(VMS))
+#if !defined(MACOS)
     int echofd;        /* ttyio static: file descriptor whose echo is off */
-#endif /* !(MACOS || VMS) */
+#endif /* !MACOS */
 #endif /* !DOS_OS2_W32 */
 
     unsigned hufts;    /* track memory usage */

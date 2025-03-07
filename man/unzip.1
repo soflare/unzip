@@ -63,15 +63,14 @@ verbatim left bracket, the three-character sequence ``[[]'' has to be used.
 .RE
 .IP
 (Be sure to quote any character that might otherwise be interpreted or
-modified by the operating system, particularly under Unix and VMS.)  If no
+modified by the operating system, particularly under Unix.)  If no
 matches are found, the specification is assumed to be a literal filename;
 and if that also fails, the suffix \fC.zip\fR is appended.  Note that
 self-extracting ZIP files are supported, as with any other ZIP archive;
 just specify the \fC.exe\fR suffix (if any) explicitly.
 .IP [\fIfile(s)\fP]
 An optional list of archive members to be processed, separated by spaces.
-(VMS versions compiled with VMSCLI defined must delimit files with commas
-instead.  See \fB\-v\fP in \fBOPTIONS\fP below.)
+See \fB\-v\fP in \fBOPTIONS\fP below.)
 Regular expressions (wildcards) may be used to match multiple members; see
 above.  Again, be sure to quote expressions that would otherwise be expanded
 or modified by the operating system.
@@ -135,13 +134,11 @@ adjustment for Daylight Savings Time or ``summer time'').
 .B \-l
 list archive files (short format).  The names, uncompressed file sizes and
 modification dates and times of the specified files are printed, along
-with totals for all files specified.  If UnZip was compiled with OS2_EAS
-defined, the \fB\-l\fP option also lists columns for the sizes of stored
-OS/2 extended attributes (EAs) and OS/2 access control lists (ACLs).  In
-addition, the zipfile comment and individual file comments (if any) are
-displayed.  If a file was archived from a single-case file system (for
-example, the old MS-DOS FAT file system) and the \fB\-L\fP option was given,
-the filename is converted to lowercase and is prefixed with a caret (^).
+with totals for all files specified.  In addition, the zipfile comment and
+individual file comments (if any) are displayed.  If a file was archived from
+a single-case file system (for example, the old MS-DOS FAT file system) and
+the \fB\-L\fP option was given, the filename is converted to lowercase and is
+prefixed with a caret (^).
 .TP
 .B \-p
 extract files to pipe (stdout).  Nothing but the file data is sent to
@@ -215,19 +212,10 @@ Note that \fIzip\fP's identification of text files is by no means perfect; some
 prints ``\fC[text]\fR'' or ``\fC[binary]\fR'' as a visual check for each file
 it extracts when using the \fB\-a\fP option.  The \fB\-aa\fP option forces
 all files to be extracted as text, regardless of the supposed file type.
-On VMS, see also \fB\-S\fP.
 .TP
 .B \-b
-[general] treat all files as binary (no text conversions).  This is a shortcut
-for \fB\-\-\-a\fP.
-.TP
-.B \-b
-[VMS] auto-convert binary files (see \fB\-a\fP above) to fixed-length,
-512-byte record format.  Doubling the option (\fB\-bb\fP) forces all files
-to be extracted in this format. When extracting to standard output
-(\fB\-c\fP or \fB\-p\fP option in effect), the default conversion of text
-record delimiters is disabled for binary (\fB\-b\fP) resp. all (\fB\-bb\fP)
-files.
+treat all files as binary (no text conversions).  This is a shortcut for
+\fB\-\-\-a\fP.
 .TP
 .B \-B
 [when compiled with UNIXBACKUP defined] save a backup copy of each
@@ -287,20 +275,11 @@ in the Zip archive (and do not require privileges or impose a security risk).
 By specifying \fB\-D\fP, \fIunzip\fP is told to suppress restoration of
 timestamps for directories explicitly created from Zip archive entries.
 This option only applies to ports that support setting timestamps for
-directories (currently BeOS, MacOS, OS/2, Unix, VMS, Win32, for other
-\fIunzip\fP ports, \fB\-D\fP has no effect).
-The duplicated option \fB\-DD\fP forces suppression of timestamp restoration
-for all extracted entries (files and directories).  This option results in
-setting the timestamps for all extracted entries to the current time.
-.IP
-On VMS, the default setting for this option is \fB\-D\fP for consistency
-with the behaviour of BACKUP: file timestamps are restored, timestamps of
-extracted directories are left at the current time.  To enable restoration
-of directory timestamps, the negated option \fB\--D\fP should be specified.
-On VMS, the option \fB\-D\fP disables timestamp restoration for all extracted
-Zip archive items.  (Here, a single \fB\-D\fP on the command line combines
-with the default \fB\-D\fP to do what an explicit \fB\-DD\fP does on other
-systems.)
+directories (currently BeOS, MacOS, OS/2, Unix, Win32, for other \fIunzip\fP
+ports, \fB\-D\fP has no effect).  The duplicated option \fB\-DD\fP forces
+suppression of timestamp restoration for all extracted entries (files and
+directories).  This option results in setting the timestamps for all
+extracted entries to the current time.
 .TP
 .B \-E
 [MacOS only] display contents of MacOS extra field during restore operation.
@@ -332,7 +311,7 @@ system or file system.  (This was \fIunzip\fP's default behavior in releases
 prior to 5.11; the new default behavior is identical to the old behavior with
 the \fB\-U\fP option, which is now obsolete and will be removed in a future
 release.)  Depending on the archiver, files archived under single-case
-file systems (VMS, old MS-DOS FAT, etc.) may be stored as all-uppercase names;
+file systems (old MS-DOS FAT, etc.) may be stored as all-uppercase names;
 this can be ugly or inconvenient when extracting to a case-preserving
 file system such as OS/2 HPFS or a case-sensitive one such as under
 Unix.  By default \fIunzip\fP lists and extracts such filenames exactly as
@@ -391,13 +370,6 @@ awkward, however, since MS-DOS in particular does not gracefully support
 spaces in filenames.  Conversion of spaces to underscores can eliminate the
 awkwardness in some cases.
 .TP
-.B \-S
-[VMS] convert text files (\fB\-a\fP, \fB\-aa\fP) into Stream_LF record format,
-instead of the text-file default, variable-length record format.
-(Stream_LF is the default record format of VMS \fIunzip\fP. It is applied
-unless conversion (\fB\-a\fP, \fB\-aa\fP and/or \fB\-b\fP, \fB\-bb\fP) is
-requested or a VMS-specific entry is processed.)
-.TP
 .B \-U
 [UNICODE_SUPPORT only] modify or disable UTF-8 handling.
 When UNICODE_SUPPORT is available, the option \fB\-U\fP forces \fIunzip\fP
@@ -446,8 +418,7 @@ For systems allowing `/' as regular filename character, the -W option
 would not work as expected on a wildcard zipfile specification.)
 .TP
 .B \-X
-[VMS, Unix, OS/2, NT] restore owner/protection info (UICs and ACL
-entries) under VMS, or user and group info (UID/GID) under Unix, or access
+[Unix, OS/2, NT] restore user and group info (UID/GID) under Unix, or access
 control lists (ACLs) under certain network-enabled versions of OS/2
 (Warp Server with IBM LAN Server/Requester 3.0 to 5.0; Warp Connect with
 IBM Peer 1.0), or security ACLs under Windows NT.  In most cases this will
@@ -461,14 +432,6 @@ only to optional, extra ownership info available on some operating systems.
 OS/2's, so no attempt is made at cross-platform portability of access
 privileges.  It is not clear under what conditions this would ever be
 useful anyway.]
-.TP
-.B \-Y
-[VMS] treat archived file name endings of ``.nnn'' (where ``nnn'' is a
-decimal  number) as if they were VMS version numbers (``;nnn'').
-(The default is to treat them as file types.)  Example:
-.EX
-     "a.b.3" -> "a.b;3".
-.EE
 .TP
 .B \-$
 [MS-DOS, OS/2, NT] restore the volume label if the extraction medium is
@@ -510,13 +473,6 @@ default that removes potentially dangerous control characters from the
 extracted file names. The \fB-^\fP option allows to override this filter
 in the rare case that embedded filename control characters are to be
 intentionally restored.
-.TP
-.B \-2
-[VMS] force unconditionally conversion of file names to ODS2-compatible
-names.  The default is to exploit the destination file system, preserving
-case and extended file name characters on an ODS5 destination file system;
-and applying the ODS2-compatibility file name filtering on an ODS2 destination
-file system.
 .PD
 .\" =========================================================================
 .SH "ENVIRONMENT OPTIONS"
@@ -538,9 +494,6 @@ setenv UNZIP \-qq
 .TP
   OS/2 or MS-DOS:
 set UNZIP=\-qq
-.TP
-  VMS (quotes for \fIlowercase\fP):
-define UNZIP_OPTS "\-qq"
 .PP
 Environment options are, in effect, considered to be just like any other
 command-line options, except that they are effectively the first options
@@ -567,14 +520,12 @@ or confusing, but it is reasonably intuitive:  just ignore the first
 hyphen and go from there.  It is also consistent with the behavior of
 Unix \fInice\fP(1).
 .PP
-As suggested by the examples above, the default variable names are UNZIP_OPTS
-for VMS (where the symbol used to install \fIunzip\fP as a foreign command
-would otherwise be confused with the environment variable), and UNZIP
-for all other operating systems.  For compatibility with \fIzip\fP(1L),
-UNZIPOPT is also accepted (don't ask).  If both UNZIP and UNZIPOPT
-are defined, however, UNZIP takes precedence.  \fIunzip\fP's diagnostic
-option (\fB\-v\fP with no zipfile name) can be used to check the values
-of all four possible \fIunzip\fP and \fIzipinfo\fP environment variables.
+As suggested by the examples above, the default variable names are UNZIP.
+For compatibility with \fIzip\fP(1L), UNZIPOPT is also accepted (don't ask).
+If both UNZIP and UNZIPOPT are defined, however, UNZIP takes precedence.
+\fIunzip\fP's diagnostic option (\fB\-v\fP with no zipfile name) can be used
+to check the values of all four possible \fIunzip\fP and \fIzipinfo\fP
+environment variables.
 .PP
 The timezone variable (TZ) should be set according to the local timezone
 in order for the \fB\-f\fP and \fB\-u\fP to operate correctly.  See the
@@ -709,7 +660,7 @@ both *.c and *.C, and any makefile, Makefile, MAKEFILE or similar):
 unzip \-C source.zip "*.[fch]" makefile -d /tmp
 .EE
 .PP
-To extract any such files but convert any uppercase MS-DOS or VMS names to
+To extract any such files but convert any uppercase MS-DOS names to
 lowercase and convert the line-endings of all of the files to the local
 standard (without respect to any files that might be marked ``binary''):
 .PP
@@ -788,7 +739,7 @@ variable is set to ``\fC\-z\fR''.
 .\" =========================================================================
 .SH DIAGNOSTICS
 The exit status (or error level) approximates the exit codes defined by PKWARE
-and takes on the following values, except under VMS:
+and takes on the following values:
 .RS
 .IP 0
 normal; no errors or warnings detected.
@@ -835,16 +786,6 @@ compression methods or unsupported decryption.
 no files were found due to bad decryption password(s).  (If even one file is
 successfully processed, however, the exit status is 1.)
 .RE
-.PP
-VMS interprets standard Unix (or PC) return values as other, scarier-looking
-things, so \fIunzip\fP instead maps them into VMS-style status codes.  The
-current mapping is as follows:   1 (success) for normal exit, 0x7fff0001
-for warning errors, and (0x7fff000? + 16*normal_unzip_exit_status) for all
-other errors, where the `?' is 2 (error) for \fIunzip\fP values 2, 9-11 and
-80-82, and 4 (fatal error) for the remaining ones (3-8, 50, 51).  In addition,
-there is a compilation option to expand upon this behavior:  defining
-RETURN_CODES results in a human-readable explanation of what the error
-status means.
 .PD
 .\" =========================================================================
 .SH BUGS
@@ -902,16 +843,6 @@ are newer or older than those on disk.  In practice this may mean a two-pass
 approach is required:  first unpack the archive normally (with or without
 freshening/updating existing files), then overwrite just the directory entries
 (e.g., ``\fCunzip -o foo */\fR'').
-.PP
-[VMS] When extracting to another directory, only the \fI[.foo]\fP syntax is
-accepted for the \fB\-d\fP option; the simple Unix \fIfoo\fP syntax is
-silently ignored (as is the less common VMS \fIfoo.dir\fP syntax).
-.PP
-[VMS] When the file being extracted already exists, \fIunzip\fP's query only
-allows skipping, overwriting or renaming; there should additionally be a
-choice for creating a new version of the file.  In fact, the ``overwrite''
-choice does create a new version; the old version is not overwritten or
-deleted.
 .PD
 .\" =========================================================================
 .SH "SEE ALSO"

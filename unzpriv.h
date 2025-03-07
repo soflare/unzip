@@ -70,7 +70,7 @@
 #  undef USE_BZIP2
 #endif
 
-#if (defined(NO_VMS_TEXT_CONV) || defined(VMS))
+#if defined(NO_VMS_TEXT_CONV)
 #  ifdef VMS_TEXT_CONV
 #    undef VMS_TEXT_CONV
 #  endif
@@ -201,14 +201,11 @@
 #  define DECLARE_ERRNO
 #endif /* pyr */
 
-/* stat() bug for Borland and VAX C RTL.  Watcom C was previously included on
- * this list; it would be good to know what version the problem was fixed at,
+/* stat() bug for Borland C RTL.  Watcom C was previously included on this
+ * list; it would be good to know what version the problem was fixed at,
  * if it did exist. */
 #if (defined(__TURBOC__) && !defined(WIN32))
 /*#  define WILD_STAT_BUG*/
-#endif
-#if defined(VMS)
-#  define WILD_STAT_BUG
 #endif
 
 /*---------------------------------------------------------------------------
@@ -348,14 +345,6 @@
 #endif /* UNIX */
 
 /*---------------------------------------------------------------------------
-    VMS section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef VMS
-#  include "vms/vmscfg.h"
-#endif /* VMS */
-
-/*---------------------------------------------------------------------------
     Win32 (Windows 95/NT) section:
   ---------------------------------------------------------------------------*/
 
@@ -436,11 +425,7 @@
    typedef size_t extent;
 #else /* !MODERN */
    Z_OFF_T lseek();
-#  ifdef VAXC          /* not fully modern, but has stdlib.h and void */
-#    include <stdlib.h>
-#  else
-     char *malloc();
-#  endif /* ?VAXC */
+   char *malloc();
    typedef unsigned int extent;
 #endif /* ?MODERN */
 
@@ -478,10 +463,6 @@
 #if (defined(DOS_OS2) || defined(WIN32))
 #  define DOS_OS2_W32
 #  define DOS_W32_OS2          /* historical:  don't use */
-#endif
-
-#if (defined(MSDOS) || defined(VMS))
-#  define DOS_VMS
 #endif
 
 #if (defined(__BEOS__) || defined(UNIX))
@@ -539,7 +520,7 @@
 #  if (defined(SYSV) || defined(CONVEX) || defined(NeXT) || defined(BSD4_4))
 #    define INT_SPRINTF      /* sprintf() returns int:  SysVish/Posix */
 #  endif
-#  if (defined(DOS_OS2_W32) || defined(VMS))
+#  if defined(DOS_OS2_W32)
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI */
 #  endif
 #  if (defined(ultrix) || defined(__ultrix)) /* Ultrix 4.3 and newer */
@@ -810,14 +791,6 @@
 #  define PIPE_ERROR (errno == EPIPE)
 #endif
 
-/* File operations--use "b" for binary if allowed or fixed length 512 on VMS */
-#ifdef VMS
-#  define FOPR  "r","ctx=stm"
-#  define FOPM  "r+","ctx=stm","rfm=fix","mrs=512"
-#  define FOPW  "w","ctx=stm","rfm=fix","mrs=512"
-#  define FOPWR "w+","ctx=stm","rfm=fix","mrs=512"
-#endif /* VMS */
-
 /* Defaults when nothing special has been defined previously. */
 #ifdef MODERN
 #  ifndef FOPR
@@ -860,18 +833,6 @@
  */
 #ifdef DOS_OS2_W32
 #  include <limits.h>
-#endif
-
-/* 2008-07-22 SMS.
- * Unfortunately, on VMS, <limits.h> exists, and is included by <stdlib.h>
- * (so it's pretty much unavoidable), and it defines PATH_MAX to a fixed
- * short value (256, correct only for older systems without ODS-5 support),
- * rather than one based on the real RMS NAM[L] situation.  So, we
- * artificially undefine it here, to allow our better-defined _MAX_PATH
- * (see vms/vmscfg.h) to be used.
- */
-#ifdef VMS
-#  undef PATH_MAX
 #endif
 
 #ifndef PATH_MAX
@@ -1044,7 +1005,7 @@
 
 /* ---------------------------- */
 
-# if defined(UNIX) || defined(VMS)
+# if defined(UNIX)
 
     /* 64-bit stat functions */
 #   define zstat stat
@@ -1061,7 +1022,7 @@
 #   define zfopen fopen
 #   define zfdopen fdopen
 
-# endif /* UNIX || VMS */
+# endif /* UNIX */
 
 /* ---------------------------- */
 
@@ -1193,7 +1154,7 @@
 # define zfopen fopen
 # define zfdopen fdopen
 
-# if defined(UNIX) || defined(VMS) || defined(WIN32)
+# if defined(UNIX) || defined(WIN32)
     /* For these systems, implement "64bit file vs. 32bit prog" check  */
 #   ifndef DO_SAFECHECK_2GB
 #     define DO_SAFECHECK_2GB
@@ -1328,14 +1289,6 @@
 
 #define IS_OVERWRT_ALL    (G.overwrite_mode == OVERWRT_ALWAYS)
 #define IS_OVERWRT_NONE   (G.overwrite_mode == OVERWRT_NEVER)
-
-#ifdef VMS
-  /* return codes for VMS-specific open_outfile() function */
-# define OPENOUT_OK       0   /* file openend normally */
-# define OPENOUT_FAILED   1   /* file open failed */
-# define OPENOUT_SKIPOK   2   /* file not opened, skip at error level OK */
-# define OPENOUT_SKIPWARN 3   /* file not opened, skip at error level WARN */
-#endif /* VMS */
 
 #define ROOT              0    /* checkdir() extract-to path:  called once */
 #define INIT              1    /* allocate buildpath:  called once per member */
@@ -1520,7 +1473,7 @@
 
 #define LF     10        /* '\n' on ASCII machines; must be 10 due to EBCDIC */
 #define CR     13        /* '\r' on ASCII machines; must be 13 due to EBCDIC */
-#define CTRLZ  26        /* DOS & OS/2 EOF marker (used in fileio.c, vms.c) */
+#define CTRLZ  26        /* DOS & OS/2 EOF marker (used in fileio.c) */
 
 #ifdef EBCDIC
 #  define foreign(c)    ascii[(uch)(c)]
@@ -1529,10 +1482,6 @@
 #  define NOANSIFILT
 #endif
 
-#ifdef VMS
-#  define ENV_UNZIP       "UNZIP_OPTS"     /* names of environment variables */
-#  define ENV_ZIPINFO     "ZIPINFO_OPTS"
-#endif /* VMS */
 #ifndef ENV_UNZIP
 #  define ENV_UNZIP       "UNZIP"          /* the standard names */
 #  define ENV_ZIPINFO     "ZIPINFO"
@@ -1708,11 +1657,6 @@ typedef struct min_info {
     char Far *cfilname;      /* central header version of filename */
 #endif
 } min_info;
-
-typedef struct VMStimbuf {
-    char *revdate;    /* (both roughly correspond to Unix modtime/st_mtime) */
-    char *credate;
-} VMStimbuf;
 
 /*---------------------------------------------------------------------------
     Zipfile work area declarations.
@@ -1974,7 +1918,7 @@ void     fnprint                 OF((__GPRO));
   ---------------------------------------------------------------------------*/
 
 int      open_input_file      OF((__GPRO));
-int      open_outfile         OF((__GPRO));                    /* also vms.c */
+int      open_outfile         OF((__GPRO));
 void     undefer_input        OF((__GPRO));
 void     defer_leftover_input OF((__GPRO));
 unsigned readbuf              OF((__GPRO__ char *buf, register unsigned len));
@@ -1989,7 +1933,7 @@ int      seek_zipf            OF((__GPRO__ zoff_t abs_offset));
 /* static int  disk_error     OF((__GPRO)); */
 void     handler              OF((int signal));
 time_t   dos_to_unix_time     OF((ulg dos_datetime));
-int      check_for_newer      OF((__GPRO__ char *filename)); /* os2,vms */
+int      check_for_newer      OF((__GPRO__ char *filename)); /* os2 */
 int      do_string            OF((__GPRO__ unsigned int length, int option));
 ush      makeword             OF((ZCONST uch *b));
 ulg      makelong             OF((ZCONST uch *sig));
@@ -2055,7 +1999,7 @@ int    extract_or_test_files     OF((__GPRO));
 int    memextract                OF((__GPRO__ uch *tgt, ulg tgtsize,
                                      ZCONST uch *src, ulg srcsize));
 int    memflush                  OF((__GPRO__ ZCONST uch *rawbuf, ulg size));
-#if (defined(VMS) || defined(VMS_TEXT_CONV))
+#if defined(VMS_TEXT_CONV)
    uch   *extract_izvms_block    OF((__GPRO__ ZCONST uch *ebdata,
                                      unsigned size, unsigned *retlen,
                                      ZCONST uch *init, unsigned needlen));
@@ -2166,27 +2110,6 @@ int    huft_build                OF((__GPRO__ ZCONST unsigned *b, unsigned n,
 #endif
 
 /*---------------------------------------------------------------------------
-    VMS-only functions:
-  ---------------------------------------------------------------------------*/
-
-#ifdef VMS
-   int    check_format        OF((__GPRO));                         /* vms.c */
-/* int    open_outfile        OF((__GPRO));           * (see fileio.c) vms.c */
-/* int    flush               OF((__GPRO__ uch *rawbuf, unsigned size,
-                                  int final_flag));   * (see fileio.c) vms.c */
-   char  *vms_msg_text        OF((void));                           /* vms.c */
-#ifdef RETURN_CODES
-   void   return_VMS          OF((__GPRO__ int zip_error));         /* vms.c */
-#else
-   void   return_VMS          OF((int zip_error));                  /* vms.c */
-#endif
-#ifdef VMSCLI
-   ulg    vms_unzip_cmdline   OF((int *, char ***));            /* cmdline.c */
-   int    VMSCLI_usage        OF((__GPRO__ int error));         /* cmdline.c */
-#endif
-#endif
-
-/*---------------------------------------------------------------------------
     WIN32-only functions:
   ---------------------------------------------------------------------------*/
 
@@ -2232,12 +2155,9 @@ int      mapname         OF((__GPRO__ int renamed));                /* local */
 int      checkdir        OF((__GPRO__ char *pathcomp, int flag));   /* local */
 char    *do_wild         OF((__GPRO__ ZCONST char *wildzipfn));     /* local */
 char    *GetLoadPath     OF((__GPRO));                              /* local */
-#if (defined(MORE) && (defined(BEO_UNX) || defined(VMS)))
+#if (defined(MORE) && defined(BEO_UNX))
    int screensize        OF((int *tt_rows, int *tt_cols));          /* local */
-# if defined(VMS)
-   int screenlinewrap    OF((void));                                /* local */
-# endif
-#endif /* MORE && (BEO_UNX || VMS) */
+#endif /* MORE && BEO_UNX */
 #ifdef OS2_W32
    int   SetFileSize     OF((FILE *file, zusz_t filesize));         /* local */
 #endif
@@ -2306,7 +2226,7 @@ char    *GetLoadPath     OF((__GPRO));                              /* local */
 #  define MTrace(x)  Trace(x)
 #endif
 
-#if (defined(UNIX) || defined(VMS)) /* generally old systems */
+#if defined(UNIX) /* generally old systems */
 #  define ToLower(x)   ((char)(isupper((int)x)? tolower((int)x) : x))
 #else
 #  define ToLower      tolower          /* assumed "smart"; used in match() */
