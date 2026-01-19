@@ -46,10 +46,6 @@
 #  define GLOBAL(g) G.g
 #endif
 
-#if (defined(__BEOS__))  /* why yes, we do */
-#  define HAVE_TERMIOS_H
-#endif
-
 #ifdef _POSIX_VERSION
 #  ifndef USE_POSIX_TERMIOS
 #    define USE_POSIX_TERMIOS  /* use POSIX style termio (termios) */
@@ -201,7 +197,7 @@ void Echon(__G)
 
 #if (defined(UNZIP) && !defined(FUNZIP))
 
-#ifdef BEO_UNX
+#ifdef UNIX
 #ifdef MORE
 
 /*
@@ -341,7 +337,7 @@ int zgetch(__G__ f)
 }
 
 
-#else /* !BEO_UNX */
+#else /* !UNIX */
 
 
 int zgetch(__G__ f)
@@ -366,7 +362,7 @@ int zgetch(__G__ f)
     return (int)c;
 }
 
-#endif /* ?BEO_UNX */
+#endif /* ?UNIX */
 
 #endif /* UNZIP && !FUNZIP */
 #endif /* !HAVE_WORKING_GETCH */
@@ -445,7 +441,7 @@ char *getp(__G__ m, p, n)
 #else /* !HAVE_WORKING_GETCH */
 
 
-#if defined(BEO_UNX)
+#if defined(UNIX)
 
 #ifndef _PATH_TTY
 #  define _PATH_TTY "/dev/tty"
@@ -498,7 +494,7 @@ char *getp(__G__ m, p, n)
 
 } /* end function getp() */
 
-#endif /* BEO_UNX */
+#endif /* UNIX */
 
 
 

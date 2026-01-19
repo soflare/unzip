@@ -53,7 +53,6 @@ at the end contain their own Contents listings:
   unzvers.h     header with UnZip/UnZipSFX and ZipInfo version info (required)
   zip.h         dummy header for use with crypt.c (required*)
   zipinfo.c     UnZip listing routines, ZipInfo mode (required)
-  beos/         support files for compiling under BeOS
   msdos/        support files for compiling under MS-DOS
   unix/         support files for compiling under Unix
   win32/        support files for compiling under Windows 9x and Windows NT

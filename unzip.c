@@ -52,7 +52,7 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, MS-DOS,
-              Windows 3.x/95/NT and BeOS.
+              Windows 3.x/95/NT.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -201,7 +201,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 #endif
 #endif /* ?WIN32 */
 #else /* !DOS_W32 */
-#ifdef BEO_UNX
+#ifdef UNIX
    static ZCONST char Far local2[] = " -X  restore UID/GID info";
 #ifdef MORE
    static ZCONST char Far local3[] = "\
@@ -210,7 +210,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local3[] = "\
   -K  keep setuid/setgid/tacky permissions\n";
 #endif
-#else /* !BEO_UNX */
+#else /* !UNIX */
 #ifdef MORE
    static ZCONST char Far local2[] = " -M  pipe through \"more\" pager";
    static ZCONST char Far local3[] = "\n";
@@ -218,7 +218,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local2[] = "";   /* Mac, etc. */
    static ZCONST char Far local3[] = "";
 #endif
-#endif /* ?BEO_UNX */
+#endif /* ?UNIX */
 #endif /* ?DOS_W32 */
 #endif /* !SFX */
 
@@ -1179,16 +1179,7 @@ int uz_opts(__G__ pargc, pargv)
                     else
                         uO.jflag = TRUE;
                     break;
-#if defined(__BEOS__)
-                case ('J'):    /* Junk BeOS file attributes */
-                    if( negative ) {
-                        uO.J_flag = FALSE, negative = 0;
-                    } else {
-                        uO.J_flag = TRUE;
-                    }
-                    break;
-#endif /* __BEOS__ */
-#ifdef BEO_UNX
+#ifdef UNIX
                 case ('K'):
                     if (negative) {
                         uO.K_flag = FALSE, negative = 0;
@@ -1196,7 +1187,7 @@ int uz_opts(__G__ pargc, pargv)
                         uO.K_flag = TRUE;
                     }
                     break;
-#endif /* BEO_UNX */
+#endif /* UNIX */
 #ifndef SFX
                 case ('l'):
                     if (negative) {
@@ -1725,8 +1716,7 @@ static void help_extended(__G)
   "         is on by default and -D essentially becames -DD.",
   "  -DD  Skip restoration of timestamps for all entries.",
   "  -j   Junk paths and deposit all files in extraction directory.",
-  "  -J   [BeOS] Junk file attributes.",
-  "  -K   [BeOS, Unix] Restore SUID/SGID/Tacky file attributes.",
+  "  -K   [Unix] Restore SUID/SGID/Tacky file attributes.",
   "  -L   Convert to lowercase any names from uppercase only file system.",
   "  -LL  Convert all files to lowercase.",
   "  -M   Pipe all output through internal pager similar to Unix more(1).",

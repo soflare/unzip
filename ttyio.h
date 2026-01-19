@@ -40,12 +40,6 @@
 #  endif
 #endif
 
-#if (defined(__BEOS__) || defined(UNIX))
-#  ifndef BEO_UNX
-#    define BEO_UNX
-#  endif
-#endif
-
 
 /* Function prototypes */
 

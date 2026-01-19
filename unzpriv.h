@@ -225,14 +225,6 @@
 #endif
 
 /*---------------------------------------------------------------------------
-    BeOS section:
-  ---------------------------------------------------------------------------*/
-
-#ifdef __BEOS__
-#  include "beos/beocfg.h"
-#endif
-
-/*---------------------------------------------------------------------------
     MS-DOS section:
   ---------------------------------------------------------------------------*/
 
@@ -433,10 +425,6 @@
 #  define DOS_W32
 #endif
 
-#if (defined(__BEOS__) || defined(UNIX))
-#  define BEO_UNX
-#endif
-
 /* clean up with a few defaults */
 #ifndef DIR_END
 #  define DIR_END       '/'     /* last char before program name or filename */
@@ -476,7 +464,7 @@
 #endif
 
 
-#if defined(DOS_W32) || defined(BEO_UNX)
+#if defined(DOS_W32) || defined(UNIX)
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -2087,9 +2075,9 @@ int      mapname         OF((__GPRO__ int renamed));                /* local */
 int      checkdir        OF((__GPRO__ char *pathcomp, int flag));   /* local */
 char    *do_wild         OF((__GPRO__ ZCONST char *wildzipfn));     /* local */
 char    *GetLoadPath     OF((__GPRO));                              /* local */
-#if (defined(MORE) && defined(BEO_UNX))
+#if (defined(MORE) && defined(UNIX))
    int screensize        OF((int *tt_rows, int *tt_cols));          /* local */
-#endif /* MORE && BEO_UNX */
+#endif /* MORE && UNIX */
 #ifdef W32
    int   SetFileSize     OF((FILE *file, zusz_t filesize));         /* local */
 #endif

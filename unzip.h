@@ -164,7 +164,7 @@ freely, subject to the above disclaimer and the following restrictions:
 
 /* use prototypes and ANSI libraries if __STDC__, or MS-DOS, or Win32,
  * or IBM C Set/2, or Borland C, or Watcom C, or GNU gcc (emx or Cygwin),
- * or Sequent, or IBM RS/6000, or Silicon Graphics, * or Convex?, or BeOS.  */
+ * or Sequent, or IBM RS/6000, or Silicon Graphics, * or Convex? */
 #if (defined(__STDC__) || defined(MSDOS) || defined(WIN32))
 #  ifndef PROTO
 #    define PROTO
@@ -191,15 +191,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #endif
 /* Sequent running Dynix/ptx:  non-modern compiler */
 #if (defined(_AIX) || defined(sgi) || (defined(_SEQUENT_) && !defined(PTX)))
-#  ifndef PROTO
-#    define PROTO
-#  endif
-#  ifndef MODERN
-#    define MODERN
-#  endif
-#endif
-#if defined(__BEOS__)
-/* || defined(CONVEX) ? */
 #  ifndef PROTO
 #    define PROTO
 #  endif
@@ -385,10 +376,7 @@ typedef struct _UzpOpts {
     int fflag;          /* -f: "freshen" (extract only newer files) */
     int hflag;          /* -h: header line (zipinfo) */
     int jflag;          /* -j: junk pathnames (unzip) */
-#if defined(__BEOS__)
-    int J_flag;         /* -J: ignore BeOS e. f. info (unzip) */
-#endif
-#if (defined(__BEOS__) || defined(UNIX))
+#if defined(UNIX)
     int K_flag;         /* -K: keep setuid/setgid/tacky permissions */
 #endif
     int lflag;          /* -12slmv: listing format (zipinfo) */
@@ -413,7 +401,7 @@ typedef struct _UzpOpts {
     int vflag;          /* -v: (verbosely) list directory */
     int V_flag;         /* -V: don't strip VMS version numbers */
     int W_flag;         /* -W: wildcard '*' won't match '/' dir separator */
-#if (defined(__BEOS__) || defined(UNIX))
+#if defined(UNIX)
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #else
 #if defined(WIN32)

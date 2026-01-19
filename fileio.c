@@ -118,7 +118,7 @@ static int disk_error OF((__GPRO));
 static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
-#if (defined(BEO_UNX) || defined(DOS_W32))
+#if (defined(UNIX) || defined(DOS_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
 #ifdef UNIXBACKUP
@@ -126,7 +126,7 @@ static ZCONST char Far CannotOpenZipfile[] =
      "error:  cannot rename old %s\n        %s\n";
    static ZCONST char Far BackupSuffix[] = "~";
 #endif
-#endif /* BEO_UNX || DOS_W32 */
+#endif /* UNIX || DOS_W32 */
 #ifdef NOVELL_BUG_FAILSAFE
    static ZCONST char Far NovellBug[] =
      "error:  %s: stat() says does not exist, but fopen() found anyway\n";
@@ -221,7 +221,7 @@ int open_outfile(__G)           /* return 1 if fail */
     if (G.redirect_data)
         return (redirect_outfile(__G) == FALSE);
 #endif
-#if (defined(DOS_W32) || defined(BEO_UNX))
+#if (defined(DOS_W32) || defined(UNIX))
 #ifdef BORLAND_STAT_BUG
     /* Borland 5.0's stat() barfs if the filename has no extension and the
      * file doesn't exist. */
@@ -331,7 +331,7 @@ int open_outfile(__G)           /* return 1 if fail */
               FnFilter1(G.filename)));
         }
     }
-#endif /* DOS_W32 || BEO_UNX */
+#endif /* DOS_W32 || UNIX */
 #ifdef MTS
     if (uO.aflag)
         G.outfile = zfopen(G.filename, FOPWT);
@@ -1666,9 +1666,7 @@ time_t dos_to_unix_time(dosdatetime)
 #else /* !(BSD || MTS || __GO32__) */
     /* tzset was already called at start of process_zipfiles() */
     /* tzset(); */              /* set `timezone' variable */
-#ifndef __BEOS__                /* BeOS DR8 has no timezones... */
     m_time += timezone;         /* seconds WEST of GMT:  add */
-#endif
 #endif /* ?(BSD || MTS || __GO32__) */
 #endif /* ?WIN32 */
     TTrace((stderr, "  m_time after timezone =  %lu\n", (ulg)m_time));
