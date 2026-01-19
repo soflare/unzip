@@ -325,16 +325,8 @@
     Win32 (Windows 95/NT) section:
   ---------------------------------------------------------------------------*/
 
-#if (defined(WIN32) && !defined(POCKET_UNZIP) && !defined(_WIN32_WCE))
+#if defined(WIN32)
 #  include "win32/w32cfg.h"
-#endif
-
-/*---------------------------------------------------------------------------
-    Win32 Windows CE section (also POCKET_UNZIP)
-  ---------------------------------------------------------------------------*/
-
-#if (defined(_WIN32_WCE) || defined(POCKET_UNZIP))
-#  include "wince/wcecfg.h"
 #endif
 
 
@@ -845,9 +837,7 @@
  */
 #ifdef UNICODE_SUPPORT
 # ifdef UNICODE_WCHAR
-#  if !(defined(_WIN32_WCE) || defined(POCKET_UNZIP))
-#   include <wchar.h>
-#  endif
+# include <wchar.h>
 # endif
 # ifndef _MBCS  /* no need to include <locale.h> twice, see below */
 #   include <locale.h>

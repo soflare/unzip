@@ -38,20 +38,14 @@
 #define UNZIP_INTERNAL
 #include "unzip.h"
 #ifdef WINDLL
-#  ifdef POCKET_UNZIP
-#    include "wince/intrface.h"
-#  else
-#    include "windll/windll.h"
-#  endif
+#  include "windll/windll.h"
 #endif
 #include "unzvers.h"
 #include <setjmp.h>
 
 #ifdef DLL      /* This source file supplies DLL-only interface code. */
 
-#ifndef POCKET_UNZIP    /* WinCE pUnZip defines this elsewhere. */
 jmp_buf dll_error_return;
-#endif
 
 /*---------------------------------------------------------------------------
     Documented API entry points

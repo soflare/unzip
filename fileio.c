@@ -61,11 +61,7 @@
 #define UNZIP_INTERNAL
 #include "unzip.h"
 #ifdef WINDLL
-#  ifdef POCKET_UNZIP
-#    include "wince/intrface.h"
-#  else
-#    include "windll/windll.h"
-#  endif
+#  include "windll/windll.h"
 #  include <setjmp.h>
 #endif
 #include "crc32.h"
@@ -1882,11 +1878,11 @@ int do_string(__G__ length, option)   /* return PK-type error code */
                 length -= eol + 1 - G.autorun_command;
                 while (eol >= G.autorun_command && isspace(*eol))
                     *eol-- = '\0';
-#if (defined(WIN32) && !defined(_WIN32_WCE))
+#if defined(WIN32)
                 /* Win9x console always uses OEM character coding, and
                    WinNT console is set to OEM charset by default, too */
                 INTERN_TO_OEM(G.autorun_command, G.autorun_command);
-#endif /* (WIN32 && !_WIN32_WCE) */
+#endif /* WIN32 */
             }
         }
         if (option == CHECK_AUTORUN_Q)  /* don't display the remainder */
@@ -1950,11 +1946,11 @@ int do_string(__G__ length, option)   /* return PK-type error code */
                 /* translate to ANSI (RTL internal codepage may be OEM) */
                 INTERN_TO_ISO((char *)G.outbuf, (char *)G.outbuf);
 #else /* !WINDLL */
-#if (defined(WIN32) && !defined(_WIN32_WCE))
+#if defined(WIN32)
                 /* Win9x console always uses OEM character coding, and
                    WinNT console is set to OEM charset by default, too */
                 INTERN_TO_OEM((char *)G.outbuf, (char *)G.outbuf);
-#endif /* (WIN32 && !_WIN32_WCE) */
+#endif /* WIN32 */
 #endif /* ?WINDLL */
             } else {
                 A_TO_N(G.outbuf);   /* translate string to native */

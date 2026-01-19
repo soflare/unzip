@@ -72,7 +72,7 @@ int envargs(Pargc, Pargv, envstr, envstr2)
     bufptr = malloc(1 + strlen(envptr));
     if (bufptr == (char *)NULL)
         return PK_MEM;
-#if ((defined(WIN32) || defined(WINDLL)) && !defined(_WIN32_WCE))
+#if (defined(WIN32) || defined(WINDLL))
 # ifdef WIN32
     if (IsWinNT()) {
         /* SPC: don't know codepage of 'real' WinNT console */
@@ -85,9 +85,9 @@ int envargs(Pargc, Pargv, envstr, envstr2)
     /* DOS (Win 3.x) environment uses OEM codepage */
     OEM_TO_INTERN(envptr, bufptr);
 # endif
-#else /* !((WIN32 || WINDLL) && !_WIN32_WCE) */
+#else /* !(WIN32 || WINDLL) */
     strcpy(bufptr, envptr);
-#endif /* ?((WIN32 || WINDLL) && !_WIN32_WCE) */
+#endif /* ?(WIN32 || WINDLL) */
 
     /* count the args so we can allocate room for them */
     argc = count_args(bufptr);

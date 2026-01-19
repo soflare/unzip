@@ -129,15 +129,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  define WIN32
 #endif
 
-#if defined(_WIN32_WCE)
-#  ifndef WIN32         /* WinCE is treated as a variant of the Win32 API */
-#    define WIN32
-#  endif
-#  ifndef UNICODE       /* WinCE requires UNICODE wide character support */
-#    define UNICODE
-#  endif
-#endif
-
 /* Borland C does not define __TURBOC__ if compiling for a 32-bit platform */
 #ifdef __BORLANDC__
 #  ifndef __TURBOC__
@@ -259,9 +250,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  ifndef _CRT_NONSTDC_NO_WARNINGS
 #    define _CRT_NONSTDC_NO_WARNINGS
 #  endif
-#  if defined(POCKET_UNZIP) && !defined(_CRT_NON_CONFORMING_SWPRINTFS)
-#    define _CRT_NON_CONFORMING_SWPRINTFS
-#  endif
 #endif
 
 /* NO_UNIXBACKUP overrides UNIXBACKUP */
@@ -272,10 +260,6 @@ freely, subject to the above disclaimer and the following restrictions:
 /*---------------------------------------------------------------------------
     Grab system-specific public include headers.
   ---------------------------------------------------------------------------*/
-
-#ifdef POCKET_UNZIP             /* WinCE port */
-#  include "wince/punzip.h"     /* must appear before windows.h */
-#endif
 
 #ifdef WINDLL
    /* for UnZip, the "basic" part of the win32 api is sufficient */

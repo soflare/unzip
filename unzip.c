@@ -52,7 +52,7 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, MS-DOS,
-              Windows 3.x/95/NT/CE and BeOS.
+              Windows 3.x/95/NT and BeOS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -106,14 +106,12 @@ static void  show_version_info  OF((__GPRO));
 /* constant local variables: */
 
 #ifndef SFX
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
    static ZCONST char Far EnvUnZip[] = ENV_UNZIP;
    static ZCONST char Far EnvUnZip2[] = ENV_UNZIP2;
    static ZCONST char Far EnvZipInfo[] = ENV_ZIPINFO;
    static ZCONST char Far EnvZipInfo2[] = ENV_ZIPINFO2;
   static ZCONST char Far NoMemEnvArguments[] =
     "envargs:  cannot get memory for arguments";
-#endif /* !_WIN32_WCE */
   static ZCONST char Far CmdLineParamTooLong[] =
     "error:  command line parameter #%d exceeds internal size limit\n";
 #endif /* !SFX */
@@ -274,11 +272,9 @@ static ZCONST char Far ZipInfoUsageLine3[] = "miscellaneous options:\n\
    static ZCONST char Far CompileOptions[] =
      "UnZip special compilation options:\n";
    static ZCONST char Far CompileOptFormat[] = "        %s\n";
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
    static ZCONST char Far EnvOptions[] =
      "\nUnZip and ZipInfo environment options:\n";
    static ZCONST char Far EnvOptFormat[] = "%16s:  %.1024s\n";
-#endif
    static ZCONST char Far None[] = "[none]";
 #  ifdef ASM_CRC
      static ZCONST char Far AsmCRC[] = "ASM_CRC";
@@ -777,20 +773,16 @@ int unzip(__G__ argc, argv)
         (argc > 1 && strncmp(argv[1], "-Z", 2) == 0))
     {
         uO.zipinfo_mode = TRUE;
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
         if ((error = envargs(&argc, &argv, LoadFarStringSmall(EnvZipInfo),
                              LoadFarStringSmall2(EnvZipInfo2))) != PK_OK)
             perror(LoadFarString(NoMemEnvArguments));
-#endif
     } else
 #endif /* !NO_ZIPINFO */
     {
         uO.zipinfo_mode = FALSE;
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
         if ((error = envargs(&argc, &argv, LoadFarStringSmall(EnvUnZip),
                              LoadFarStringSmall2(EnvUnZip2))) != PK_OK)
             perror(LoadFarString(NoMemEnvArguments));
-#endif
     }
 
     if (!error) {
@@ -1882,11 +1874,9 @@ static void help_extended(__G)
 
 
 
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
 #if (!defined(MODERN) || defined(NO_STDLIB_H))
 /* Declare getenv() to be sure (might be missing in some environments) */
 extern char *getenv();
-#endif
 #endif
 
 /********************************/
@@ -1900,9 +1890,7 @@ static void show_version_info(__G)
         Info(slide, 0, ((char *)slide, "%d\n",
           (UZ_MAJORVER*100 + UZ_MINORVER*10 + UZ_PATCHLEVEL)));
     else {
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
         char *envptr;
-#endif
         int numopts = 0;
 
         Info(slide, 0, ((char *)slide, LoadFarString(UnzipUsageLine1v),
@@ -2112,7 +2100,6 @@ static void show_version_info(__G)
               LoadFarString(CompileOptFormat),
               LoadFarStringSmall(None)));
 
-#ifndef _WIN32_WCE /* Win CE does not support environment variables */
         Info(slide, 0, ((char *)slide, LoadFarString(EnvOptions)));
         envptr = getenv(LoadFarStringSmall(EnvUnZip));
         Info(slide, 0, ((char *)slide, LoadFarString(EnvOptFormat),
@@ -2160,7 +2147,6 @@ static void show_version_info(__G)
           LoadFarStringSmall2(None) : envptr));
 #endif /* __GO32__ && !(__DJGPP__ >= 2) */
 #endif /* !__RSXNT__ */
-#endif /* !_WIN32_WCE */
     }
 } /* end function show_version() */
 

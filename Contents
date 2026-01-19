@@ -57,7 +57,6 @@ at the end contain their own Contents listings:
   msdos/        support files for compiling under MS-DOS
   unix/         support files for compiling under Unix
   win32/        support files for compiling under Windows 9x and Windows NT
-  wince/        support files for compiling under Windows CE (GUI version)
   windll/       support files for compiling Windows 3.x/9x/NT DLLs
   bzip2/        subfolder for source of externally supplied bzip2 extension
   man/          nroff man-page sources for the main user documentation

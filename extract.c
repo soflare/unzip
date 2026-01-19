@@ -36,11 +36,7 @@
 #define UNZIP_INTERNAL
 #include "unzip.h"
 #ifdef WINDLL
-#  ifdef POCKET_UNZIP
-#    include "wince/intrface.h"
-#  else
-#    include "windll/windll.h"
-#  endif
+#  include "windll/windll.h"
 #endif
 #include "crc32.h"
 #include "crypt.h"
@@ -2549,11 +2545,11 @@ char *fnfilter(raw, space, size)   /* convert name to safely printable form */
 #ifdef WINDLL
     INTERN_TO_ISO((char *)space, (char *)space);  /* translate to ANSI */
 #else
-#if (defined(WIN32) && !defined(_WIN32_WCE))
+#if defined(WIN32)
     /* Win9x console always uses OEM character coding, and
        WinNT console is set to OEM charset by default, too */
     INTERN_TO_OEM((char *)space, (char *)space);
-#endif /* (WIN32 && !_WIN32_WCE) */
+#endif /* WIN32 */
 #endif /* ?WINDLL */
 
     return (char *)space;
