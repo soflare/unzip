@@ -52,7 +52,7 @@
   ---------------------------------------------------------------------------
 
   Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, MS-DOS,
-              Windows 3.x/95/NT/CE, Macintosh and BeOS.
+              Windows 3.x/95/NT/CE and BeOS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
                (This software is free but NOT IN THE PUBLIC DOMAIN.)
@@ -157,12 +157,8 @@ static ZCONST char Far IgnoreOOptionMsg[] =
    static ZCONST char Far Example2[] =
      "";                /* no room:  too many local3[] items */
 #else /* !DOS_W32 */
-#ifdef MACOS
-   static ZCONST char Far Example2[] = ""; /* not needed */
-#else /* !MACOS */
    static ZCONST char Far Example2[] = " \
  unzip -p foo | more  => send contents of foo.zip via pipe into program more\n";
-#endif /* ?MACOS */
 #endif /* ?DOS_W32 */
 
 /* local1[]:  command options */
@@ -217,12 +213,6 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
   -K  keep setuid/setgid/tacky permissions\n";
 #endif
 #else /* !BEO_UNX */
-#ifdef MACOS
-   static ZCONST char Far local2[] = " -E  show Mac info during extraction";
-   static ZCONST char Far local3[] = " \
- -i  ignore filenames in mac extra info     -J  junk (ignore) Mac extra info\n\
-\n";
-#else /* !MACOS */
 #ifdef MORE
    static ZCONST char Far local2[] = " -M  pipe through \"more\" pager";
    static ZCONST char Far local3[] = "\n";
@@ -230,7 +220,6 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
    static ZCONST char Far local2[] = "";   /* Mac, etc. */
    static ZCONST char Far local3[] = "";
 #endif
-#endif /* ?MACOS */
 #endif /* ?BEO_UNX */
 #endif /* ?DOS_W32 */
 #endif /* !SFX */
@@ -460,17 +449,10 @@ Latest sources and executables are at ftp://ftp.info-zip.org/pub/infozip/ ;\
 \nsee ftp://ftp.info-zip.org/pub/infozip/UnZip.html for other sites.\
 \n\n";
 
-#ifdef MACOS
-static ZCONST char Far UnzipUsageLine2[] = "\
-Usage: unzip %s[-opts[modifiers]] file[.zip] [list] [-d exdir]\n \
- Default action is to extract files in list, to exdir;\n\
-  file[.zip] may be a wildcard.  %s\n";
-#else /* !MACOS */
 static ZCONST char Far UnzipUsageLine2[] = "\
 Usage: unzip %s[-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]\n \
  Default action is to extract files in list, except those in xlist, to exdir;\n\
   file[.zip] may be a wildcard.  %s\n";
-#endif /* ?MACOS */
 
 #ifdef NO_ZIPINFO
 #  define ZIPINFO_MODE_OPTION  ""
@@ -482,20 +464,12 @@ Usage: unzip %s[-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]\n \
      "-Z => ZipInfo mode (\"unzip -Z\" for usage).";
 #endif /* ?NO_ZIPINFO */
 
-#ifdef MACOS
-static ZCONST char Far UnzipUsageLine3[] = "\n\
-  -d  extract files into exdir               -l  list files (short format)\n\
-  -f  freshen existing files, create none    -t  test compressed archive data\n\
-  -u  update files, create if necessary      -z  display archive comment only\n\
-  -v  list verbosely/show version info     %s\n";
-#else /* !MACOS */
 static ZCONST char Far UnzipUsageLine3[] = "\n\
   -p  extract files to pipe, no messages     -l  list files (short format)\n\
   -f  freshen existing files, create none    -t  test compressed archive data\n\
   -u  update files, create if necessary      -z  display archive comment only\n\
   -v  list verbosely/show version info     %s\n\
   -x  exclude files that follow (in xlist)   -d  extract files into exdir\n";
-#endif /* ?MACOS */
 
 /* There is not enough space on a standard 80x25 Windows console screen for
  * the additional line advertising the UTF-8 debugging options. This may
@@ -690,20 +664,6 @@ int unzip(__G__ argc, argv)
 #if (defined(WIN32) && defined(__RSXNT__))
     for (i = 0 ; i < argc; i++) {
         _ISO_INTERN(argv[i]);
-    }
-#endif
-
-/*---------------------------------------------------------------------------
-    Macintosh initialization code.
-  ---------------------------------------------------------------------------*/
-
-#ifdef MACOS
-    {
-        int a;
-
-        for (a = 0;  a < 4;  ++a)
-            G.rghCursor[a] = GetCursor(a+128);
-        G.giCursor = 0;
     }
 #endif
 
@@ -1203,15 +1163,6 @@ int uz_opts(__G__ pargc, pargv)
 #endif /* (!NO_TIMESTAMPS) */
                 case ('e'):    /* just ignore -e, -x options (extract) */
                     break;
-#ifdef MACOS
-                case ('E'): /* -E [MacOS] display Mac e.f. when restoring */
-                    if( negative ) {
-                        uO.E_flag = FALSE, negative = 0;
-                    } else {
-                        uO.E_flag = TRUE;
-                    }
-                    break;
-#endif /* MACOS */
                 case ('f'):    /* "freshen" (extract only newer files) */
                     if (negative)
                         uO.fflag = uO.uflag = FALSE, negative = 0;
@@ -1230,30 +1181,21 @@ int uz_opts(__G__ pargc, pargv)
                         }
                     }
                     break;
-#ifdef MACOS
-                case ('i'): /* -i [MacOS] ignore filenames stored in Mac ef */
-                    if( negative ) {
-                        uO.i_flag = FALSE, negative = 0;
-                    } else {
-                        uO.i_flag = TRUE;
-                    }
-                    break;
-#endif  /* MACOS */
                 case ('j'):    /* junk pathnames/directory structure */
                     if (negative)
                         uO.jflag = FALSE, negative = 0;
                     else
                         uO.jflag = TRUE;
                     break;
-#if (defined(__BEOS__) || defined(MACOS))
-                case ('J'):    /* Junk BeOS or MacOS file attributes */
+#if defined(__BEOS__)
+                case ('J'):    /* Junk BeOS file attributes */
                     if( negative ) {
                         uO.J_flag = FALSE, negative = 0;
                     } else {
                         uO.J_flag = TRUE;
                     }
                     break;
-#endif /* __BEOS__ || MACOS */
+#endif /* __BEOS__ */
 #ifdef BEO_UNX
                 case ('K'):
                     if (negative) {
@@ -1790,12 +1732,8 @@ static void help_extended(__G)
   "  -D   Skip restoration of timestamps for extracted directories.  On VMS this",
   "         is on by default and -D essentially becames -DD.",
   "  -DD  Skip restoration of timestamps for all entries.",
-  "  -E   [MacOS (not Unix Apple)]  Display contents of MacOS extra field during",
-  "         restore.",
-  "  -i   [MacOS] Ignore filenames in MacOS extra field.  Instead, use name in",
-  "         standard header.",
   "  -j   Junk paths and deposit all files in extraction directory.",
-  "  -J   [BeOS] Junk file attributes.  [MacOS] Ignore MacOS specific info.",
+  "  -J   [BeOS] Junk file attributes.",
   "  -K   [BeOS, Unix] Restore SUID/SGID/Tacky file attributes.",
   "  -L   Convert to lowercase any names from uppercase only file system.",
   "  -LL  Convert all files to lowercase.",

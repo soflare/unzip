@@ -356,9 +356,6 @@ int zi_opts(__G__ pargc, pargv)
     int    explicit_h=FALSE, explicit_t=FALSE;
 
 
-#ifdef MACOS
-    uO.lflag = LFLAG;         /* reset default on each call */
-#endif
     G.extract_flag = FALSE;   /* zipinfo does not extract to disk */
     argc = *pargc;
     argv = *pargv;
@@ -786,9 +783,6 @@ int zipinfo(__G)   /* return PK-type error code */
                 error_in_archive = IZ_CTRLC;
                 break;
             }
-#endif
-#ifdef MACOS  /* MacOS is no preemptive OS, thus call event-handling by hand */
-            UserStop();
 #endif
 
         } else {        /* not listing this file */

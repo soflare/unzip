@@ -15,7 +15,7 @@
   of the stuff has to do with opening, closing, reading and/or writing files.
 
   Contains:  open_input_file()
-             open_outfile()           (non-MACOS)
+             open_outfile()
              undefer_input()
              defer_leftover_input()
              readbuf()
@@ -122,7 +122,6 @@ static int disk_error OF((__GPRO));
 static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
-#if !defined(MACOS)
 #if (defined(BEO_UNX) || defined(DOS_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
@@ -138,7 +137,6 @@ static ZCONST char Far CannotOpenZipfile[] =
 #endif
    static ZCONST char Far CannotCreateFile[] =
      "error:  cannot create %s\n        %s\n";
-#endif /* !MACOS */
 
 static ZCONST char Far ReadError[] = "error:  zipfile read error\n";
 static ZCONST char Far FilenameTooLongTrunc[] =
@@ -170,12 +168,7 @@ static ZCONST char Far ExtraFieldTooLong[] =
    static ZCONST char Far HidePrompt[] = /* "\r                       \r"; */
      "\r                                                         \r";
 #  if CRYPT
-#    ifdef MACOS
-       /* SPC: are names on MacOS REALLY so much longer than elsewhere ??? */
-       static ZCONST char Far PasswPrompt[] = "[%s]\n %s password: ";
-#    else
-       static ZCONST char Far PasswPrompt[] = "[%s] %s password: ";
-#    endif
+     static ZCONST char Far PasswPrompt[] = "[%s] %s password: ";
      static ZCONST char Far PasswPrompt2[] = "Enter password: ";
      static ZCONST char Far PasswRetry[] = "password incorrect--reenter: ";
 #  endif /* CRYPT */
@@ -197,15 +190,11 @@ int open_input_file(__G)    /* return 1 if open failed */
      *  translation, which would corrupt the bitstreams
      */
 
-#ifdef MACOS
-    G.zipfd = open(G.zipfn, 0);
-#else /* !MACOS */
 #ifdef USE_STRM_INPUT
     G.zipfd = fopen(G.zipfn, FOPR);
 #else /* !USE_STRM_INPUT */
     G.zipfd = open(G.zipfn, O_RDONLY | O_BINARY);
 #endif /* ?USE_STRM_INPUT */
-#endif /* ?MACOS */
 
 #ifdef USE_STRM_INPUT
     if (G.zipfd == NULL)
@@ -224,8 +213,6 @@ int open_input_file(__G)    /* return 1 if open failed */
 
 
 
-
-#if !defined(MACOS)
 
 /***************************/
 /* Function open_outfile() */
@@ -428,8 +415,6 @@ int open_outfile(__G)           /* return 1 if fail */
     return 0;
 
 } /* end function open_outfile() */
-
-#endif /* !MACOS */
 
 
 
@@ -1394,7 +1379,7 @@ int UZ_EXP UzpInput(pG, buf, size, flag)
 
 
 
-#if (!defined(WINDLL) && !defined(MACOS))
+#if (!defined(WINDLL))
 
 /***************************/
 /* Function UzpMorePause() */
@@ -1445,7 +1430,7 @@ void UZ_EXP UzpMorePause(pG, prompt, flag)
 
 } /* end function UzpMorePause() */
 
-#endif /* !WINDLL && !MACOS */
+#endif /* !WINDLL */
 
 
 
@@ -1610,7 +1595,6 @@ time_t dos_to_unix_time(dosdatetime)
     int leap;
     unsigned days;
     struct tm *tm;
-#if !defined(MACOS)
 #ifdef WIN32
     TIME_ZONE_INFORMATION tzinfo;
     DWORD res;
@@ -1625,7 +1609,6 @@ time_t dos_to_unix_time(dosdatetime)
 #endif /* ?(BSD || MTS || __GO32__) */
 #endif /* !BSD4_4 */
 #endif /* ?WIN32 */
-#endif /* !MACOS */
 
 
     /* dissect date */
@@ -1664,7 +1647,6 @@ time_t dos_to_unix_time(dosdatetime)
     Adjust for local standard timezone offset.
   ---------------------------------------------------------------------------*/
 
-#if !defined(MACOS)
 #ifdef WIN32
     /* account for timezone differences */
     res = GetTimeZoneInformation(&tzinfo);
@@ -1720,7 +1702,6 @@ time_t dos_to_unix_time(dosdatetime)
 #ifdef WIN32
     }
 #endif
-#endif /* !MACOS */
 
 #endif /* ?HAVE_MKTIME */
 

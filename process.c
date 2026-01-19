@@ -303,10 +303,8 @@ int process_zipfiles(__G)    /* return PK-type error code */
 /* For systems that do not have tzset() but supply this function using another
    name (_tzset() or something similar), an appropiate "#define tzset ..."
    should be added to the system specifc configuration section.  */
-#if !defined(MACOS)
 #if (!defined(BSD) && !defined(MTS))
     tzset();
-#endif
 #endif
 
 /* Initialize UnZip's built-in pseudo hard-coded "ISO <--> OEM" translation,

@@ -249,7 +249,7 @@ typedef struct Globals {
     zoff_t    ziplen;
     zoff_t    cur_zipfile_bufstart; /* extract_or_test, readbuf, ReadByte */
     zoff_t    extra_bytes;          /* used in unzip.c, misc.c */
-    uch       *extra_field;         /* Unix, Mac, ... */
+    uch       *extra_field;         /* Unix, ... */
     uch       *hold;
 
     local_file_hdr  lrec;          /* used in unzip.c, extract.c */
@@ -307,9 +307,7 @@ typedef struct Globals {
     z_uint4 keys[3];   /* crypt static: keys defining pseudo-random sequence */
 
 #if !defined(DOS_W32)
-#if !defined(MACOS)
     int echofd;        /* ttyio static: file descriptor whose echo is off */
-#endif /* !MACOS */
 #endif /* !DOS_W32 */
 
     unsigned hufts;    /* track memory usage */

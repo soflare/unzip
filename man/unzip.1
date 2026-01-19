@@ -275,19 +275,11 @@ in the Zip archive (and do not require privileges or impose a security risk).
 By specifying \fB\-D\fP, \fIunzip\fP is told to suppress restoration of
 timestamps for directories explicitly created from Zip archive entries.
 This option only applies to ports that support setting timestamps for
-directories (currently BeOS, MacOS, Unix, Win32, for other \fIunzip\fP
+directories (currently BeOS, Unix, Win32, for other \fIunzip\fP
 ports, \fB\-D\fP has no effect).  The duplicated option \fB\-DD\fP forces
 suppression of timestamp restoration for all extracted entries (files and
 directories).  This option results in setting the timestamps for all
 extracted entries to the current time.
-.TP
-.B \-E
-[MacOS only] display contents of MacOS extra field during restore operation.
-.TP
-.B \-i
-[MacOS only] ignore filenames stored in MacOS extra fields. Instead, the
-most compatible filename stored in the generic part of the entry's header
-is used.
 .TP
 .B \-j
 junk paths.  The archive's directory structure is not recreated; all files
@@ -296,10 +288,6 @@ are deposited in the extraction directory (by default, the current one).
 .B \-J
 [BeOS only] junk file attributes.  The file's BeOS file attributes are not
 restored, just the file's data.
-.TP
-.B \-J
-[MacOS only] ignore MacOS extra fields.  All Macintosh specific info
-is skipped. Data-fork and resource-fork are restored as separate files.
 .TP
 .B \-K
 [BeOS, Unix only] retain SUID/SGID/Tacky file attributes.  Without
