@@ -122,10 +122,6 @@ freely, subject to the above disclaimer and the following restrictions:
 #  endif
 #endif /* CONVEX || MINIX || _AIX || __QNX__ */
 
-#if (defined(__OS2__) && !defined(OS2))
-#  define OS2
-#endif
-
 #if ((defined(__WIN32__) || defined(_WIN32)) && !defined(WIN32))
 #  define WIN32
 #endif
@@ -147,12 +143,12 @@ freely, subject to the above disclaimer and the following restrictions:
 #  ifndef __TURBOC__
 #    define __TURBOC__
 #  endif
-#  if (!defined(__MSDOS__) && !defined(OS2) && !defined(WIN32))
+#  if (!defined(__MSDOS__) && !defined(WIN32))
 #    define __MSDOS__
 #  endif
 #endif
 
-/* define MSDOS for Turbo C (unless OS/2) and Power C as well as Microsoft C */
+/* define MSDOS for Turbo C and Power C as well as Microsoft C */
 #ifdef __POWERC
 #  define __TURBOC__
 #  define MSDOS
@@ -182,12 +178,12 @@ freely, subject to the above disclaimer and the following restrictions:
 #  define MACOS
 #endif
 
-/* use prototypes and ANSI libraries if __STDC__, or MS-DOS, or OS/2, or Win32,
+/* use prototypes and ANSI libraries if __STDC__, or MS-DOS, or Win32,
  * or IBM C Set/2, or Borland C, or Watcom C, or GNU gcc (emx or Cygwin),
  * or Macintosh, or Sequent, or IBM RS/6000, or Silicon Graphics,
  * or Convex?, or BeOS.
  */
-#if (defined(__STDC__) || defined(MSDOS) || defined(OS2) || defined(WIN32))
+#if (defined(__STDC__) || defined(MSDOS) || defined(WIN32))
 #  ifndef PROTO
 #    define PROTO
 #  endif
@@ -316,34 +312,6 @@ freely, subject to the above disclaimer and the following restrictions:
     Grab system-dependent definition of EXPENTRY for prototypes below.
   ---------------------------------------------------------------------------*/
 
-#if 0
-#if (defined(OS2) && !defined(FUNZIP))
-#  ifdef UNZIP_INTERNAL
-#    define INCL_NOPM
-#    define INCL_DOSNLS
-#    define INCL_DOSPROCESS
-#    define INCL_DOSDEVICES
-#    define INCL_DOSDEVIOCTL
-#    define INCL_DOSERRORS
-#    define INCL_DOSMISC
-#    ifdef OS2DLL
-#      define INCL_REXXSAA
-#      include <rexxsaa.h>
-#    endif
-#  endif /* UNZIP_INTERNAL */
-#  include <os2.h>
-#  define UZ_EXP EXPENTRY
-#endif /* OS2 && !FUNZIP */
-#endif /* 0 */
-
-#if (defined(OS2) && !defined(FUNZIP))
-#  if (defined(__IBMC__) || defined(__WATCOMC__))
-#    define UZ_EXP  _System    /* compiler keyword */
-#  else
-#    define UZ_EXP
-#  endif
-#endif /* OS2 && !FUNZIP */
-
 #if (defined(WINDLL) || defined(USE_UNZIP_LIB))
 #  ifndef EXPENTRY
 #    define UZ_EXP WINAPI
@@ -437,7 +405,7 @@ typedef struct _UzpOpts {
     char *pwdarg;       /* pointer to command-line password (-P option) */
     int zipinfo_mode;   /* behave like ZipInfo or like normal UnZip? */
     int aflag;          /* -a: do ASCII-EBCDIC and/or end-of-line translation */
-#if defined(UNIX) || defined(OS2) || defined(WIN32)
+#if defined(UNIX) || defined(WIN32)
     int B_flag;         /* -B: back up existing files by renaming to *~##### */
 #else
 #ifdef UNIXBACKUP
@@ -469,10 +437,10 @@ typedef struct _UzpOpts {
 #endif /* !FUNZIP */
     int qflag;          /* -q: produce a lot less output */
 #ifndef FUNZIP
-#if (defined(MSDOS) || defined(OS2) || defined(WIN32))
+#if (defined(MSDOS) || defined(WIN32))
     int sflag;          /* -s: convert spaces in filenames to underscores */
 #endif
-#if (defined(MSDOS) || defined(OS2) || defined(WIN32))
+#if (defined(MSDOS) || defined(WIN32))
     int volflag;        /* -$: extract volume labels */
 #endif
     int tflag;          /* -t: test (unzip) or totals line (zipinfo) */
@@ -487,7 +455,7 @@ typedef struct _UzpOpts {
 #if (defined(__BEOS__) || defined(UNIX))
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #else
-#if (defined(OS2) || defined(WIN32))
+#if defined(WIN32)
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */
 #endif
 #endif
@@ -515,7 +483,6 @@ typedef struct _UzpVer {
     ZCONST char *zlib_version;/* e.g. "1.2.3" or NULL */
     _version_type unzip;      /* current UnZip version */
     _version_type zipinfo;    /* current ZipInfo version */
-    _version_type os2dll;     /* OS2DLL version (retained for compatibility */
     _version_type windll;     /* WinDLL version (retained for compatibility */
     _version_type dllapimin;  /* last incompatible change of library API */
 } UzpVer;
@@ -529,7 +496,6 @@ typedef struct _UzpVer2 {
     char zlib_version[10];    /* e.g. "1.2.3" or NULL */
     _version_type unzip;      /* current UnZip version */
     _version_type zipinfo;    /* current ZipInfo version */
-    _version_type os2dll;     /* OS2DLL version (retained for compatibility */
     _version_type windll;     /* WinDLL version (retained for compatibility */
     _version_type dllapimin;  /* last incompatible change of library API */
 } UzpVer2;
@@ -622,10 +588,6 @@ int      UZ_EXP UzpUnzipToMemory   OF((char *zip, char *file, UzpOpts *optflgs,
 int      UZ_EXP UzpGrep            OF((char *archive, char *file,
                                        char *pattern, int cmd, int SkipBin,
                                        UzpCB *UsrFunc));
-#endif
-#ifdef OS2
-int      UZ_EXP UzpFileTree        OF((char *name, cbList(callBack),
-                                       char *cpInclude[], char *cpExclude[]));
 #endif
 
 unsigned UZ_EXP UzpVersion2        OF((UzpVer2 *version));

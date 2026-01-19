@@ -35,11 +35,6 @@
   ---------------------------------------------------------------------------*/
 
 
-#ifdef OS2
-#  define  INCL_DOSMEMMGR
-#  include <os2.h>
-#endif
-
 #define UNZIP_INTERNAL
 #include "unzip.h"
 #ifdef WINDLL
@@ -95,14 +90,8 @@ ZCONST UzpVer * UZ_EXP UzpVersion()     /* returns pointer to const struct */
         {UZ_MAJORVER, UZ_MINORVER, UZ_PATCHLEVEL, 0},
         /* zipinfo version */
         {ZI_MAJORVER, ZI_MINORVER, UZ_PATCHLEVEL, 0},
-        /* os2dll version (retained for backward compatibility) */
-        {UZ_MAJORVER, UZ_MINORVER, UZ_PATCHLEVEL, 0},
         /* windll version (retained for backward compatibility)*/
         {UZ_MAJORVER, UZ_MINORVER, UZ_PATCHLEVEL, 0},
-#ifdef OS2DLL
-        /* os2dll API minimum compatible version*/
-        {UZ_OS2API_COMP_MAJOR, UZ_OS2API_COMP_MINOR, UZ_OS2API_COMP_REVIS, 0}
-#else /* !OS2DLL */
 #ifdef WINDLL
         /* windll API minimum compatible version*/
         {UZ_WINAPI_COMP_MAJOR, UZ_WINAPI_COMP_MINOR, UZ_WINAPI_COMP_REVIS, 0}
@@ -110,7 +99,6 @@ ZCONST UzpVer * UZ_EXP UzpVersion()     /* returns pointer to const struct */
         /* generic DLL API minimum compatible version*/
         {UZ_GENAPI_COMP_MAJOR, UZ_GENAPI_COMP_MINOR, UZ_GENAPI_COMP_REVIS, 0}
 #endif /* ?WINDLL */
-#endif /* ?OS2DLL */
     };
 
     return &version;
@@ -151,21 +139,10 @@ unsigned UZ_EXP UzpVersion2(UzpVer2 *version)
     version->zipinfo.minor = ZI_MINORVER;
     version->zipinfo.patchlevel = UZ_PATCHLEVEL;
 
-    /* these are retained for backward compatibility only: */
-    version->os2dll.major = UZ_MAJORVER;
-    version->os2dll.minor = UZ_MINORVER;
-    version->os2dll.patchlevel = UZ_PATCHLEVEL;
-
     version->windll.major = UZ_MAJORVER;
     version->windll.minor = UZ_MINORVER;
     version->windll.patchlevel = UZ_PATCHLEVEL;
 
-#ifdef OS2DLL
-    /* os2dll API minimum compatible version*/
-    version->dllapimin.major = UZ_OS2API_COMP_MAJOR;
-    version->dllapimin.minor = UZ_OS2API_COMP_MINOR;
-    version->dllapimin.patchlevel = UZ_OS2API_COMP_REVIS;
-#else /* !OS2DLL */
 #ifdef WINDLL
     /* windll API minimum compatible version*/
     version->dllapimin.major = UZ_WINAPI_COMP_MAJOR;
@@ -177,7 +154,6 @@ unsigned UZ_EXP UzpVersion2(UzpVer2 *version)
     version->dllapimin.minor = UZ_GENAPI_COMP_MINOR;
     version->dllapimin.patchlevel = UZ_GENAPI_COMP_REVIS;
 #endif /* ?WINDLL */
-#endif /* ?OS2DLL */
     return 0;
 }
 
@@ -325,45 +301,6 @@ int UZ_EXP UzpUnzipToMemory(char *zip, char *file, UzpOpts *optflgs,
 #endif /* !WINDLL */
 #endif /* !__16BIT__ */
 
-
-
-
-
-#ifdef OS2DLL
-
-int UZ_EXP UzpFileTree(char *name, cbList(callBack), char *cpInclude[],
-                char *cpExclude[])
-{
-    int r;
-
-    CONSTRUCTGLOBALS();
-    uO.qflag = 2;
-    uO.vflag = 1;
-    uO.C_flag = 1;
-    G.wildzipfn = name;
-    G.process_all_files = TRUE;
-    if (cpInclude) {
-        char **ptr = cpInclude;
-
-        while (*ptr != NULL) ptr++;
-        G.filespecs = ptr - cpInclude;
-        G.pfnames = cpInclude, G.process_all_files = FALSE;
-    }
-    if (cpExclude) {
-        char **ptr = cpExclude;
-
-        while (*ptr != NULL) ptr++;
-        G.xfilespecs = ptr - cpExclude;
-        G.pxnames = cpExclude, G.process_all_files = FALSE;
-    }
-
-    G.processExternally = callBack;
-    r = process_zipfiles(__G)==0;
-    DESTROYGLOBALS();
-    return r;
-}
-
-#endif /* OS2DLL */
 #endif /* !SFX */
 
 
@@ -459,14 +396,8 @@ int redirect_outfile(__G)
     if ((ulg)((extent)G.redirect_size) != G.redirect_size)
         return FALSE;
 #endif
-#ifdef OS2
-    DosAllocMem((void **)&G.redirect_buffer, G.redirect_size+1,
-      PAG_READ|PAG_WRITE|PAG_COMMIT);
-    G.redirect_pointer = G.redirect_buffer;
-#else
     G.redirect_pointer =
       G.redirect_buffer = malloc((extent)(G.redirect_size+1));
-#endif
     if (!G.redirect_buffer)
         return FALSE;
     G.redirect_pointer[G.redirect_size] = '\0';

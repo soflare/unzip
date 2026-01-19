@@ -691,7 +691,7 @@ static int do_seekable(__G__ lastchance)        /* return PK-type error code */
     G.ziplen = G.statbuf.st_size;
 
 #ifndef SFX
-#if defined(UNIX) || defined(DOS_OS2_W32)
+#if defined(UNIX) || defined(DOS_W32)
     if (G.statbuf.st_mode & S_IEXEC)   /* no extension on Unix exes:  might */
         maybe_exe = TRUE;               /*  find unzip, not unzip.zip; etc. */
 #endif

@@ -110,8 +110,6 @@ OBJX = unzipsfx$O crc32_$O $(CRCA_O) crypt_$O extract_$O fileio_$O \
 	globals_$O inflate_$O match_$O process_$O ttyio_$O ubz2err_$O $M_$O
 LOBJX = $(OBJX)
 OBJF = funzip$O crc32$O $(CRCA_O) cryptf$O globalsf$O inflatef$O ttyiof$O
-#OBJS_OS2 = $(OBJS1:.o=.obj) $(OBJS2:.o=.obj) os2.obj
-#OBJF_OS2 = $(OBJF:.o=.obj)
 UNZIP_H = unzip.h unzpriv.h globals.h $(OSDEP_H) $(ACONF_DEP)
 
 # installation
@@ -395,9 +393,6 @@ msdos_$O:	msdos/msdos.c $(UNZIP_H)			# DOS unzipsfx
 	-$(CP) msdos/msdos.c msdos_.c > nul
 	$(CC) -c $(CF) -DSFX msdos_.c
 	$(RM) msdos_.c
-
-#os2$O:		os2/os2.c $(UNZIP_H)				# OS/2 only
-#	$(CC) -c $(CF) os2/os2.c
 
 unix$O:		unix/unix.c $(UNZIP_H) unzvers.h		# Unix only
 	$(CC) -c $(CF) unix/unix.c

@@ -109,7 +109,7 @@ the remaining options are taken to be \fIzipinfo\fP(1L) options.  See the
 appropriate manual page for a description of these options.
 .TP
 .B \-A
-[OS/2, Unix DLL] print extended help for the DLL's programming interface (API).
+[Unix DLL] print extended help for the DLL's programming interface (API).
 .TP
 .B \-c
 extract files to stdout/screen (``CRT'').  This option is similar to the
@@ -275,7 +275,7 @@ in the Zip archive (and do not require privileges or impose a security risk).
 By specifying \fB\-D\fP, \fIunzip\fP is told to suppress restoration of
 timestamps for directories explicitly created from Zip archive entries.
 This option only applies to ports that support setting timestamps for
-directories (currently BeOS, MacOS, OS/2, Unix, Win32, for other \fIunzip\fP
+directories (currently BeOS, MacOS, Unix, Win32, for other \fIunzip\fP
 ports, \fB\-D\fP has no effect).  The duplicated option \fB\-DD\fP forces
 suppression of timestamp restoration for all extracted entries (files and
 directories).  This option results in setting the timestamps for all
@@ -363,7 +363,7 @@ and possibly a summary when finished with each archive.  The \fB\-q\fP[\fBq\fP]
 options suppress the printing of some or all of these messages.
 .TP
 .B \-s
-[OS/2, NT, MS-DOS] convert spaces in filenames to underscores.  Since all PC
+[NT, MS-DOS] convert spaces in filenames to underscores.  Since all PC
 operating systems allow spaces in filenames, \fIunzip\fP by default extracts
 filenames with spaces intact (e.g., ``\fCEA\ DATA.\ SF\fR'').  This can be
 awkward, however, since MS-DOS in particular does not gracefully support
@@ -418,23 +418,17 @@ For systems allowing `/' as regular filename character, the -W option
 would not work as expected on a wildcard zipfile specification.)
 .TP
 .B \-X
-[Unix, OS/2, NT] restore user and group info (UID/GID) under Unix, or access
-control lists (ACLs) under certain network-enabled versions of OS/2
-(Warp Server with IBM LAN Server/Requester 3.0 to 5.0; Warp Connect with
-IBM Peer 1.0), or security ACLs under Windows NT.  In most cases this will
-require special system privileges, and doubling the option (\fB\-XX\fP)
-under NT instructs \fIunzip\fP to use privileges for extraction; but under
-Unix, for example, a user who belongs to several groups can restore files
-owned by any of those groups, as long as the user IDs match his or her own.
-Note that ordinary file attributes are always restored--this option applies
-only to optional, extra ownership info available on some operating systems.
-[NT's access control lists do not appear to be especially compatible with
-OS/2's, so no attempt is made at cross-platform portability of access
-privileges.  It is not clear under what conditions this would ever be
-useful anyway.]
+[Unix, NT] restore user and group info (UID/GID) under Unix, or security ACLs
+under Windows NT.  In most cases this will require special system privileges,
+and doubling the option (\fB\-XX\fP) under NT instructs \fIunzip\fP to use
+privileges for extraction; but under Unix, for example, a user who belongs to
+several groups can restore files owned by any of those groups, as long as the
+user IDs match his or her own.  Note that ordinary file attributes are always
+restored--this option applies only to optional, extra ownership info
+available on some operating systems.
 .TP
 .B \-$
-[MS-DOS, OS/2, NT] restore the volume label if the extraction medium is
+[MS-DOS, NT] restore the volume label if the extraction medium is
 removable (e.g., a diskette).  Doubling the option (\fB\-$$\fP) allows fixed
 media (hard disks) to be labelled as well.  By default, volume labels are
 ignored.
@@ -492,7 +486,7 @@ UNZIP=\-qq; export UNZIP
   Unix C shell:
 setenv UNZIP \-qq
 .TP
-  OS/2 or MS-DOS:
+  MS-DOS:
 set UNZIP=\-qq
 .PP
 Environment options are, in effect, considered to be just like any other
@@ -835,14 +829,6 @@ in the zipfile, nor are hard-linked files relinked.  Basically the only file
 types restored by \fIunzip\fP are regular files, directories and symbolic
 (soft) links.
 .PP
-[OS/2] Extended attributes for existing directories are only updated if the
-\fB\-o\fP (``overwrite all'') option is given.  This is a limitation of the
-operating system; because directories only have a creation time associated
-with them, \fIunzip\fP has no way to determine whether the stored attributes
-are newer or older than those on disk.  In practice this may mean a two-pass
-approach is required:  first unpack the archive normally (with or without
-freshening/updating existing files), then overwrite just the directory entries
-(e.g., ``\fCunzip -o foo */\fR'').
 .PD
 .\" =========================================================================
 .SH "SEE ALSO"

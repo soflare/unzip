@@ -253,7 +253,6 @@ typedef struct _UzpVer {
     LPCSTR zlib_version;      /* e.g. "1.2.3" or NULL */
     _version_type unzip;      /* current UnZip version */
     _version_type zipinfo;    /* current ZipInfo version */
-    _version_type os2dll;     /* OS2DLL version (retained for compatibility) */
     _version_type windll;     /* WinDLL version (retained for compatibility) */
     _version_type dllapimin;  /* last incompatible change of library API */
 } UzpVer;
@@ -287,7 +286,6 @@ typedef struct _UzpVer2 {
     char zlib_version[10];    /* e.g. "1.2.3" or NULL */
     _version_type unzip;      /* current UnZip version */
     _version_type zipinfo;    /* current ZipInfo version */
-    _version_type os2dll;     /* OS2DLL version (retained for compatibility) */
     _version_type windll;     /* WinDLL version (retained for compatibility) */
     _version_type dllapimin;  /* last incompatible change of library API */
 } UzpVer2;

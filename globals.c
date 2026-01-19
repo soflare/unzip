@@ -188,11 +188,11 @@ Uz_Globs *globalsCtor()
     G.decr_passwd = UzpPassword;
 #endif /* !FUNZIP */
 
-#if !defined(DOS_OS2_W32)
+#if !defined(DOS_W32)
 #if !defined(MACOS)
     G.echofd = -1;
 #endif /* !MACOS */
-#endif /* !DOS_OS2_W32 */
+#endif /* !DOS_W32 */
 
 #ifdef SYSTEM_SPECIFIC_CTOR
     SYSTEM_SPECIFIC_CTOR(__G);

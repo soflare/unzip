@@ -32,7 +32,7 @@
              UzpPassword()            (non-WINDLL)
              handler()
              dos_to_unix_time()
-             check_for_newer()        (non-OS/2)
+             check_for_newer()
              do_string()
              makeword()
              makelong()
@@ -123,7 +123,7 @@ static ZCONST char Far CannotOpenZipfile[] =
   "error:  cannot open zipfile [ %s ]\n        %s\n";
 
 #if !defined(MACOS)
-#if (defined(BEO_UNX) || defined(DOS_OS2_W32))
+#if (defined(BEO_UNX) || defined(DOS_W32))
    static ZCONST char Far CannotDeleteOldFile[] =
      "error:  cannot delete old %s\n        %s\n";
 #ifdef UNIXBACKUP
@@ -131,7 +131,7 @@ static ZCONST char Far CannotOpenZipfile[] =
      "error:  cannot rename old %s\n        %s\n";
    static ZCONST char Far BackupSuffix[] = "~";
 #endif
-#endif /* BEO_UNX || DOS_OS2_W32 */
+#endif /* BEO_UNX || DOS_W32 */
 #ifdef NOVELL_BUG_FAILSAFE
    static ZCONST char Far NovellBug[] =
      "error:  %s: stat() says does not exist, but fopen() found anyway\n";
@@ -238,7 +238,7 @@ int open_outfile(__G)           /* return 1 if fail */
     if (G.redirect_data)
         return (redirect_outfile(__G) == FALSE);
 #endif
-#if (defined(DOS_OS2_W32) || defined(BEO_UNX))
+#if (defined(DOS_W32) || defined(BEO_UNX))
 #ifdef BORLAND_STAT_BUG
     /* Borland 5.0's stat() barfs if the filename has no extension and the
      * file doesn't exist. */
@@ -328,7 +328,7 @@ int open_outfile(__G)           /* return 1 if fail */
         } else
 #endif /* UNIXBACKUP */
         {
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
             if (!(G.statbuf.st_mode & S_IWRITE)) {
                 Trace((stderr,
                   "open_outfile:  existing file %s is read-only\n",
@@ -337,7 +337,7 @@ int open_outfile(__G)           /* return 1 if fail */
                 Trace((stderr, "open_outfile:  %s now writable\n",
                   FnFilter1(G.filename)));
             }
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
             if (unlink(G.filename) != 0) {
                 Info(slide, 0x401, ((char *)slide,
                   LoadFarString(CannotDeleteOldFile),
@@ -348,7 +348,7 @@ int open_outfile(__G)           /* return 1 if fail */
               FnFilter1(G.filename)));
         }
     }
-#endif /* DOS_OS2_W32 || BEO_UNX */
+#endif /* DOS_W32 || BEO_UNX */
 #ifdef MTS
     if (uO.aflag)
         G.outfile = zfopen(G.filename, FOPWT);
@@ -410,18 +410,18 @@ int open_outfile(__G)           /* return 1 if fail */
 #endif /* !MTS */
 
 #ifdef USE_FWRITE
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
     /* 16-bit MSC: buffer size must be strictly LESS than 32K (WSIZE):  bogus */
     setbuf(G.outfile, (char *)NULL);   /* make output unbuffered */
-#else /* !DOS_OS2_W32 */
+#else /* !DOS_W32 */
 #ifdef _IOFBF  /* make output fully buffered (works just about like write()) */
     setvbuf(G.outfile, (char *)slide, _IOFBF, WSIZE);
 #else
     setbuf(G.outfile, (char *)slide);
 #endif
-#endif /* ?DOS_OS2_W32 */
+#endif /* ?DOS_W32 */
 #endif /* USE_FWRITE */
-#ifdef OS2_W32
+#ifdef W32
     /* preallocate the final file size to prevent file fragmentation */
     SetFileSize(G.outfile, G.lrec.ucsize);
 #endif
@@ -715,9 +715,9 @@ int flush(__G__ rawbuf, size, unshrink)
 {
     int ret;
 
-    /* On 16-bit systems (MSDOS, OS/2 1.x), the standard C library functions
-     * cannot handle writes of 64k blocks at once.  For these systems, the
-     * blocks to flush are split into pieces of 32k or less.
+    /* On 16-bit systems (MSDOS), the standard C library functions cannot
+     * handle writes of 64k blocks at once.  For these systems, the blocks
+     * to flush are split into pieces of 32k or less.
      */
     while (size > 0x8000L) {
         ret = partflush(__G__ rawbuf, 0x8000L, unshrink);
@@ -949,7 +949,7 @@ static int partflush(__G__ rawbuf, size, unshrink)
                 } else if (*p == LF)      /* lone LF */
                     PutNativeEOL
                 else
-#ifndef DOS_OS2_W32
+#ifndef DOS_W32
                 if (*p != CTRLZ)          /* lose all ^Z's */
 #endif
                     *q++ = native(*p);
@@ -1198,10 +1198,6 @@ int UZ_EXP UzpMessagePrnt(pG, buf, size, flag)
     of this one.
   ---------------------------------------------------------------------------*/
 
-#if (defined(OS2) && defined(DLL))
-    if (MSG_NO_DLL2(flag))  /* if OS/2 DLL bit is set, do NOT print this msg */
-        return 0;
-#endif
 #ifdef WINDLL
     if (MSG_NO_WDLL(flag))
         return 0;
@@ -1259,46 +1255,35 @@ int UZ_EXP UzpMessagePrnt(pG, buf, size, flag)
 
     if (MSG_LNEWLN(flag) && !((Uz_Globs *)pG)->sol) {
         /* not at start of line:  want newline */
-#ifdef OS2DLL
-        if (!((Uz_Globs *)pG)->redirect_text) {
-#endif
-            putc('\n', outfp);
-            fflush(outfp);
+        putc('\n', outfp);
+        fflush(outfp);
 #ifdef MORE
-            if (((Uz_Globs *)pG)->M_flag)
-            {
+        if (((Uz_Globs *)pG)->M_flag)
+        {
 #if (defined(SCREENWIDTH) && defined(SCREENLWRAP))
-                ((Uz_Globs *)pG)->chars = 0;
+            ((Uz_Globs *)pG)->chars = 0;
 #endif
-                ++((Uz_Globs *)pG)->numlines;
-                ++((Uz_Globs *)pG)->lines;
-                if (((Uz_Globs *)pG)->lines >= ((Uz_Globs *)pG)->height)
-                    (*((Uz_Globs *)pG)->mpause)((zvoid *)pG,
-                      LoadFarString(MorePrompt), 1);
-            }
+            ++((Uz_Globs *)pG)->numlines;
+            ++((Uz_Globs *)pG)->lines;
+            if (((Uz_Globs *)pG)->lines >= ((Uz_Globs *)pG)->height)
+                (*((Uz_Globs *)pG)->mpause)((zvoid *)pG,
+                  LoadFarString(MorePrompt), 1);
+        }
 #endif /* MORE */
-            if (MSG_STDERR(flag) && ((Uz_Globs *)pG)->UzO.tflag &&
-                !isatty(1) && isatty(2))
-            {
-                /* error output from testing redirected:  also send to stderr */
-                putc('\n', stderr);
-                fflush(stderr);
-            }
-#ifdef OS2DLL
-        } else
-           REDIRECTC('\n');
-#endif
+        if (MSG_STDERR(flag) && ((Uz_Globs *)pG)->UzO.tflag &&
+            !isatty(1) && isatty(2))
+        {
+            /* error output from testing redirected:  also send to stderr */
+            putc('\n', stderr);
+            fflush(stderr);
+        }
         ((Uz_Globs *)pG)->sol = TRUE;
     }
 
     /* put zipfile name, filename and/or error/warning keywords here */
 
 #ifdef MORE
-    if (((Uz_Globs *)pG)->M_flag
-#ifdef OS2DLL
-         && !((Uz_Globs *)pG)->redirect_text
-#endif
-                                                 )
+    if (((Uz_Globs *)pG)->M_flag)
     {
         while (p < endbuf) {
             if (*p == '\n') {
@@ -1344,26 +1329,17 @@ int UZ_EXP UzpMessagePrnt(pG, buf, size, flag)
 #endif /* MORE */
 
     if (size) {
-#ifdef OS2DLL
-        if (!((Uz_Globs *)pG)->redirect_text) {
-#endif
-            if ((error = WriteTxtErr(q, size, outfp)) != 0)
+        if ((error = WriteTxtErr(q, size, outfp)) != 0)
+            return error;
+        fflush(outfp);
+        if (MSG_STDERR(flag) && ((Uz_Globs *)pG)->UzO.tflag &&
+            !isatty(1) && isatty(2))
+        {
+            /* error output from testing redirected:  also send to stderr */
+            if ((error = WriteTxtErr(q, size, stderr)) != 0)
                 return error;
-            fflush(outfp);
-            if (MSG_STDERR(flag) && ((Uz_Globs *)pG)->UzO.tflag &&
-                !isatty(1) && isatty(2))
-            {
-                /* error output from testing redirected:  also send to stderr */
-                if ((error = WriteTxtErr(q, size, stderr)) != 0)
-                    return error;
-                fflush(stderr);
-            }
-#ifdef OS2DLL
-        } else {                /* GRR:  this is ugly:  hide with macro */
-            if ((error = REDIRECTPRINT(q, size)) != 0)
-                return error;
+            fflush(stderr);
         }
-#endif /* OS2DLL */
         ((Uz_Globs *)pG)->sol = (endbuf[-1] == '\n');
     }
     return 0;
@@ -1589,8 +1565,6 @@ void handler(signal)   /* upon interrupt, turn on echo and exit cleanly */
 
 
 
-#if (!defined(OS2) || defined(TIMESTAMP))
-
 #if (!defined(HAVE_MKTIME) || defined(WIN32))
 /* also used in win32/win32.c */
 ZCONST ush ydays[] =
@@ -1760,11 +1734,7 @@ time_t dos_to_unix_time(dosdatetime)
 
 } /* end function dos_to_unix_time() */
 
-#endif /* !OS2 || TIMESTAMP */
 
-
-
-#if !defined(OS2)
 
 /******************************/
 /* Function check_for_newer() */  /* used for overwriting/freshening/updating */
@@ -1858,8 +1828,6 @@ int check_for_newer(__G__ filename)  /* return 1 if existing file is newer */
     return (existing >= archive);
 
 } /* end function check_for_newer() */
-
-#endif /* !OS2 */
 
 
 

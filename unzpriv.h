@@ -86,7 +86,7 @@
  * that add the B_flag to the UzpOpts structure, see unzip.h.)
  */
 #if (!defined(NO_UNIXBACKUP) && !defined(UNIXBACKUP))
-#  if defined(UNIX) || defined(OS2) || defined(WIN32)
+#  if defined(UNIX) || defined(WIN32)
 #    define UNIXBACKUP
 #  endif
 #endif
@@ -219,16 +219,9 @@
 
 #ifdef DLL
 #  define MAIN   UZ_EXP UzpMain   /* was UzpUnzip */
-#  ifdef OS2DLL
-#    undef Info
-#    define REDIRECTC(c)             varputchar(__G__ c)
-#    define REDIRECTPRINT(buf,size)  varmessage(__G__ buf, size)
-#    define FINISH_REDIRECT()        finish_REXX_redirect(__G)
-#  else
-#    define REDIRECTC(c)
-#    define REDIRECTPRINT(buf,size)  0
-#    define FINISH_REDIRECT()        close_redirect(__G)
-#  endif
+#  define REDIRECTC(c)
+#  define REDIRECTPRINT(buf,size)  0
+#  define FINISH_REDIRECT()        close_redirect(__G)
 #endif
 
 /*---------------------------------------------------------------------------
@@ -248,15 +241,12 @@
 #endif /* MACOS */
 
 /*---------------------------------------------------------------------------
-    MS-DOS, OS/2 section:
+    MS-DOS section:
   ---------------------------------------------------------------------------*/
 
 #ifdef WINDLL
 #  ifdef MORE
 #    undef MORE
-#  endif
-#  ifdef OS2_EAS
-#    undef OS2_EAS
 #  endif
 #endif
 
@@ -266,18 +256,13 @@
 #  endif
 #endif
 
-#if (defined(MSDOS) || defined(OS2))
+#if defined(MSDOS)
 #  include <sys/types.h>      /* off_t, time_t, dev_t, ... */
 #  include <sys/stat.h>
 #  include <io.h>             /* lseek(), open(), setftime(), dup(), creat() */
 #  include <time.h>           /* localtime() */
 #  include <fcntl.h>          /* O_BINARY for open() w/o CR/LF translation */
-
-#  ifdef OS2                  /* defined for all OS/2 compilers */
-#    include "os2/os2cfg.h"
-#  else
-#    include "msdos/doscfg.h"
-#  endif
+#  include "msdos/doscfg.h"
 
 #  if (defined(_MSC_VER) && (_MSC_VER == 700) && !defined(GRR))
     /*
@@ -309,7 +294,7 @@
 #  if (!defined(NO_EF_UT_TIME) && !defined(USE_EF_UT_TIME))
 #    define USE_EF_UT_TIME
 #  endif
-#endif /* MSDOS || OS2 */
+#endif /* MSDOS */
 
 /*---------------------------------------------------------------------------
     MTS section (piggybacks UNIX, I think):
@@ -452,17 +437,16 @@
 #endif
 #define VMS_UNZIP_VERSION 42   /* if OS-needed-to-extract is VMS:  can do */
 
-#if (defined(MSDOS) || defined(OS2))
-#  define DOS_OS2
+#if defined(MSDOS)
+#  define DOS
 #endif
 
-#if (defined(OS2) || defined(WIN32))
-#  define OS2_W32
+#if defined(WIN32)
+#  define W32
 #endif
 
-#if (defined(DOS_OS2) || defined(WIN32))
-#  define DOS_OS2_W32
-#  define DOS_W32_OS2          /* historical:  don't use */
+#if (defined(DOS) || defined(WIN32))
+#  define DOS_W32
 #endif
 
 #if (defined(__BEOS__) || defined(UNIX))
@@ -508,7 +492,7 @@
 #endif
 
 
-#if defined(DOS_OS2_W32) || defined(BEO_UNX)
+#if defined(DOS_W32) || defined(BEO_UNX)
 #  ifndef HAVE_UNLINK
 #    define HAVE_UNLINK
 #  endif
@@ -520,7 +504,7 @@
 #  if (defined(SYSV) || defined(CONVEX) || defined(NeXT) || defined(BSD4_4))
 #    define INT_SPRINTF      /* sprintf() returns int:  SysVish/Posix */
 #  endif
-#  if defined(DOS_OS2_W32)
+#  if defined(DOS_W32)
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI */
 #  endif
 #  if (defined(ultrix) || defined(__ultrix)) /* Ultrix 4.3 and newer */
@@ -567,7 +551,7 @@
 #define MSG_NO_WDLL(f) (f & 0x1000)   /* bit 12:  1 = skip if Windows DLL */
 
 #if (defined(MORE) && !defined(SCREENLINES))
-#  ifdef DOS_OS2_W32
+#  ifdef DOS_W32
 #    define SCREENLINES 25  /* can be (should be) a function instead */
 #  else
 #    define SCREENLINES 24  /* VT-100s are assumed to be minimal hardware */
@@ -606,7 +590,7 @@
 #else
 #  define nearmalloc  malloc
 #  define nearfree    free
-#  if (!defined(__IBMC__) || !defined(OS2))
+#  if !defined(__IBMC__)
 #    ifndef near
 #      define near
 #    endif
@@ -676,7 +660,7 @@
  * and normal text.  Hence difference is sufficient for most "average" files.
  * (Argument scales for larger OUTBUFSIZ.)
  */
-#ifdef SMALL_MEM          /* i.e., 16-bit OSes:  MS-DOS, OS/2 1.x, etc. */
+#ifdef SMALL_MEM          /* i.e., 16-bit OSes:  MS-DOS, etc. */
 #  define LoadFarString(x)       fLoadFarString(__G__ (x))
 #  define LoadFarStringSmall(x)  fLoadFarStringSmall(__G__ (x))
 #  define LoadFarStringSmall2(x) fLoadFarStringSmall2(__G__ (x))
@@ -831,7 +815,7 @@
  * define some or all of the following:  NAME_MAX, PATH_MAX, _POSIX_NAME_MAX,
  * _POSIX_PATH_MAX.
  */
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
 #  include <limits.h>
 #endif
 
@@ -1473,7 +1457,7 @@
 
 #define LF     10        /* '\n' on ASCII machines; must be 10 due to EBCDIC */
 #define CR     13        /* '\r' on ASCII machines; must be 13 due to EBCDIC */
-#define CTRLZ  26        /* DOS & OS/2 EOF marker (used in fileio.c) */
+#define CTRLZ  26        /* DOS EOF marker (used in fileio.c) */
 
 #ifdef EBCDIC
 #  define foreign(c)    ascii[(uch)(c)]
@@ -1837,10 +1821,6 @@ typedef struct _APIDocStruct {
 /*  Globals  */
 /*************/
 
-#if (defined(OS2) && !defined(FUNZIP))
-#  include "os2/os2data.h"
-#endif
-
 #include "globals.h"
 
 
@@ -1933,7 +1913,7 @@ int      seek_zipf            OF((__GPRO__ zoff_t abs_offset));
 /* static int  disk_error     OF((__GPRO)); */
 void     handler              OF((int signal));
 time_t   dos_to_unix_time     OF((ulg dos_datetime));
-int      check_for_newer      OF((__GPRO__ char *filename)); /* os2 */
+int      check_for_newer      OF((__GPRO__ char *filename));
 int      do_string            OF((__GPRO__ unsigned int length, int option));
 ush      makeword             OF((ZCONST uch *b));
 ulg      makelong             OF((ZCONST uch *sig));
@@ -1991,7 +1971,6 @@ int    extract_or_test_files     OF((__GPRO));
 /* static int   store_info          OF((void)); */
 /* static int   extract_or_test_member   OF((__GPRO)); */
 /* static int   TestExtraField   OF((__GPRO__ uch *ef, unsigned ef_len)); */
-/* static int   test_OS2         OF((__GPRO__ uch *eb, unsigned eb_size)); */
 /* static int   test_NT          OF((__GPRO__ uch *eb, unsigned eb_size)); */
 #ifndef SFX
   unsigned find_compr_idx        OF((unsigned compr_methodnum));
@@ -2055,11 +2034,6 @@ int    huft_build                OF((__GPRO__ ZCONST unsigned *b, unsigned n,
    int      close_redirect        OF((__GPRO));                     /* api.c */
    /* this obsolescent entry point kept for compatibility: */
    int      UzpUnzip              OF((int argc, char **argv));/* use UzpMain */
-#ifdef OS2DLL
-   int      varmessage            OF((__GPRO__ ZCONST uch *buf, ulg size));
-   int      varputchar            OF((__GPRO__ int c));         /* rexxapi.c */
-   int      finish_REXX_redirect  OF((__GPRO));                 /* rexxapi.c */
-#endif
 #ifdef API_DOC
    void     APIhelp               OF((__GPRO__ int argc, char **argv));
 #endif                                                          /* apihelp.c */
@@ -2083,30 +2057,6 @@ int    huft_build                OF((__GPRO__ ZCONST unsigned *b, unsigned n,
    unsigned _dos_close(int);                                      /* msdos.c */
 #endif /* !__DJGPP__ || (__DJGPP__ < 2) */
 #endif /* __GO32__ || __EMX__ */
-#endif
-
-/*---------------------------------------------------------------------------
-    OS/2-only functions:
-  ---------------------------------------------------------------------------*/
-
-#ifdef OS2   /* GetFileTime conflicts with something in Win32 header files */
-#if (defined(REENTRANT) && defined(USETHREADID))
-   ulg   GetThreadId          OF((void));
-#endif
-   int   GetCountryInfo       OF((void));                           /* os2.c */
-   long  GetFileTime          OF((ZCONST char *name));              /* os2.c */
-/* static void  SetPathAttrTimes OF((__GPRO__ int flags, int dir));    os2.c */
-/* static int   SetEAs        OF((__GPRO__ const char *path,
-                                  void *eablock));                     os2.c */
-/* static int   SetACL        OF((__GPRO__ const char *path,
-                                  void *eablock));                     os2.c */
-/* static int   IsFileNameValid OF((const char *name));                os2.c */
-/* static void  map2fat       OF((char *pathcomp, char **pEndFAT));    os2.c */
-/* static int   SetLongNameEA OF((char *name, char *longname));        os2.c */
-/* static void  InitNLS       OF((void));                              os2.c */
-   int   IsUpperNLS           OF((int nChr));                       /* os2.c */
-   int   ToLowerNLS           OF((int nChr));                       /* os2.c */
-   void  DebugMalloc          OF((void));                           /* os2.c */
 #endif
 
 /*---------------------------------------------------------------------------
@@ -2158,7 +2108,7 @@ char    *GetLoadPath     OF((__GPRO));                              /* local */
 #if (defined(MORE) && defined(BEO_UNX))
    int screensize        OF((int *tt_rows, int *tt_cols));          /* local */
 #endif /* MORE && BEO_UNX */
-#ifdef OS2_W32
+#ifdef W32
    int   SetFileSize     OF((FILE *file, zusz_t filesize));         /* local */
 #endif
 #ifndef MTS /* macro in MTS */

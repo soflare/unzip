@@ -42,14 +42,6 @@ int main(int argc, char *argv[])
       ZI_MAJORVER, ZI_MINORVER, UZ_PATCHLEVEL, pVersion->zipinfo.major,
       pVersion->zipinfo.minor, pVersion->zipinfo.patchlevel);
 
-/*
-    D2_M*VER and os2dll.* are obsolete, though retained for compatibility:
-
-    printf("   OS2 DLL versions:  expecting %u.%u%u, using %u.%u%u\n",
-      D2_MAJORVER, D2_MINORVER, D2_PATCHLEVEL, pVersion->os2dll.major,
-      pVersion->os2dll.minor, pVersion->os2dll.patchlevel);
- */
-
     if (pVersion->flag & 2)
         printf("   using zlib version %s\n", pVersion->zlib_version);
 
@@ -86,11 +78,6 @@ int main(int argc, char *argv[])
 #endif
          + sizeof(_version_type) ))
     {
-#ifdef OS2DLL
-#       define UZ_API_COMP_MAJOR        UZ_OS2API_COMP_MAJOR
-#       define UZ_API_COMP_MINOR        UZ_OS2API_COMP_MINOR
-#       define UZ_API_COMP_REVIS        UZ_OS2API_COMP_REVIS
-#else /* !OS2DLL */
 #ifdef WINDLL
 #       define UZ_API_COMP_MAJOR        UZ_WINAPI_COMP_MAJOR
 #       define UZ_API_COMP_MINOR        UZ_WINAPI_COMP_MINOR
@@ -100,7 +87,6 @@ int main(int argc, char *argv[])
 #       define UZ_API_COMP_MINOR        UZ_GENAPI_COMP_MINOR
 #       define UZ_API_COMP_REVIS        UZ_GENAPI_COMP_REVIS
 #endif /* ?WINDLL */
-#endif /* ?OS2DLL */
         printf(
           "   UnZip API version: can handle <= %u.%u%u, DLL supplies %u.%u%u\n",
           UZ_API_COMP_MAJOR, UZ_API_COMP_MINOR, UZ_API_COMP_REVIS,

@@ -34,9 +34,9 @@
 #  define ZCONST const
 #endif
 
-#if (defined(MSDOS) || defined(OS2) || defined(WIN32))
-#  ifndef DOS_OS2_W32
-#    define DOS_OS2_W32
+#if (defined(MSDOS) || defined(WIN32))
+#  ifndef DOS_W32
+#    define DOS_W32
 #  endif
 #endif
 
@@ -60,7 +60,7 @@
 #  define HAVE_WORKING_GETCH
 #endif
 
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
 #  define echoff(f)
 #  define echon()
 #  ifdef WIN32
@@ -82,7 +82,7 @@
 #    endif /* ?__EMX__ */
 #  endif /* ?WIN32 */
 #  define HAVE_WORKING_GETCH
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
 
 /* For all other systems, ttyio.c supplies the two functions Echoff() and
  * Echon() for suppressing and (re)enabling console input echo.

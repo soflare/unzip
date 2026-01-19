@@ -51,7 +51,7 @@
 
   ---------------------------------------------------------------------------
 
-  Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, OS/2, MS-DOS,
+  Version:  unzip5??.{tar.Z | tar.gz | zip} for Unix, MS-DOS,
               Windows 3.x/95/NT/CE, Macintosh and BeOS.
 
   Copyrights:  see accompanying file "LICENSE" in UnZip source distribution.
@@ -153,17 +153,17 @@ static ZCONST char Far IgnoreOOptionMsg[] =
 /* usage() strings */
 #ifndef SFX
    static ZCONST char Far Example3[] = "ReadMe";
-#if (defined(OS2) || (defined(DOS_OS2_W32) && defined(MORE)))
+#if (defined(DOS_W32) && defined(MORE))
    static ZCONST char Far Example2[] =
      "";                /* no room:  too many local3[] items */
-#else /* !OS2 */
+#else /* !DOS_W32 */
 #ifdef MACOS
    static ZCONST char Far Example2[] = ""; /* not needed */
 #else /* !MACOS */
    static ZCONST char Far Example2[] = " \
  unzip -p foo | more  => send contents of foo.zip via pipe into program more\n";
 #endif /* ?MACOS */
-#endif /* ?OS2 */
+#endif /* ?DOS_W32 */
 
 /* local1[]:  command options */
 #if defined(TIMESTAMP)
@@ -174,19 +174,9 @@ static ZCONST char Far IgnoreOOptionMsg[] =
 #endif /* ?TIMESTAMP */
 
 /* local2[] and local3[]:  modifier options */
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
    static ZCONST char Far local2[] =
      " -$  label removables (-$$ => fixed disks)";
-#ifdef OS2
-#ifdef MORE
-   static ZCONST char Far local3[] = "\
-  -X  restore ACLs if supported              -s  spaces in filenames => '_'\n\
-                                             -M  pipe through \"more\" pager\n";
-#else
-   static ZCONST char Far local3[] = " \
- -X  restore ACLs if supported              -s  spaces in filenames => '_'\n\n";
-#endif /* ?MORE */
-#else /* !OS2 */
 #ifdef WIN32
 #ifdef NTSD_EAS
 #ifdef MORE
@@ -216,8 +206,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
                                              -s  spaces in filenames => '_'\n";
 #endif
 #endif /* ?WIN32 */
-#endif /* ?OS2 || ?WIN32 */
-#else /* !DOS_OS2_W32 */
+#else /* !DOS_W32 */
 #ifdef BEO_UNX
    static ZCONST char Far local2[] = " -X  restore UID/GID info";
 #ifdef MORE
@@ -243,7 +232,7 @@ M  pipe through \"more\" pager              -s  spaces in filenames => '_'\n\n";
 #endif
 #endif /* ?MACOS */
 #endif /* ?BEO_UNX */
-#endif /* ?DOS_OS2_W32 */
+#endif /* ?DOS_W32 */
 #endif /* !SFX */
 
 #ifndef NO_ZIPINFO
@@ -336,9 +325,6 @@ static ZCONST char Far ZipInfoUsageLine3[] = "miscellaneous options:\n\
 #  endif
 #  if defined(WIN32) && defined(NO_W32TIMES_IZFIX)
      static ZCONST char Far W32NoIZTimeFix[] = "NO_W32TIMES_IZFIX";
-#  endif
-#  ifdef OS2_EAS
-     static ZCONST char Far OS2ExtAttrib[] = "OS2_EAS";
 #  endif
 #  ifdef QLZIP
      static ZCONST char Far SMSExFldOnUnix[] = "QLZIP";
@@ -580,7 +566,7 @@ int unzip(__G__ argc, argv)
 #ifndef NO_ZIPINFO
     char *p;
 #endif
-#if (defined(DOS_OS2_W32) || !defined(SFX))
+#if (defined(DOS_W32) || !defined(SFX))
     int i;
 #endif
     int retcode, error=FALSE;
@@ -797,7 +783,7 @@ int unzip(__G__ argc, argv)
 
 #ifdef SFX
     G.argv0 = argv[0];
-#if (defined(OS2) || defined(WIN32))
+#if defined(WIN32)
     G.zipfn = GetLoadPath(__G);/* non-MSC NT puts path into G.filename[] */
 #else
     G.zipfn = G.argv0;
@@ -883,7 +869,7 @@ int unzip(__G__ argc, argv)
     maining options and file specifications.
   ---------------------------------------------------------------------------*/
 
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
     /* convert MSDOS-style 'backward slash' directory separators to Unix-style
      * 'forward slashes' for user's convenience (include zipfile name itself)
      */
@@ -902,7 +888,7 @@ int unzip(__G__ argc, argv)
         }
         ++G.pfnames;
     }
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
 
 #ifndef SFX
     G.wildzipfn = *argv++;
@@ -1377,14 +1363,14 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.qflag;
                     break;
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
                 case ('s'):    /* spaces in filenames:  allow by default */
                     if (negative)
                         uO.sflag = FALSE, negative = 0;
                     else
                         uO.sflag = TRUE;
                     break;
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
                 case ('t'):
                     if (negative)
                         uO.tflag = FALSE, negative = 0;
@@ -1483,7 +1469,7 @@ int uz_opts(__G__ pargc, pargv)
                     error = TRUE;
                     break;
 #endif /* !SFX */
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
                 case ('$'):
                     if (negative) {
                         uO.volflag = MAX(uO.volflag-negative,0);
@@ -1491,7 +1477,7 @@ int uz_opts(__G__ pargc, pargv)
                     } else
                         ++uO.volflag;
                     break;
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
                 case (':'):    /* allow "parent dir" path components */
                     if (negative) {
                         uO.ddotflag = MAX(uO.ddotflag-negative,0);
@@ -1612,7 +1598,7 @@ opts_done:  /* yes, very ugly...but only used by UnZipSFX with -x xlist */
 #  ifdef UNIX
 #    define LOCAL "X"
 #  endif
-#  ifdef DOS_OS2_W32
+#  ifdef DOS_W32
 #    define LOCAL "s$"
 #  endif
    /* Default for all other systems: */
@@ -1778,7 +1764,7 @@ static void help_extended(__G)
   "unzip options:",
   "  -Z   Switch to zipinfo mode.  Must be first option.",
   "  -hh  Display extended help.",
-  "  -A   [OS/2, Unix DLL] Print extended help for DLL.",
+  "  -A   [Unix DLL] Print extended help for DLL.",
   "  -c   Extract files to stdout/screen.  As -p but include names.  Also,",
   "         -a allowed and EBCDIC conversions done if needed.",
   "  -f   Freshen by extracting only if older file on disk.",
@@ -1820,7 +1806,7 @@ static void help_extended(__G)
   "  -P p Use password p to decrypt files.  THIS IS INSECURE!  Some OS show",
   "         command line to other users.",
   "  -q   Perform operations quietly.  The more q (as in -qq) the quieter.",
-  "  -s   [OS/2, NT, MS-DOS] Convert spaces in filenames to underscores.",
+  "  -s   [NT, MS-DOS] Convert spaces in filenames to underscores.",
   "  -U   [UNICODE enabled] Show non-local characters as #Uxxxx or #Lxxxxxx ASCII",
   "         text escapes where x is hex digit.  [Old] -U used to leave names",
   "         uppercase if created on MS-DOS, VMS, etc.  See -L.",
@@ -1830,13 +1816,12 @@ static void help_extended(__G)
   "  -W   [Only if WILD_STOP_AT_DIR] Modify pattern matching so ? and * do not",
   "         match directory separator /, but ** does.  Allows matching at specific",
   "         directory levels.",
-  "  -X   [Unix, OS/2, NT] Restore UICs and ACL entries under VMS, or UIDs/GIDs",
-  "         under Unix, or ACLs under certain network-enabled versions of OS/2,",
-  "         or security ACLs under Windows NT.  Can require user privileges.",
+  "  -X   [Unix, NT] Restore UICs and ACL entries under VMS, or UIDs/GIDs under",
+  "         Unix, or security ACLs under Windows NT.  Can require user privileges.",
   "  -XX  [NT] Extract NT security ACLs after trying to enable additional",
   "         system privileges.",
-  "  -$   [MS-DOS, OS/2, NT] Restore volume label if extraction medium is",
-  "         removable.  -$$ allows fixed media (hard drives) to be labeled.",
+  "  -$   [MS-DOS, NT] Restore volume label if extraction medium is removable.",
+  "         -$$ allows fixed media (hard drives) to be labeled.",
   "  -:   Allow extract archive members into locations outside of current",
   "         extraction root folder.  This allows paths such as ../foo to be",
   "         extracted above the current extraction directory, which can be a",
@@ -2042,11 +2027,6 @@ static void show_version_info(__G)
 #if defined(WIN32) && defined(NO_W32TIMES_IZFIX)
         Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
           LoadFarStringSmall(W32NoIZTimeFix)));
-        ++numopts;
-#endif
-#ifdef OS2_EAS
-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
-          LoadFarStringSmall(OS2ExtAttrib)));
         ++numopts;
 #endif
 #ifdef QLZIP

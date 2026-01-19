@@ -1359,7 +1359,7 @@ startover:
                     }
 #endif /* SET_DIR_ATTRIB */
                 } else if (errcode == MPN_VOL_LABEL) {
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
                     Info(slide, 0x401, ((char *)slide,
                       LoadFarString(SkipVolumeLabel),
                       FnFilter1(G.filename),
@@ -1606,21 +1606,17 @@ static int extract_or_test_member(__G)    /* return PK-type error code */
         if (uO.cflag)
 #endif
         {
-#if (defined(OS2) && defined(__IBMC__) && (__IBMC__ >= 200))
-            G.outfile = freopen("", "wb", stdout);   /* VAC++ ignores setmode */
-#else
             G.outfile = stdout;
-#endif
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
 #if defined(__HIGHC__)
             setmode(G.outfile, _BINARY);
 #else /* !defined(__HIGHC__) */
             setmode(fileno(G.outfile), O_BINARY);
 #endif /* ?defined(__HIGHC__) */
 #           define NEWLINE "\r\n"
-#else /* !DOS_OS2_W32 */
+#else /* !DOS_W32 */
 #           define NEWLINE "\n"
-#endif /* ?DOS_OS2_W32 */
+#endif /* ?DOS_W32 */
         } else if (open_outfile(__G))
             return PK_DISK;
     }

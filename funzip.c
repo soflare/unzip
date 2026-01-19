@@ -37,8 +37,8 @@
    1.5     1 Sep 92  K. U. Rommel    changed read/write modes for OS/2.
    1.6     6 Sep 92  G. Roelofs      modified to use dummy crypt.c and
                                      crypt.h instead of -DCRYPT.
-   1.7    23 Sep 92  G. Roelofs      changed to use DOS_OS2; included
-                                     crypt.c under MS-DOS.
+   1.7    23 Sep 92  G. Roelofs      changed to use DOS; included crypt.c
+                                     under MS-DOS.
    1.8     9 Oct 92  M. Adler        improved inflation error msgs.
    1.9    17 Oct 92  G. Roelofs      changed ULONG/UWORD/byte to ulg/ush/uch;
                                      renamed inflate_entry() to inflate();
@@ -66,7 +66,7 @@
                      H. Gessau       second updcrc() arg and flush() arg to ulg;
                                      added inflate_free(); added "g =" to null
                                      getc(in) to avoid compiler warnings
-   3.5    31 Oct 93  H. Gessau       changed DOS_OS2 to DOS_NT_OS2
+   3.5    31 Oct 93  H. Gessau       changed DOS to DOS_NT
    3.6     6 Dec 93  H. Gessau       added "near" to mask_bits[]
    3.7     9 Dec 93  G. Roelofs      added extent typecasts to fwrite() checks
    3.8    28 Jan 94  GRR/JlG         initialized g variable in main() for gcc
@@ -343,25 +343,25 @@ char **argv;
   }
   else
   {
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
 #if defined(__HIGHC__)
     setmode(stdin, _BINARY);
 #else
     setmode(0, O_BINARY);  /* some buggy C libraries require BOTH setmode() */
 #endif                     /*  call AND the fdopen() in binary mode :-( */
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
 
     if ((G.in = fdopen(0, FOPR)) == (FILE *)NULL)
       err(2, "cannot find stdin");
   }
 
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
 #if defined(__HIGHC__)
   setmode(stdout, _BINARY);
 #else
   setmode(1, O_BINARY);
 #endif
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
 
   if ((out = fdopen(1, FOPW)) == (FILE *)NULL)
     err(2, "cannot write to stdout");

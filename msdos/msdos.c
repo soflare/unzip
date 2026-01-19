@@ -2004,9 +2004,9 @@ void version(__G)
 
 
 
-#ifdef MY_ZCALLOC       /* Special zcalloc function for MEMORY16 (MSDOS/OS2) */
+#ifdef MY_ZCALLOC       /* Special zcalloc function for MEMORY16 (MSDOS) */
 
-#if defined(__TURBOC__) && !defined(OS2)
+#if defined(__TURBOC__)
 #include <alloc.h>
 /* Turbo C malloc() does not allow dynamic allocation of 64K bytes
  * and farmalloc(64K) returns a pointer with an offset of 8, so we

@@ -209,9 +209,6 @@ typedef struct Globals {
 # ifndef NO_SLIDE_REDIR
      uch *redirect_sldptr;         /* head of decompression slide buffer */
 # endif
-# ifdef OS2DLL
-     cbList(processExternally);    /* call-back list */
-# endif
 #endif /* DLL */
 
     char **pfnames;
@@ -252,7 +249,7 @@ typedef struct Globals {
     zoff_t    ziplen;
     zoff_t    cur_zipfile_bufstart; /* extract_or_test, readbuf, ReadByte */
     zoff_t    extra_bytes;          /* used in unzip.c, misc.c */
-    uch       *extra_field;         /* Unix, Mac, OS/2, ... */
+    uch       *extra_field;         /* Unix, Mac, ... */
     uch       *hold;
 
     local_file_hdr  lrec;          /* used in unzip.c, extract.c */
@@ -309,11 +306,11 @@ typedef struct Globals {
 #endif /* !FUNZIP */
     z_uint4 keys[3];   /* crypt static: keys defining pseudo-random sequence */
 
-#if !defined(DOS_OS2_W32)
+#if !defined(DOS_W32)
 #if !defined(MACOS)
     int echofd;        /* ttyio static: file descriptor whose echo is off */
 #endif /* !MACOS */
-#endif /* !DOS_OS2_W32 */
+#endif /* !DOS_W32 */
 
     unsigned hufts;    /* track memory usage */
 

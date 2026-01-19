@@ -79,9 +79,9 @@
 #  define __GPRO__
 #endif
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32)
-#  ifndef DOS_OS2_W32
-#    define DOS_OS2_W32
+#if defined(MSDOS) || defined(WIN32)
+#  ifndef DOS_W32
+#    define DOS_W32
 #  endif
 #endif
 

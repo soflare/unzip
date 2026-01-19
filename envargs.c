@@ -130,9 +130,9 @@ int envargs(Pargc, Pargv, envstr, envstr2)
                 *(bufptr++) = '\0';
         }
 #else
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
         /* we do not support backslash-quoting of quotes in quoted
-         * strings under DOS_OS2_W32, because backslashes are
+         * strings under DOS_W32, because backslashes are
          * directory separators and double quotes are illegal in filenames */
         if (*bufptr == '"') {
             *(argv++) = ++bufptr;
@@ -153,7 +153,7 @@ int envargs(Pargc, Pargv, envstr, envstr2)
             INCSTR(bufptr);
         if (ch != '\0')
             *(bufptr++) = '\0';
-#endif /* ?DOS_OS2_W32 */
+#endif /* ?DOS_W32 */
 #endif /* ?UNIX */
         while ((ch = *bufptr) != '\0' && ISspace(ch))
             INCSTR(bufptr);
@@ -195,7 +195,7 @@ static int count_args(s)
                 ++s;        /* trailing quote */
         } else
 #else
-#ifdef DOS_OS2_W32
+#ifdef DOS_W32
         if (*s == '\"') {
             ++s;                /* leading quote */
             while ((ch = *s) != '\0' && ch != '\"')
@@ -203,7 +203,7 @@ static int count_args(s)
             if (*s)
                 ++s;        /* trailing quote */
         } else
-#endif /* DOS_OS2_W32 */
+#endif /* DOS_W32 */
 #endif /* ?UNIX */
         while ((ch = *s) != '\0' && !ISspace(ch))  /* note else-clauses above */
             INCSTR(s);
@@ -251,7 +251,7 @@ void dump_args(argc, argv)
 
 
 
-#ifdef MSDOS   /* DOS_OS2?  DOS_OS2_W32? */
+#ifdef MSDOS   /* DOS?  DOS_W32? */
 
 /*
  * void mksargs(int *argcp, char ***argvp)

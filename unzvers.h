@@ -40,13 +40,6 @@
 #  define IZ_COMPANY_NAME "Info-ZIP"
 #endif
 
-/* these are obsolete but remain for backward compatibility: */
-#if (defined(OS2) || defined(__OS2__))
-#  define D2_MAJORVER    UZ_MAJORVER    /* DLL for OS/2 */
-#  define D2_MINORVER    UZ_MINORVER
-#  define D2_PATCHLEVEL  UZ_PATCHLEVEL
-#endif
-
 #define DW_MAJORVER    UZ_MAJORVER    /* DLL for MS Windows */
 #define DW_MINORVER    UZ_MINORVER
 #define DW_PATCHLEVEL  UZ_PATCHLEVEL
@@ -77,10 +70,6 @@
 #define UZ_GENAPI_COMP_MAJOR  6
 #define UZ_GENAPI_COMP_MINOR  0
 #define UZ_GENAPI_COMP_REVIS  0
-/* os2dll API minimum compatible version*/
-#define UZ_OS2API_COMP_MAJOR  6
-#define UZ_OS2API_COMP_MINOR  0
-#define UZ_OS2API_COMP_REVIS  0
 /* windll API minimum compatible version*/
 #define UZ_WINAPI_COMP_MAJOR  6
 #define UZ_WINAPI_COMP_MINOR  0

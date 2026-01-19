@@ -56,7 +56,6 @@ at the end contain their own Contents listings:
   beos/         support files for compiling under BeOS
   macos/        support files for compiling under Macintosh OS
   msdos/        support files for compiling under MS-DOS
-  os2/          support files for compiling under OS/2 (includes DLL stuff)
   unix/         support files for compiling under Unix
   win32/        support files for compiling under Windows 9x and Windows NT
   wince/        support files for compiling under Windows CE (GUI version)
