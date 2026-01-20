@@ -98,7 +98,6 @@
 #else
 #  include <utime.h>
 #endif
-#define GOT_UTIMBUF
 
 #ifdef _MBCS
 #  if (!defined(__EMX__) && !defined(__DJGPP__) && !defined(__CYGWIN__))

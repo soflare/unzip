@@ -97,30 +97,21 @@ freely, subject to the above disclaimer and the following restrictions:
 #  endif
 #endif
 
-#if ((defined(__convex__) || defined(__convexc__)) && !defined(CONVEX))
-#  define CONVEX
-#endif
-
 #if (defined(unix) || defined(_unix) || defined(__unix) || defined(__unix__))
 #  ifndef UNIX
 #    define UNIX
 #  endif
 #endif /* unix || _unix || __unix || __unix__ */
-#if (defined(M_XENIX) || defined(COHERENT) || defined(__hpux))
+#if (defined(__NetBSD__) || defined(__FreeBSD__) || defined(__APPLE__))
 #  ifndef UNIX
 #    define UNIX
 #  endif
-#endif /* M_XENIX || COHERENT || __hpux */
-#if (defined(__NetBSD__) || defined(__FreeBSD__))
+#endif /* __NetBSD__ || __FreeBSD__ || __APPLE__ */
+#if (defined(MINIX) || defined(_AIX) || defined(__QNX__))
 #  ifndef UNIX
 #    define UNIX
 #  endif
-#endif /* __NetBSD__ || __FreeBSD__ */
-#if (defined(CONVEX) || defined(MINIX) || defined(_AIX) || defined(__QNX__))
-#  ifndef UNIX
-#    define UNIX
-#  endif
-#endif /* CONVEX || MINIX || _AIX || __QNX__ */
+#endif /* MINIX || _AIX || __QNX__ */
 
 #if ((defined(__WIN32__) || defined(_WIN32)) && !defined(WIN32))
 #  define WIN32
@@ -189,17 +180,10 @@ freely, subject to the above disclaimer and the following restrictions:
 #    define MODERN
 #  endif
 #endif
-/* Sequent running Dynix/ptx:  non-modern compiler */
-#if (defined(_AIX) || defined(sgi) || (defined(_SEQUENT_) && !defined(PTX)))
+#if defined(_AIX)
 #  ifndef PROTO
 #    define PROTO
 #  endif
-#  ifndef MODERN
-#    define MODERN
-#  endif
-#endif
-/* Bundled C compiler on HP-UX needs this.  Others shouldn't care. */
-#if (defined(__hpux))
 #  ifndef MODERN
 #    define MODERN
 #  endif

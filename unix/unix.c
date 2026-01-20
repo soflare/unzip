@@ -30,46 +30,7 @@
 #define UNZIP_INTERNAL
 #include "unzip.h"
 
-#ifdef SCO_XENIX
-#  define SYSNDIR
-#else  /* SCO Unix, AIX, DNIX, TI SysV, Coherent 4.x, ... */
-#  if defined(__convexc__) || defined(SYSV) || defined(CRAY) || defined(BSD4_4)
-#    define DIRENT
-#  endif
-#endif
-#if defined(_AIX) || defined(__mpexl)
-#  define DIRENT
-#endif
-#ifdef COHERENT
-#  if defined(_I386) || (defined(__COHERENT__) && (__COHERENT__ >= 0x420))
-#    define DIRENT
-#  endif
-#endif
-
-#ifdef _POSIX_VERSION
-#  ifndef DIRENT
-#    define DIRENT
-#  endif
-#endif
-
-#ifdef DIRENT
-#  include <dirent.h>
-#else
-#  ifdef SYSV
-#    ifdef SYSNDIR
-#      include <sys/ndir.h>
-#    else
-#      include <ndir.h>
-#    endif
-#  else /* !SYSV */
-#    ifndef NO_SYSDIR
-#      include <sys/dir.h>
-#    endif
-#  endif /* ?SYSV */
-#  ifndef dirent
-#    define dirent direct
-#  endif
-#endif /* ?DIRENT */
+#include <dirent.h>
 
 #ifdef SET_DIR_ATTRIB
 typedef struct uxdirattr {      /* struct for holding unix style directory */
@@ -77,7 +38,7 @@ typedef struct uxdirattr {      /* struct for holding unix style directory */
     char *fn;                   /* filename of directory */
     union {
         iztimes t3;             /* mtime, atime, ctime */
-        ztimbuf t2;             /* modtime, actime */
+        struct utimbuf t2;      /* modtime, actime */
     } u;
     unsigned perms;             /* same as min_info.file_attr */
     int have_uidgid;            /* flag */
@@ -1007,12 +968,7 @@ static int get_extattribs(__G__ pzt, z_uidgid)
     }
 
     /* if -X option was specified and we have UID/GID info, restore it */
-    have_uidgid_flg =
-#ifdef RESTORE_UIDGID
-            (uO.X_flag && (eb_izux_flg & EB_UX2_VALID));
-#else
-            0;
-#endif
+    have_uidgid_flg = (uO.X_flag && (eb_izux_flg & EB_UX2_VALID));
     return have_uidgid_flg;
 }
 #endif /* SET_DIR_ATTRIB */
@@ -1028,7 +984,7 @@ void close_outfile(__G)    /* GRR: change to return PK-style warning level */
 {
     union {
         iztimes t3;             /* mtime, atime, ctime */
-        ztimbuf t2;             /* modtime, actime */
+        struct utimbuf t2;      /* modtime, actime */
     } zt;
     ulg z_uidgid[2];
     int have_uidgid_flg;
@@ -1320,7 +1276,7 @@ int stamp_file(fname, modtime)
     ZCONST char *fname;
     time_t modtime;
 {
-    ztimbuf tp;
+    struct utimbuf tp;
 
     tp.modtime = tp.actime = modtime;
     return (utime(fname, &tp));
@@ -1350,25 +1306,12 @@ void version(__G)
 #else
 #if (defined(__HP_cc) || defined(__IBMC__))
     char cc_versbuf[25];
-#else
-#if (defined(__DECC_VER))
-    char cc_versbuf[17];
-    int cc_verstyp;
-#else
-#if (defined(CRAY) && defined(_RELEASE))
-    char cc_versbuf[40];
-#endif /* (CRAY && _RELEASE) */
-#endif /* __DECC_VER */
 #endif /* __HP_cc || __IBMC__ */
 #endif /* __SUNPRO_C */
 #endif /* (__GNUC__ && NX_CURRENT_COMPILER_RELEASE) */
 
-#if ((defined(CRAY) || defined(cray)) && defined(_UNICOS))
-    char os_namebuf[40];
-#else
 #if defined(__NetBSD__)
     char os_namebuf[40];
-#endif
 #endif
 
     /* Pyramid, NeXT have problems with huge macro expansion, too:  no Info() */
@@ -1388,27 +1331,6 @@ void version(__G)
 #if defined(__SUNPRO_C)
       "Sun C ", (sprintf(cc_versbuf, "version %x", __SUNPRO_C), cc_versbuf),
 #else
-#if (defined(__HP_cc))
-      "HP C ",
-      (((__HP_cc% 100) == 0) ?
-      (sprintf(cc_versbuf, "version A.%02d.%02d",
-      (__HP_cc/ 10000), ((__HP_cc% 10000)/ 100))) :
-      (sprintf(cc_versbuf, "version A.%02d.%02d.%02d",
-      (__HP_cc/ 10000), ((__HP_cc% 10000)/ 100), (__HP_cc% 100))),
-      cc_versbuf),
-#else
-#if (defined(__DECC_VER))
-      "DEC C ",
-      (sprintf(cc_versbuf, "%c%d.%d-%03d",
-               ((cc_verstyp = (__DECC_VER / 10000) % 10) == 6 ? 'T' :
-                (cc_verstyp == 8 ? 'S' : 'V')),
-               __DECC_VER / 10000000,
-               (__DECC_VER % 10000000) / 100000, __DECC_VER % 1000),
-               cc_versbuf),
-#else
-#if defined(CRAY) && defined(_RELEASE)
-      "cc ", (sprintf(cc_versbuf, "version %d", _RELEASE), cc_versbuf),
-#else
 #ifdef __IBMC__
       "IBM C ",
       (sprintf(cc_versbuf, "version %d.%d.%d",
@@ -1427,9 +1349,6 @@ void version(__G)
       IZ_CC_NAME, "",
 #endif /* ?__VERSION__ */
 #endif /* ?__IBMC__ */
-#endif /* ?(CRAY && _RELEASE) */
-#endif /* ?__DECC_VER */
-#endif /* ?__HP_cc */
 #endif /* ?__SUNPRO_C */
 #endif /* ?__GNUC__ */
 
@@ -1438,99 +1357,23 @@ void version(__G)
 #endif
       IZ_OS_NAME,
 
-#if defined(sgi) || defined(__sgi)
-      " (Silicon Graphics IRIX)",
-#else
 #ifdef sun
-#  ifdef sparc
-#    ifdef __SVR4
-      " (Sun SPARC/Solaris)",
-#    else /* may or may not be SunOS */
-      " (Sun SPARC)",
-#    endif
-#  else
-#  if defined(sun386) || defined(i386)
-      " (Sun 386i)",
-#  else
-#  if defined(mc68020) || defined(__mc68020__)
-      " (Sun 3)",
-#  else /* mc68010 or mc68000:  Sun 2 or earlier */
-      " (Sun 2)",
-#  endif
-#  endif
-#  endif
-#else
-#ifdef __hpux
-      " (HP-UX)",
-#else
-#ifdef __osf__
-      " (DEC OSF/1)",
+      " (Sun Solaris)",
 #else
 #ifdef _AIX
       " (IBM AIX)",
 #else
-#ifdef aiws
-      " (IBM RT/AIX)",
-#else
-#if defined(CRAY) || defined(cray)
-#  ifdef _UNICOS
-      (sprintf(os_namebuf, " (Cray UNICOS release %d)", _UNICOS), os_namebuf),
-#  else
-      " (Cray UNICOS)",
-#  endif
-#else
-#if defined(uts) || defined(UTS)
-      " (Amdahl UTS)",
-#else
-#ifdef NeXT
-#  ifdef mc68000
-      " (NeXTStep/black)",
-#  else
-      " (NeXTStep for Intel)",
-#  endif
-#else              /* the next dozen or so are somewhat order-dependent */
 #ifdef LINUX
-#  ifdef __ELF__
-      " (Linux ELF)",
-#  else
-      " (Linux a.out)",
-#  endif
+      " (Linux)",
 #else
 #ifdef MINIX
       " (Minix)",
 #else
-#ifdef M_UNIX
-      " (SCO Unix)",
-#else
-#ifdef M_XENIX
-      " (SCO Xenix)",
-#else
 #ifdef __NetBSD__
-#  ifdef NetBSD0_8
-      (sprintf(os_namebuf, " (NetBSD 0.8%c)", (char)(NetBSD0_8 - 1 + 'A')),
-       os_namebuf),
-#  else
-#  ifdef NetBSD0_9
-      (sprintf(os_namebuf, " (NetBSD 0.9%c)", (char)(NetBSD0_9 - 1 + 'A')),
-       os_namebuf),
-#  else
-#  ifdef NetBSD1_0
-      (sprintf(os_namebuf, " (NetBSD 1.0%c)", (char)(NetBSD1_0 - 1 + 'A')),
-       os_namebuf),
-#  else
-      (BSD4_4 == 0.5)? " (NetBSD before 0.9)" : " (NetBSD 1.1 or later)",
-#  endif
-#  endif
-#  endif
+      " (NetBSD)",
 #else
 #ifdef __FreeBSD__
-      (BSD4_4 == 0.5)? " (FreeBSD 1.x)" : " (FreeBSD 2.0 or later)",
-#else
-#ifdef __bsdi__
-      (BSD4_4 == 0.5)? " (BSD/386 1.0)" : " (BSD/386 1.1 or later)",
-#else
-#ifdef __386BSD__
-      (BSD4_4 == 1)? " (386BSD, post-4.4 release)" : " (386BSD)",
+      " (FreeBSD)",
 #else
 #ifdef __CYGWIN__
       " (Cygwin)",
@@ -1547,81 +1390,30 @@ void version(__G)
 #if defined(i386) || defined(__i386) || defined(__i386__)
       " (Intel 386)",
 #else
-#ifdef pyr
-      " (Pyramid)",
-#else
-#ifdef ultrix
-#  ifdef mips
-      " (DEC/MIPS)",
-#  else
-#  ifdef vax
-      " (DEC/VAX)",
-#  else /* __alpha? */
-      " (DEC/Alpha)",
-#  endif
-#  endif
-#else
-#ifdef gould
-      " (Gould)",
-#else
-#ifdef __convexc__
-      " (Convex)",
-#else
-#ifdef __QNX__
-      " (QNX 4)",
-#else
 #ifdef __QNXNTO__
-      " (QNX Neutrino)",
+      " (QNX)",
 #else
 #ifdef Lynx
       " (LynxOS)",
 #else
 #ifdef __APPLE__
-#  ifdef __i386__
-      " Mac OS X Intel i32",
-#  else
-#  ifdef __ppc__
-      " Mac OS X PowerPC",
-#  else
-#  ifdef __ppc64__
-      " Mac OS X PowerPC64",
-#  else
       " Mac OS X",
-#  endif /* __ppc64__ */
-#  endif /* __ppc__ */
-#  endif /* __i386__ */
 #else
       "",
 #endif /* Apple */
 #endif /* Lynx */
 #endif /* QNX Neutrino */
-#endif /* QNX 4 */
-#endif /* Convex */
-#endif /* Gould */
-#endif /* DEC */
-#endif /* Pyramid */
 #endif /* 386 */
 #endif /* 486 */
 #endif /* 586 */
 #endif /* 686 */
 #endif /* Cygwin */
-#endif /* 386BSD */
-#endif /* BSDI BSD/386 */
-#endif /* NetBSD */
 #endif /* FreeBSD */
-#endif /* SCO Xenix */
-#endif /* SCO Unix */
+#endif /* NetBSD */
 #endif /* Minix */
 #endif /* Linux */
-#endif /* NeXT */
-#endif /* Amdahl */
-#endif /* Cray */
-#endif /* RT/AIX */
 #endif /* AIX */
-#endif /* OSF/1 */
-#endif /* HP-UX */
 #endif /* Sun */
-#endif /* SGI */
 
 #ifdef __DATE__
       " on ", __DATE__

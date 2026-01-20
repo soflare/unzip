@@ -26,10 +26,6 @@
 # (That never works--makes that are too stupid to define MAKE are also too
 # stupid to look in the environment--but try it anyway for kicks. :-) )
 #
-# Memcpy and memset are provided for those systems that don't have them; they
-# are in fileio.c and will be used if -DZMEM is included in CF.  These days
-# almost all systems have them.
-#
 # Be sure to test your new UnZip (and UnZipSFX and fUnZip); successful compila-
 # tion does not always imply a working program.
 
@@ -140,15 +136,15 @@ DOCS = funzip.txt unzip.txt unzipsfx.txt zipgrep.txt zipinfo.txt
 # list of supported systems/targets in this version
 SYSTEMG1 = generic generic_gcc  generic_pkg generic_gccpkg
 SYSTEMG2 = generic1 generic2 generic3 generic_bz2 generic_zlib generic_shlib
-SYSTEMS1 = 386i 3Bx 7300 7300_gcc aix aix_rt amdahl amdahl_eft apollo aviion
-SYSTEMS2 = bsd bsdi bsdi_noasm bull coherent convex cray cray_opt cyber_sgi
-SYSTEMS3 = cygwin dec dnix encore eta freebsd gcc gould hk68 hp hpux
-SYSTEMS4 = isc isc_gcc isi linux linux_dos linux_noasm linux_shlib linux_shlibz
-SYSTEMS5 = lynx macosx macosx_gcc minix mips mpeix next next10 next2x next3x
-SYSTEMS6 = nextfat osf1 pixel ptx pyramid qnxnto realix regulus rs6000 sco
-SYSTEMS7 = sco_dos sco_sl sco_x286 sequent sgi solaris solaris_pkg stardent
-SYSTEMS8 = stellar sunos3 sunos4 sysv sysv_gcc sysv6300 tahoe ti_sysv ultrix
-SYSTEMS9 = vax v7 wombat xenix xos
+SYSTEMS1 =
+SYSTEMS2 = bsd
+SYSTEMS3 = cygwin freebsd gcc
+SYSTEMS4 = linux linux_dos linux_noasm linux_shlib linux_shlibz
+SYSTEMS5 = lynx macosx macosx_gcc minix
+SYSTEMS6 = qnxnto
+SYSTEMS7 = sco_dos solaris solaris_pkg
+SYSTEMS8 = sysv sysv_gcc
+SYSTEMS9 = wombat
 
 
 ####################
@@ -608,38 +604,6 @@ solaris_pkg:	generic_pkg
 solaris_gccpkg:	generic_gcc_pkg
 
 #----------------------------------------------------------------------------
-#  "Normal" group (BSD vs. SysV may be set in unzip.h via predefined macros):
-#----------------------------------------------------------------------------
-
-386i:		unzips	# sun386i, SunOS 4.0.2
-#3Bx:		unzips	# AT&T 3B2/1000-80; should work on any WE32XXX machine
-#aix_rt:		unzips	# IBM RT 6150 under AIX 2.2.1
-bull:		unzips	# Bull DPX/2, BOS 2.00.45 (doesn't require -Xk switch)
-convex:		unzips	# Convex C-120 and C-210 (-O is enough; -ext is default)
-cray:		unzips	# Cray-2 and Y-MP, using default (possibly old) compiler
-dec:		unzips	# DEC 5820 (MIPS RISC), test version of Ultrix v4.0
-encore:		unzips	# Multimax
-eta:		unzips	# ETA-10P*, hybrid SysV with BSD 4.3 enhancements
-gould:		unzips	# Gould PN9000 running UTX/32 2.1Bu01
-hp:		unzips	# HP 9000 series (68020), 4.3BSD or HP-UX A.B3.10 Ver D
-hpux:		unzips	# (to match zip's makefile entry)
-mips:		unzips	# MIPS M120-5(?), SysV.3 [error in sys/param.h file?]
-next10:		unzips	# NeXT (generic; use next2x or next3x for better opt.)
-osf1:		unzips	# DECstation, including Alpha-based; DEC OSF/1 v1.x
-pyr_:		unzips	# [failsafe target for pyramid target below]
-pyr_ucb:	unzips	# Pyramids running BSD universe by default (see below)
-realix:		unzips	# Modcomp Real/IX (SysV.3); note "gcc" = GLS C, not GNU
-sco:		unzips	# Xenix/386 (tested on 2.3.1); SCO Unix 3.2.0.
-sgi:		unzips	# Silicon Graphics; Irix 3.3.2, 4.0.x, 5.2, etc.
-stellar:	unzips	# gs-2000
-sun:		unzips	# old target; no good with solaris...use "sunos" now
-sunos:		unzips	# no good with SunOS 3.x...use "sunos3" or "sunos4" now
-sunos4:		unzips	# Sun 3, 4; SunOS 4.x (SOME SYSTEMS ARE SYSTEM V!)
-tahoe:		unzips	# tahoe (CCI Power6/32), 4.3BSD
-ultrix:		unzips	# VAXen, DEC 58x0 (MIPS guts), DECstation 2100; v4.x
-vax:		unzips	# general-purpose VAX target (not counting VMS)
-
-#----------------------------------------------------------------------------
 #  BSD group (for timezone structs [struct timeb]):
 #----------------------------------------------------------------------------
 
@@ -652,12 +616,7 @@ _bsd:		unix_make
 #  SysV group (for extern long timezone and ioctl.h instead of sgtty.h):
 #----------------------------------------------------------------------------
 
-aix_rt:		_sysv	# IBM RT 6150 under AIX 2.2.1
-aviion:		_sysv	# Data General AViiONs, DG/UX 4.3x
-pyr_att:	_sysv	# Pyramids running AT&T (SysV) universe by default
-stardent:	_sysv	# Stardent ...
 sysv:		_sysv	# generic System V Unix (Xenix handled in unzip.h)
-xos:		_sysv	# Olivetti LSX-3005..3045, X/OS 2.3 and 2.4
 
 _sysv:		unix_make
 	$(MAKE) unzips CF="$(CF) -DSYSV"
@@ -666,76 +625,8 @@ _sysv:		unix_make
 _sysvp:		_sysv svr4package
 
 #----------------------------------------------------------------------------
-#  Version 7 group (old/obsolescent):
-#----------------------------------------------------------------------------
-
-pixel:		_v7	# Pixel 80, 100 (68000-based, V7/mostly BSD4.1 compat.)
-v7:		_v7	# generic Unix Version 7 box (prob. only Pixel...)
-
-_v7:
-	make $(MAKEF) unzips \
-	 CF="$(CF) -DV7 -DNO_PARAM_H -DSHORT_NAMES -DBSD -DZMEM -DNO_LCHOWN -DNO_LCHMOD"
-
-#----------------------------------------------------------------------------
 #  "Unique" group (require non-standard options):
 #----------------------------------------------------------------------------
-
-# AT&T 3B2/1000-80; should work on any WE32XXX machine
-3Bx:		unix_make
-	$(MAKE) unzips CF="$(CF) -DCBREAK=2"
-
-# AT&T 7300 (M68000/SysV.3) (add -DSYSV? -DNO_LIMITS?)
-7300:		unix_make
-	$(MAKE) unzips CF="$(CF) -DNO_DIR -DNO_MKDIR -DNO_STRNICMP -DNO_UID_GID -DNO_FCHMOD -DNO_LCHOWN -DNO_LCHMOD -DCBREAK=2"
-
-7300_gcc:	unix_make
-	$(MAKE) unzips CC=gcc LD=gcc LF2="" CFLAGS="-O2" \
-	 LOC="-DNO_DIR -DNO_MKDIR -DNO_STDLIB_H -DNO_STRNICMP -DNO_UID_GID -DNO_FCHMOD -DNO_LCHOWN -DNO_LCHMOD -DCBREAK=2 $(LOC)"
-	$(STRIP) $(UNZIPS)
-
-# IBM AIX 3.x on an RS/6000:  see rs6000 target below
-aix:		rs6000
-
-# Amdahl (IBMish) mainframe, UTS (SysV) 1.2.4, 2.0.1, 3.x
-amdahl:		unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV -DNO_UID_GID -DNO_LCHOWN -DNO_LCHMOD"
-
-# Amdahl UTS 2.1.4 with "extended file types" filesystem (aarrrggghhhh...)
-amdahl_eft:	unix_make
-	$(MAKE) unzips CF="$(CF) -eft -DSYSV -DNO_UID_GID -DNO_LCHOWN -DNO_LCHMOD"
-
-# Apollo Domain/OS machines (added -D...SOURCE options) [Gordon Fox, 960810]
-apollo:		unix_make
-	$(MAKE) unzips CF="$(CF) -D_INCLUDE_BSD_SOURCE -D_INCLUDE_XOPEN_SOURCE -DNO_LCHOWN -DNO_LCHMOD"
-
-# BSDI BSD/OS on 386 platform, using the assembler replacement for crc32.c
-bsdi:		unix_make
-	@echo 'NOTE:  use bsdi_noasm target for non-Intel BSD/OS compiles.'
-	$(MAKE) unzips CC=gcc2 LD=shlicc2 AS=gcc2\
-	 CFLAGS="-O3 -Wall -DASM_CRC -DBSD" CRCA_O=crc_gcc$O
-
-# BSDI BSD/OS
-bsdi_noasm:	unix_make
-#	@echo 'NOTE:  use bsd target for non-Intel BSD/OS compiles.'
-	$(MAKE) unzips CC=gcc2 LD=shlicc2 AS=gcc2\
-	 CFLAGS="-O3 -Wall -DBSD"
-
-# Coherent 3.x/4.x, Mark Williams C.  ``For Coherent's CC, it needs either
-# -T0 or -T150000 (or bigger) added to the CFLAGS, otherwise the compiler
-# runs out of memory and dies in zipinfo.c.'' [Fred "Fredex" Smith, 940719]
-coherent:	unix_make
-	$(MAKE) unzips CFLAGS="$(CFLAGS) -T0 -DNO_LCHOWN -DNO_LCHMOD"
-
-# Cray-2, Y-MP or C90, running Unicos 5.x to 8.x (SysV + BSD enhancements)
-# and Standard (ANSI) C compiler 3.0 or later.
-cray_opt:	unix_make
-	$(MAKE) unzips CFLAGS="$(CFLAGS) -h scalar3 -h vector3 -DNO_LCHOWN -DNO_LCHMOD"
-
-# The unzip41 build on a Cyber 910/SGI running Irix v3.3.3 was successful
-# with the following change to Makefile:
-cyber_sgi:	unix_make
-	$(MAKE) unzips CFLAGS="$(CFLAGS) -I/usr/include/bsd -DNO_LCHOWN -DNO_LCHMOD"\
-	 LF="-lbsd $(LF)" SL="-lbsd $(SL)"
 
 # The Cygwin environment on a Win32 system, treated as an UNIX emulator.
 # This port does not offer full access to the Windows file system.
@@ -745,15 +636,6 @@ cygwin:		unix_make
 	 CFLAGS="-O3 -DASM_CRC -DNO_LCHOWN -DNO_LCHMOD"\
 	 AF="-Di386 $(AF)" CRCA_O=crc_gcc$O\
 	 E=".exe" CP="cp" LN="ln -s"
-
-# 680x0, DIAB dnix 5.2/5.3 (a Swedish System V clone)
-#
-# Options for the dnix cc:
-#  -X7 = cc is strict ANSI C
-#  -X9 = warnings if a function is used without a declaration
-#
-dnix:		unix_make
-	$(MAKE) unzips CFLAGS="$(CFLAGS) -X7 -X9 -DDNIX"
 
 # FreeBSD on Intel:
 freebsd:		unix_make
@@ -772,30 +654,6 @@ freebsd:		unix_make
 gcc:		unix_make
 	$(MAKE) unzips CC=gcc LD=gcc CFLAGS="-O3" LF2=""
 	$(STRIP) $(UNZIPS)
-
-# Heurikon HK68 (68010), UniPlus+ System V 5.0, Green Hills C-68000
-hk68:		unix_make
-	$(MAKE) unzips CC="gcc" LD="gcc"\
-	 LF="-n $(LF)" SL="-n $(SL)" FL="-n $(FL)"\
-	 CFLAGS="-ga -X138 -Dlocaltime=localti -Dtimezone=timezon"
-
-# ISC Unix on 386 platform
-isc:		unix_make
-	$(MAKE) unzips LF2="-lc_s $(LF2)" CRCA_O=crc_sysv$O \
-	 CFLAGS="-O" LOC="-DASM_CRC -DSYSV -DNO_UID_GID -DNEED_PTEM -DNO_LCHOWN -DNO_LCHMOD $(LOC)" \
-	 AF="-DNO_UNDERLINE -Djecxz=jcxz -DALIGNMENT='.align 16' $(AF)"
-
-isc_gcc:	unix_make
-	$(MAKE) unzips AS=gcc CC=gcc LD=gcc CRCA_O=crc_gcc$O \
-	 LF="-shlib $(LF)" SL="-shlib $(SL)" FL="-shlib $(FL)" LF2="" \
-	 CFLAGS="-O3" LOC="-DSYSV -DASM_CRC -DNO_UID_GID -DNEED_PTEM -DNO_LCHOWN -DNO_LCHMOD $(LOC)" \
-	 AF="-DNO_UNDERLINE -Djecxz=jcxz -DALIGNMENT='.align 16' $(AF)"
-	$(STRIP) $(UNZIPS)
-
-# "ISI machine (68025 CPU)" (based on e-mail from Rob White <rsw@tfs.com>;
-# no further information).  May also need DIRENT defined.
-isi:		unix_make
-	$(MAKE) unzips CF="$(CF) -DDECLARE_ERRNO -DNO_LCHOWN -DNO_LCHMOD"
 
 # Linux on 386 platform, using the assembler replacement for crc32.c. (-O4 and
 # -fno-strength-reduce have virtually no effect beyond -O3.  Add "-m486
@@ -880,54 +738,6 @@ macosx_gcc:	unix_make
 minix:		unix_make
 	$(MAKE) unzips CF="$(CF) -DMINIX -DSHORT_NAMES -DNO_LCHOWN -DNO_LCHMOD" CC=$(CC) LD=$(CC)
 
-# MPE/iX, the Unix variant for HP 3000 systems.
-mpeix:		unix_make
-	$(MAKE) unzips CC=c89\
-	 CF="$(CF) -DUNIX -D_POSIX_SOURCE -DHAVE_TERMIOS_H -DPASSWD_FROM_STDIN -DNO_PARAM_H -DNO_LCHOWN -DNO_LCHMOD"\
-	 LF2=-lbsd CP=cp LN="ln -s"
-
-# NeXT info.
-next:
-	@echo
-	@echo\
- '  Please pick a specific NeXT target:  "make next10" will create a generic'
-	@echo\
- '  NeXT executable; "make next2x" will create a smaller executable (for'
-	@echo\
- '  NeXTstep 2.0 and higher); "make next3x" will create a small executable'
-	@echo\
- '  with significantly better optimization (NeXTstep 3.0 and higher only);'
-	@echo\
- '  "make nextfat" will create a fat, multi-architecture (NeXT plus Intel)'
-	@echo\
- '  executable (NeXTstep 3.1 and higher only).'
-	@echo
-
-# 68030 BSD 4.3+Mach.  NeXT 2.x: make the executable smaller.
-next2x:		unix_make
-	$(MAKE) unzips LF2="-object -s"
-
-# NeXT 3.x: as above, plus better optimization.
-next3x:		unix_make
-	$(MAKE) unzips CFLAGS="-O2" LF2="-object -s"
-
-# NeXT 3.1+: make the executable fat (multi-architecture binary [MAB],
-# for "black" [NeXT] and "white" [x86] hardware, so far).
-nextfat:	unix_make
-	$(MAKE) unzips CFLAGS="-O2 -arch i386 -arch m68k" \
-	 LF2="-arch i386 -arch m68k -object -s"
-
-# Sequent Symmetry running Dynix/ptx (sort of SysV.3):  needs to link
-# with libseq to get symlink().
-ptx:		unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV -DTERMIO -DPTX -DNO_LCHOWN -DNO_LCHMOD" LF2="$(LF2) -lseq"
-
-# Pyramid 90X (probably all) under >= OSx4.1, either universe.  (This is an
-# experimental target!  If it fails, use either pyr_ucb or pyr_att instead.)
-# The make in the BSD half is too stupid to understand $(MAKE), sigh...
-pyramid:	unix_make
-	-make $(MAKEF) pyr_`universe`
-
 # QNX/Neutrino is "special" because you don't have any native development
 # tools yet.  Set ARCH to "x86", "ppcbe", "ppcle", "mipsbe", or "mipsle"
 # to produce x86, PowerPC (big- or little-endian) and MIPS (big-
@@ -943,15 +753,6 @@ qnxnto:		unix_make
 		$(MAKE) $(MAKEF) CC="qcc -Vgcc_nto$(ARCH)" unzips ; \
 	fi
 
-# REGULUS:  68040-based, "real-time" SysV.3 mutant; uses gcc, with "REGULUS"
-# predefined.
-regulus:	unix_make
-	$(MAKE) unzips CF="$(CF) -traditional -DSYSV -DNO_MKDIR -DNO_LCHOWN -DNO_LCHMOD"
-
-# IBM RS/6000 under AIX 3.2
-rs6000:		unix_make
-	$(MAKE) unzips CF="$(CF) -DBSD -D_BSD -DUNIX" LF2="-lbsd"
-
 # SCO cross compile from Unix to DOS. Tested with Xenix/386 and OpenDeskTop.
 # Should work with Xenix/286 as well. (davidsen)  Note that you *must* remove
 # the Unix objects and executable before doing this!  (Piet Plomp:  gcc won't
@@ -962,47 +763,10 @@ sco_dos:	unix_make
 	 LF="-dos -F 2000" LF2="-o unzip.exe" \
 	 FL="-dos" FL2="-o funzip.exe" SL="-dos" SL2="-o unzipsfx.exe"
 
-# SCO UNIX with shared libraries and no international support.  If you are
-# not using a USA-style keyboard and display, you may want to remove -nointl
-# to get support.  It adds quite a bit to the size of the executable.
-sco_sl:		unix_make
-	$(MAKE) unzips LF="$(LF) -nointl" LF2="$(LF2) -lc_s"\
-	 SL="$(SL) -nointl" FL="$(FL) -nointl"
-
-# SCO Xenix/286 2.2.3 or later with development system 2.2.1 or later
-sco_x286:	unix_make
-	$(MAKE) unzips CF="$(CF) -Mel2 -LARGE -DNO_MKDIR -DNO_LCHOWN -DNO_LCHMOD" \
-	 LF="$(LF) -Mel2 -LARGE -lx" SL="$(SL) -Mel2 -LARGE" \
-	 FL="$(FL) -Mel2 -LARGE"
-
-# Sequent Symmetry with Dynix.  (386, but needs -DZMEM)
-# This should also work on Balance but I can't test it just yet.
-sequent:	unix_make
-	$(MAKE) unzips CF="$(CF) -DBSD -DZMEM -DNO_LCHOWN -DNO_LCHMOD"
-
-# Sun 2, 3, 4 running SunOS 3.x
-sunos3:		unix_make
-	$(MAKE) unzips CF="$(CF) -DNO_UID_GID -DUID_USHORT -DNO_LCHOWN -DNO_LCHMOD"
-
 # Generic System V + GNU C
 sysv_gcc:	unix_make
 	$(MAKE) unzips CC=gcc LD=gcc CFLAGS="-O2 -DSYSV" LF2=""
 	$(STRIP) $(UNZIPS)
-
-# AT&T 6300+, System V.2 Unix:  run-time out-of-memory error if don't use -Ml;
-# also compile-time error if work arrays dimensioned at HSIZE+2 (>32K)
-sysv6300:	unix_make
-	$(MAKE) unzips CF="$(CF) -Ml -DSYSV -DNO_LCHOWN -DNO_LCHMOD" LF="$(LF) -Ml"\
-	 SL="$(SL) -Ml" FL="$(FL) -Ml"
-
-# Texas Instruments System V.3 (running on HP 9000-1500)
-ti_sysv:	unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV -DNO_UID_GID -DUID_USHORT -DNO_LCHOWN -DNO_LCHMOD"
-
-# SCO Xenix (Joe Foster 950508:  "unzip needs to be linked with -lx [for the
-# opendir(), readdir(), telldir(), rewinddir(), and closedir() calls]")
-xenix:		 unix_make
-	$(MAKE) unzips LF2="$(LF2) -lx"
 
 # Wombat 68000 (or whatever).
 # I didn't do this.  I swear.  No, really.

@@ -39,10 +39,6 @@
              fzofft()
              str2iso()                (CRYPT && NEED_STR2ISO, only)
              str2oem()                (CRYPT && NEED_STR2OEM, only)
-             memset()                 (ZMEM only)
-             memcpy()                 (ZMEM only)
-             zstrnicmp()              (NO_STRNICMP only)
-             zstat()                  (REGULUS only)
              plastchar()              (_MBCS only)
              uzmbclen()               (_MBCS && NEED_UZMBCLEN, only)
              uzmbschr()               (_MBCS && NEED_UZMBSCHR, only)
@@ -2115,118 +2111,6 @@ char *str2oem(dst, src)
 #endif /* NEED_STR2OEM */
 
 #endif /* CRYPT */
-
-
-#ifdef ZMEM  /* memset/memcmp/memcpy for systems without either them or */
-             /* bzero/bcmp/bcopy */
-             /* (no known systems as of 960211) */
-
-/*********************/
-/* Function memset() */
-/*********************/
-
-zvoid *memset(buf, init, len)
-    register zvoid *buf;        /* buffer location */
-    register int init;          /* initializer character */
-    register unsigned int len;  /* length of the buffer */
-{
-    zvoid *start;
-
-    start = buf;
-    while (len--)
-        *((char *)buf++) = (char)init;
-    return start;
-}
-
-
-
-/*********************/
-/* Function memcmp() */
-/*********************/
-
-int memcmp(b1, b2, len)
-    register ZCONST zvoid *b1;
-    register ZCONST zvoid *b2;
-    register unsigned int len;
-{
-    register int c;
-
-    if (len > 0) do {
-        if ((c = (int)(*((ZCONST unsigned char *)b1)++) -
-                 (int)(*((ZCONST unsigned char *)b2)++)) != 0)
-           return c;
-    } while (--len > 0)
-    return 0;
-}
-
-
-
-/*********************/
-/* Function memcpy() */
-/*********************/
-
-zvoid *memcpy(dst, src, len)
-    register zvoid *dst;
-    register ZCONST zvoid *src;
-    register unsigned int len;
-{
-    zvoid *start;
-
-    start = dst;
-    while (len-- > 0)
-        *((char *)dst)++ = *((ZCONST char *)src)++;
-    return start;
-}
-
-#endif /* ZMEM */
-
-
-
-
-#ifdef NO_STRNICMP
-
-/************************/
-/* Function zstrnicmp() */
-/************************/
-
-int zstrnicmp(s1, s2, n)
-    register ZCONST char *s1, *s2;
-    register unsigned n;
-{
-    for (; n > 0;  --n, ++s1, ++s2) {
-
-        if (ToLower(*s1) != ToLower(*s2))
-            /* test includes early termination of one string */
-            return ((uch)ToLower(*s1) < (uch)ToLower(*s2))? -1 : 1;
-
-        if (*s1 == '\0')   /* both strings terminate early */
-            return 0;
-    }
-    return 0;
-}
-
-#endif /* NO_STRNICMP */
-
-
-
-
-#ifdef REGULUS  /* returns the inode number on success(!)...argh argh argh */
-#  undef stat
-
-/********************/
-/* Function zstat() */
-/********************/
-
-int zstat(p, s)
-    ZCONST char *p;
-    struct stat *s;
-{
-    return (stat((char *)p,s) >= 0? 0 : (-1));
-}
-
-#endif /* REGULUS */
-
-
 
 
 #ifdef _MBCS

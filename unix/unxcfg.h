@@ -53,103 +53,26 @@
 #include <sys/types.h>          /* off_t, time_t, dev_t, ... */
 #include <sys/stat.h>
 
-#ifdef NO_OFF_T
-  typedef long zoff_t;
-#else
-  typedef off_t zoff_t;
-#endif
+typedef off_t zoff_t;
 #define ZOFF_T_DEFINED
 typedef struct stat z_stat;
 #define Z_STAT_DEFINED
 
-#ifndef COHERENT
-#  include <fcntl.h>            /* O_BINARY for open() w/o CR/LF translation */
-#else /* COHERENT */
-#  ifdef _I386
-#    include <fcntl.h>          /* Coherent 4.0.x, Mark Williams C */
-#  else
-#    include <sys/fcntl.h>      /* Coherent 3.10, Mark Williams C */
-#  endif
-#  define SHORT_SYMS
-#  ifndef __COHERENT__          /* Coherent 4.2 has tzset() */
-#    define tzset  settz
-#  endif
-#endif /* ?COHERENT */
-
-#ifndef NO_PARAM_H
-#  ifdef NGROUPS_MAX
-#    undef NGROUPS_MAX      /* SCO bug:  defined again in <sys/param.h> */
-#  endif
-#  ifdef BSD
-#    define TEMP_BSD        /* may be defined again in <sys/param.h> */
-#    undef BSD
-#  endif
-#  include <sys/param.h>    /* conflict with <sys/types.h>, some systems? */
-#  ifdef TEMP_BSD
-#    undef TEMP_BSD
-#    ifndef BSD
-#      define BSD
-#    endif
-#  endif
-#endif /* !NO_PARAM_H */
-
-#ifdef __osf__
-#  define DIRENT
-#  ifdef BSD
-#    undef BSD
-#  endif
-#endif /* __osf__ */
+#include <fcntl.h>            /* O_BINARY for open() w/o CR/LF translation */
+#include <sys/param.h>        /* conflict with <sys/types.h>, some systems? */
 
 #ifdef __CYGWIN__
-#  include <unistd.h>
-#  define DIRENT
 #  define HAVE_TERMIOS_H
 #  ifndef timezone
 #    define timezone _timezone
 #  endif
 #endif
 
-#ifdef BSD
-#  include <sys/time.h>
-#  include <sys/timeb.h>
-#  if (defined(_AIX) || defined(__GLIBC__) || defined(__GNU__))
-#    include <time.h>
-#  endif
-#else
-#  include <time.h>
-   struct tm *gmtime(), *localtime();
-#endif
-
-#if (defined(BSD4_4) || (defined(SYSV) && defined(MODERN)))
-#  include <unistd.h>           /* this includes utime.h on SGIs */
-#  if (defined(BSD4_4) || defined(linux) || defined(__GLIBC__))
-#    include <utime.h>
-#    define GOT_UTIMBUF
-#  endif
-#  if (!defined(GOT_UTIMBUF) && (defined(__hpux) || defined(__SUNPRO_C)))
-#    include <utime.h>
-#    define GOT_UTIMBUF
-#  endif
-#  if (!defined(GOT_UTIMBUF) && defined(__GNU__))
-#    include <utime.h>
-#    define GOT_UTIMBUF
-#  endif
-#endif
-#if (defined(__DGUX__) && !defined(GOT_UTIMBUF))
-   /* DG/UX requires this because of a non-standard struct utimebuf */
-#  include <utime.h>
-#  define GOT_UTIMBUF
-#endif
-
-#if (defined(V7) || defined(pyr_bsd))
-#  define strchr   index
-#  define strrchr  rindex
-#endif
-#ifdef V7
-#  define O_RDONLY 0
-#  define O_WRONLY 1
-#  define O_RDWR   2
-#endif
+#include <sys/timeb.h>
+#include <time.h>
+#include <time.h>
+#include <unistd.h>
+#include <utime.h>
 
 #if defined(NO_UNICODE_SUPPORT) && defined(UNICODE_SUPPORT)
    /* disable Unicode (UTF-8) support when requested */
@@ -200,7 +123,6 @@ typedef struct stat z_stat;
 #if (!defined(NOTIMESTAMP) && !defined(TIMESTAMP))   /* GRR 970513 */
 #  define TIMESTAMP
 #endif
-#define RESTORE_UIDGID
 
 /* Static variables that we have to add to Uz_Globs: */
 #define SYSTEM_SPECIFIC_GLOBALS \

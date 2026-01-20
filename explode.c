@@ -328,7 +328,7 @@ unsigned bdl;                   /* number of distance low bits */
         n -= e;
         if (u && w <= d)
         {
-          memzero(redirSlide + w, e);
+          memset(redirSlide + w, 0, e);
           w += e;
           d += e;
         }
@@ -446,7 +446,7 @@ unsigned bdl;           /* number of distance low bits */
         n -= e;
         if (u && w <= d)
         {
-          memzero(redirSlide + w, e);
+          memset(redirSlide + w, 0, e);
           w += e;
           d += e;
         }

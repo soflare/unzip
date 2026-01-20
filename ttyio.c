@@ -57,32 +57,23 @@
 
 #ifdef UNZIP            /* Zip handles this with the unix/configure script */
 #  ifndef _POSIX_VERSION
-#    if (defined(SYSV) || defined(CRAY))
+#    if defined(SYSV)
 #      ifndef USE_SYSV_TERMIO
 #        define USE_SYSV_TERMIO
 #      endif
-#      ifdef COHERENT
-#        ifndef HAVE_TERMIO_H
-#          define HAVE_TERMIO_H
-#        endif
-#        ifdef HAVE_SYS_TERMIO_H
-#          undef HAVE_SYS_TERMIO_H
-#        endif
-#      else /* !COHERENT */
-#        ifdef HAVE_TERMIO_H
-#          undef HAVE_TERMIO_H
-#        endif
-#        ifndef HAVE_SYS_TERMIO_H
-#           define HAVE_SYS_TERMIO_H
-#        endif
-#      endif /* ?COHERENT */
-#    endif /* (SYSV || CRAY) */
+#      ifdef HAVE_TERMIO_H
+#        undef HAVE_TERMIO_H
+#      endif
+#      ifndef HAVE_SYS_TERMIO_H
+#         define HAVE_SYS_TERMIO_H
+#      endif
+#    endif /* SYSV */
 #  endif /* !_POSIX_VERSION */
-#  if !(defined(BSD4_4) || defined(SYSV) || defined(__convexc__))
+#  if !(defined(BSD4_4) || defined(SYSV))
 #    ifndef NO_FCNTL_H
 #      define NO_FCNTL_H
 #    endif
-#  endif /* !(BSD4_4 || SYSV || __convexc__) */
+#  endif /* !(BSD4_4 || SYSV) */
 #endif /* UNZIP */
 
 #ifdef HAVE_TERMIOS_H

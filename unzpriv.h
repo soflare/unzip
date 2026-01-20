@@ -117,79 +117,21 @@
 #  endif
 #endif
 
-/* bad or (occasionally?) missing stddef.h: */
-#if (defined(M_XENIX) || defined(DNIX))
-#  define NO_STDDEF_H
-#endif
-
-#if (defined(M_XENIX) && !defined(M_UNIX))   /* SCO Xenix only, not SCO Unix */
-#  define SCO_XENIX
-#  define NO_LIMITS_H        /* no limits.h, but MODERN defined */
-#  define NO_UID_GID         /* no uid_t/gid_t */
-#  define size_t int
-#endif
-
-#ifdef realix   /* Modcomp Real/IX, real-time SysV.3 variant */
-#  define SYSV
-#  define NO_UID_GID         /* no uid_t/gid_t */
-#endif
-
 #if (defined(_AIX) && !defined(_ALL_SOURCE))
 #  define _ALL_SOURCE
 #endif
 
-#if defined(apollo)          /* defines __STDC__ */
-#    define NO_STDLIB_H
-#endif
-
-#ifdef DNIX
-#  define SYSV
-#  define SHORT_NAMES         /* 14-char limitation on path components */
-/* #  define FILENAME_MAX  14 */
-#  define FILENAME_MAX  NAME_MAX    /* GRR:  experiment */
-#endif
-
-#if (defined(SYSTEM_FIVE) || defined(__SYSTEM_FIVE))
-#  ifndef SYSV
-#    define SYSV
-#  endif
-#endif /* SYSTEM_FIVE || __SYSTEM_FIVE */
-#if (defined(M_SYSV) || defined(M_SYS5))
-#  ifndef SYSV
-#    define SYSV
-#  endif
-#endif /* M_SYSV || M_SYS5 */
 /* __SVR4 and __svr4__ catch Solaris on at least some combos of compiler+OS */
-#if (defined(__SVR4) || defined(__svr4__) || defined(sgi) || defined(__hpux))
+#if (defined(__SVR4) || defined(__svr4__))
 #  ifndef SYSV
 #    define SYSV
 #  endif
-#endif /* __SVR4 || __svr4__ || sgi || __hpux */
+#endif /* __SVR4 || __svr4__ */
 #if (defined(LINUX) || defined(__QNX__))
 #  ifndef SYSV
 #    define SYSV
 #  endif
 #endif /* LINUX || __QNX__ */
-
-#if (defined(ultrix) || defined(__ultrix) || defined(bsd4_2))
-#  if (!defined(BSD) && !defined(SYSV))
-#    define BSD
-#  endif
-#endif /* ultrix || __ultrix || bsd4_2 */
-#if (defined(sun) || defined(pyr) || defined(CONVEX))
-#  if (!defined(BSD) && !defined(SYSV))
-#    define BSD
-#  endif
-#endif /* sun || pyr || CONVEX */
-
-#ifdef pyr  /* Pyramid:  has BSD and AT&T "universes" */
-#  ifdef BSD
-#    define pyr_bsd
-#    define USE_STRINGS_H  /* instead of more common string.h */
-#    define ZMEM           /* ZMEM now uses bcopy/bzero: not in AT&T universe */
-#  endif                   /* (AT&T memcpy claimed to be very slow, though) */
-#  define DECLARE_ERRNO
-#endif /* pyr */
 
 /* stat() bug for Borland C RTL.  Watcom C was previously included on this
  * list; it would be good to know what version the problem was fixed at,
@@ -303,14 +245,10 @@
    reading the "standard" include headers.
  */
 
-#ifdef EFT
-#  define Z_OFF_T off_t  /* Amdahl UTS nonsense ("extended file types") */
-#else
 #if (defined(UNIX) && defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS == 64))
 #  define Z_OFF_T off_t /* 64bit offsets to support 2GB < zipfile size < 4GB */
 #else
 #  define Z_OFF_T long
-#endif
 #endif
 
 #ifndef ZOFF_T_DEFINED
@@ -328,11 +266,7 @@
 
 #include <ctype.h>       /* skip for VMS, to use tolower() function? */
 #include <errno.h>       /* used in mapname() */
-#ifdef USE_STRINGS_H
-#  include <strings.h>   /* strcpy, strcmp, memcpy, index/rindex, etc. */
-#else
-#  include <string.h>    /* strcpy, strcmp, memcpy, strchr/strrchr, etc. */
-#endif
+#include <string.h>      /* strcpy, strcmp, memcpy, strchr/strrchr, etc. */
 #if (defined(MODERN) && !defined(NO_LIMITS_H))
 #  include <limits.h>    /* MAX/MIN constant symbols for system types... */
 #endif
@@ -419,12 +353,12 @@
 #  define TIMET_TO_NATIVE(x)
 #  define NATIVE_TO_TIMET(x)
 #endif
-#ifndef STRNICMP
-#  ifdef NO_STRNICMP
-#    define STRNICMP zstrnicmp
-#  else
-#    define STRNICMP strnicmp
-#  endif
+
+#if (defined(UNIX) || defined(__GLIBC__))
+#  include <strings.h>
+#  define STRNICMP strncasecmp
+#else
+#  define STRNICMP _strnicmp
 #endif
 
 
@@ -437,25 +371,14 @@
 /* OS-specific exceptions to the "ANSI <--> INT_SPRINTF" rule */
 
 #if (!defined(PCHAR_SPRINTF) && !defined(INT_SPRINTF))
-#  if (defined(SYSV) || defined(CONVEX) || defined(NeXT) || defined(BSD4_4))
+#  if (defined(SYSV) || defined(BSD4_4))
 #    define INT_SPRINTF      /* sprintf() returns int:  SysVish/Posix */
 #  endif
 #  if defined(DOS_W32)
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI */
 #  endif
-#  if (defined(ultrix) || defined(__ultrix)) /* Ultrix 4.3 and newer */
-#    if (defined(POSIX) || defined(__POSIX))
-#      define INT_SPRINTF    /* sprintf() returns int:  ANSI/Posix */
-#    endif
-#    ifdef __GNUC__
-#      define PCHAR_SPRINTF  /* undetermined actual return value */
-#    endif
-#  endif
-#  if (defined(__osf__) || defined(_AIX))
+#  if defined(_AIX)
 #    define INT_SPRINTF      /* sprintf() returns int:  ANSI/Posix */
-#  endif
-#  if defined(sun)
-#    define PCHAR_SPRINTF    /* sprintf() returns char *:  SunOS cc *and* gcc */
 #  endif
 #endif
 
@@ -856,30 +779,11 @@
 # endif
 #endif /* MALLOC_WORK && !MY_ZCALLOC */
 
-#if (defined(CRAY) && defined(ZMEM))
-#  undef ZMEM
-#endif
-
-#ifdef ZMEM
-#  undef ZMEM
-#  define memcmp(b1,b2,len)      bcmp(b2,b1,len)
-#  define memcpy(dest,src,len)   bcopy(src,dest,len)
-#  define memzero                bzero
-#else
-#  define memzero(dest,len)      memset(dest,0,len)
-#endif
-
 #ifndef TRUE
 #  define TRUE      1   /* sort of obvious */
 #endif
 #ifndef FALSE
 #  define FALSE     0
-#endif
-
-#ifndef SEEK_SET
-#  define SEEK_SET  0
-#  define SEEK_CUR  1
-#  define SEEK_END  2
 #endif
 
 #if (!defined(S_IEXEC) && defined(S_IXUSR))
@@ -1062,9 +966,7 @@
 #else
   /* No Large File Support */
 
-# ifndef REGULUS  /* returns the inode number on success(!)...argh argh argh */
-#   define zstat stat
-# endif
+# define zstat stat
 # define zfstat fstat
 # define zlseek lseek
 # define zfseeko fseek
@@ -1391,7 +1293,7 @@
 
 #define LF     10        /* '\n' on ASCII machines; must be 10 due to EBCDIC */
 #define CR     13        /* '\r' on ASCII machines; must be 13 due to EBCDIC */
-#define CTRLZ  26        /* DOS EOF marker (used in fileio.c) */
+#define CTRLZ  26        /* DOS & OS/2 EOF marker (used in fileio.c) */
 
 #ifndef ENV_UNZIP
 #  define ENV_UNZIP       "UNZIP"          /* the standard names */
@@ -1437,7 +1339,7 @@
 
 #ifdef ZIP64_SUPPORT
 # ifndef Z_UINT8_DEFINED
-#   if (defined(__GNUC__) || defined(__hpux) || defined(__SUNPRO_C))
+#   if (defined(__GNUC__) || defined(__SUNPRO_C))
   typedef unsigned long long    z_uint8;
 #   else
   typedef unsigned __int64      z_uint8;
@@ -1506,15 +1408,6 @@
      typedef unsigned int    uid_t;    /* SCO Xenix */
      typedef unsigned int    gid_t;
 #  endif
-#endif
-
-#if (defined(GOT_UTIMBUF) || defined(sgi))
-   typedef struct utimbuf ztimbuf;
-#else
-   typedef struct ztimbuf {
-       time_t actime;        /* new access time */
-       time_t modtime;       /* new modification time */
-   } ztimbuf;
 #endif
 
 typedef struct iztimes {
@@ -1857,16 +1750,6 @@ char    *fzofft               OF((__GPRO__ zoff_t val,
    int   zstrnicmp            OF((register ZCONST char *s1,
                                   register ZCONST char *s2,
                                   register unsigned n));
-#endif
-#ifdef REGULUS
-   int   zstat                OF((ZCONST char *p, struct stat *s));
-#endif
-#ifdef ZMEM   /* MUST be ifdef'd because of conflicts with the standard def. */
-   zvoid *memset OF((register zvoid *, register int, register unsigned int));
-   int    memcmp OF((register ZCONST zvoid*, register ZCONST zvoid *,
-                     register unsigned int));
-   zvoid *memcpy OF((register zvoid *, register ZCONST zvoid *,
-                     register unsigned int));
 #endif
 #ifdef NEED_UZMBCLEN
    extent uzmbclen          OF((ZCONST unsigned char *ptr));

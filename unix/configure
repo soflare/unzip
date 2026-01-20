@@ -234,18 +234,6 @@ _EOF_
 $CC $CFLAGS -c conftest.c >/dev/null 2>/dev/null
 [ $? -ne 0 ] && CFLAGSR="${CFLAGSR} -DNO_SIZE_T"
 
-echo Check for off_t
-cat > conftest.c << _EOF_
-#include <sys/types.h>
-int main()
-{
-  off_t s;
-  return 0;
-}
-_EOF_
-$CC $CFLAGS -c conftest.c >/dev/null 2>/dev/null
-[ $? -ne 0 ] && CFLAGSR="${CFLAGSR} -DNO_OFF_T"
-
 # Added 11/4/2003 EG
 # Revised 8/12/04 EG
 # Now we set the 64-bit file environment and check the size of off_t
@@ -399,11 +387,6 @@ ln -s "${temp_link}" "${temp_file}" && \
  ./conftest
 [ $? -ne 0 ] && CFLAGSR="${CFLAGSR} -DNO_LCHMOD"
 rm -f "${temp_file}"
-
-echo Check for memset
-echo "int main(){ char k; memset(&k,0,0); return 0; }" > conftest.c
-$CC -o conftest conftest.c >/dev/null 2>/dev/null
-[ $? -ne 0 ] && CFLAGSR="${CFLAGSR} -DZMEM"
 
 echo Check for errno declaration
 cat > conftest.c << _EOF_
