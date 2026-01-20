@@ -917,15 +917,6 @@ nextfat:	unix_make
 	$(MAKE) unzips CFLAGS="-O2 -arch i386 -arch m68k" \
 	 LF2="-arch i386 -arch m68k -object -s"
 
-# IBM OS/390 (formerly MVS) compiled under "OpenEdition" shell
-os390:		unix_make
-	set -x; \
-	$(MAKE) $(MAKEF) unzips \
-	 CC=c89 LD="\$$(CC) -Wl,EDIT=NO" \
-	 CF="$(CF) -DSYSV -DUNIX -DOS390 -DEBCDIC -DNO_PARAM_H \
-	 -DNO_LCHOWN -DNO_LCHMOD \
-	 -D_ALL_SOURCE $(HOST_VERSINFO)" LF2=""
-
 # Sequent Symmetry running Dynix/ptx (sort of SysV.3):  needs to link
 # with libseq to get symlink().
 ptx:		unix_make

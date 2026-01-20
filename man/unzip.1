@@ -114,8 +114,7 @@ appropriate manual page for a description of these options.
 .B \-c
 extract files to stdout/screen (``CRT'').  This option is similar to the
 \fB\-p\fP option except that the name of each file is printed as it is
-extracted, the \fB\-a\fP option is allowed, and ASCII-EBCDIC conversion
-is automatically performed if appropriate.  This option is not listed in
+extracted, the \fB\-a\fP option is allowed.  This option is not listed in
 the \fIunzip\fP usage screen.
 .TP
 .B \-f
@@ -205,13 +204,12 @@ line endings, end-of-file characters and the character set itself as necessary.
 (For example, Unix files use line feeds (LFs) for end-of-line (EOL) and
 have no end-of-file (EOF) marker; Macintoshes use carriage returns (CRs)
 for EOLs; and most PC operating systems use CR+LF for EOLs and control-Z for
-EOF.  In addition, IBM mainframes and the Michigan Terminal System use EBCDIC
-rather than the more common ASCII character set, and NT supports Unicode.)
-Note that \fIzip\fP's identification of text files is by no means perfect; some
-``text'' files may actually be binary and vice versa.  \fIunzip\fP therefore
-prints ``\fC[text]\fR'' or ``\fC[binary]\fR'' as a visual check for each file
-it extracts when using the \fB\-a\fP option.  The \fB\-aa\fP option forces
-all files to be extracted as text, regardless of the supposed file type.
+EOF.  Note that \fIzip\fP's identification of text files is by no means
+perfect; some ``text'' files may actually be binary and vice versa.
+\fIunzip\fP therefore prints ``\fC[text]\fR'' or ``\fC[binary]\fR'' as a visual
+check for each file it extracts when using the \fB\-a\fP option.  The
+\fB\-aa\fP option forces all files to be extracted as text, regardless of the
+supposed file type.
 .TP
 .B \-b
 treat all files as binary (no text conversions).  This is a shortcut for
@@ -564,11 +562,8 @@ uses the OEM code page on DOS, OS/2 and Win3.x ports but ISO coding
 (Latin-1 etc.) everywhere else; and Nico Mak's \fIWinZip\fP 6.x does not
 allow 8-bit passwords at all.  \fIUnZip\fP 5.3 (or newer) attempts to use
 the default character set first (e.g., Latin-1), followed by the alternate
-one (e.g., OEM code page) to test passwords.  On EBCDIC systems, if both
-of these fail, EBCDIC encoding will be tested as a last resort.  (EBCDIC is
-not tested on non-EBCDIC systems, because there are no known archivers
-that encrypt using EBCDIC encoding.)  ISO character encodings other than
-Latin-1 are not supported.  The new addition of (partially) Unicode (resp.
+one (e.g., OEM code page) to test passwords.  ISO character encodings other
+than Latin-1 are not supported.  The new addition of (partially) Unicode (resp.
 UTF-8) support in \fIUnZip\fP 6.0 has not yet been adapted to the encryption
 password handling in \fIunzip\fP.  On systems that use UTF-8 as native
 character encoding, \fIunzip\fP simply tries decryption with the native
