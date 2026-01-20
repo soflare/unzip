@@ -98,7 +98,6 @@ static unsigned filtattr OF((__GPRO__ unsigned perms));
 /* times in unix.c           */
 /*****************************/
 
-#ifndef MTS
 /* messages of code for setting file/directory attributes */
 static ZCONST char CannotSetItemUidGid[] =
   "warning:  cannot set UID %lu and/or GID %lu for %s\n          %s\n";
@@ -108,7 +107,6 @@ static ZCONST char CannotSetItemTimestamps[] =
   "warning:  cannot set modif./access times for %s\n          %s\n";
 static ZCONST char CannotSetTimestamps[] =
   " (warning) cannot set modif./access times\n          %s";
-#endif /* !MTS */
 
 
 #ifndef SFX
@@ -574,12 +572,6 @@ int mapname(__G__ renamed)
                 *pp++ = ';';      /* keep for now; remove VMS ";##" */
                 break;            /*  later, if requested */
 
-#ifdef MTS
-            case ' ':             /* change spaces to underscore under */
-                *pp++ = '_';      /*  MTS; leave as spaces under Unix */
-                break;
-#endif
-
             default:
                 /* disable control character filter when requested,
                  * else allow 8-bit characters (e.g. UTF-8) in filenames:
@@ -988,7 +980,7 @@ int mkdir(path, mode)
 
 
 
-#if (!defined(MTS) || defined(SET_DIR_ATTRIB))
+#if defined(SET_DIR_ATTRIB)
 static int get_extattribs OF((__GPRO__ iztimes *pzt, ulg z_uidgid[2]));
 
 static int get_extattribs(__G__ pzt, z_uidgid)
@@ -1039,11 +1031,9 @@ static int get_extattribs(__G__ pzt, z_uidgid)
 #endif
     return have_uidgid_flg;
 }
-#endif /* !MTS || SET_DIR_ATTRIB */
+#endif /* SET_DIR_ATTRIB */
 
 
-
-#ifndef MTS
 
 /****************************/
 /* Function close_outfile() */
@@ -1218,8 +1208,6 @@ void close_outfile(__G)    /* GRR: change to return PK-style warning level */
 #endif /* NO_FCHOWN || NO_FCHMOD */
 
 } /* end function close_outfile() */
-
-#endif /* !MTS */
 
 
 #if (defined(SYMLINKS) && defined(SET_SYMLINK_ATTRIBS))
@@ -1592,9 +1580,6 @@ void version(__G)
 #ifdef gould
       " (Gould)",
 #else
-#ifdef MTS
-      " (MTS)",
-#else
 #ifdef __convexc__
       " (Convex)",
 #else
@@ -1628,7 +1613,6 @@ void version(__G)
 #endif /* QNX Neutrino */
 #endif /* QNX 4 */
 #endif /* Convex */
-#endif /* MTS */
 #endif /* Gould */
 #endif /* DEC */
 #endif /* Pyramid */

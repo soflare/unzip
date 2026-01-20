@@ -332,17 +332,6 @@ int open_outfile(__G)           /* return 1 if fail */
         }
     }
 #endif /* DOS_W32 || UNIX */
-#ifdef MTS
-    if (uO.aflag)
-        G.outfile = zfopen(G.filename, FOPWT);
-    else
-        G.outfile = zfopen(G.filename, FOPW);
-    if (G.outfile == (FILE *)NULL) {
-        Info(slide, 1, ((char *)slide, LoadFarString(CannotCreateFile),
-          FnFilter1(G.filename), strerror(errno)));
-        return 1;
-    }
-#else /* !MTS */
 #ifdef DEBUG
     Info(slide, 1, ((char *)slide,
       "open_outfile:  doing fopen(%s) for reading\n", FnFilter1(G.filename)));
@@ -390,7 +379,6 @@ int open_outfile(__G)           /* return 1 if fail */
     }
     Trace((stderr, "open_outfile:  fopen(%s) for writing succeeded\n",
       FnFilter1(G.filename)));
-#endif /* !MTS */
 
 #ifdef USE_FWRITE
 #ifdef DOS_W32
@@ -1596,13 +1584,13 @@ time_t dos_to_unix_time(dosdatetime)
     DWORD res;
 #else /* ! WIN32 */
 #ifndef BSD4_4   /* GRR:  change to !defined(MODERN) ? */
-#if (defined(BSD) || defined(MTS) || defined(__GO32__))
+#if (defined(BSD) || defined(__GO32__))
     struct timeb tbp;
-#else /* !(BSD || MTS || __GO32__) */
+#else /* !(BSD || __GO32__) */
 #ifdef DECLARE_TIMEZONE
     extern time_t timezone;
 #endif
-#endif /* ?(BSD || MTS || __GO32__) */
+#endif /* ?(BSD || __GO32__) */
 #endif /* !BSD4_4 */
 #endif /* ?WIN32 */
 
@@ -1650,7 +1638,7 @@ time_t dos_to_unix_time(dosdatetime)
     {
     m_time += 60*(tzinfo.Bias);
 #else /* !WIN32 */
-#if (defined(BSD) || defined(MTS) || defined(__GO32__))
+#if (defined(BSD) || defined(__GO32__))
 #ifdef BSD4_4
     if ( (dosdatetime >= DOSTIME_2038_01_18) &&
          (m_time < (time_t)0x70000000L) )
@@ -1663,11 +1651,11 @@ time_t dos_to_unix_time(dosdatetime)
     ftime(&tbp);                                /* get `timezone' */
     m_time += tbp.timezone * 60L;               /* seconds WEST of GMT:  add */
 #endif /* ?(BSD4_4 || __EMX__) */
-#else /* !(BSD || MTS || __GO32__) */
+#else /* !(BSD || __GO32__) */
     /* tzset was already called at start of process_zipfiles() */
     /* tzset(); */              /* set `timezone' variable */
     m_time += timezone;         /* seconds WEST of GMT:  add */
-#endif /* ?(BSD || MTS || __GO32__) */
+#endif /* ?(BSD || __GO32__) */
 #endif /* ?WIN32 */
     TTrace((stderr, "  m_time after timezone =  %lu\n", (ulg)m_time));
 

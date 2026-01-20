@@ -281,31 +281,6 @@
 #endif /* MSDOS */
 
 /*---------------------------------------------------------------------------
-    MTS section (piggybacks UNIX, I think):
-  ---------------------------------------------------------------------------*/
-
-#ifdef MTS
-#  include <sys/types.h>      /* off_t, time_t, dev_t, ... */
-#  include <sys/stat.h>
-#  include <sys/file.h>       /* MTS uses this instead of fcntl.h */
-#  include <timeb.h>
-#  include <time.h>
-#  include <unix.h>           /* some important non-ANSI routines */
-#  define mkdir(s,n) (-1)     /* no "make directory" capability */
-#  define EBCDIC              /* set EBCDIC conversion on */
-#  define NO_STRNICMP         /* unzip's is as good the one in MTS */
-#  define USE_FWRITE
-#  define close_outfile()  fclose(G.outfile)   /* can't set time on files */
-#  define umask(n)            /* don't have umask() on MTS */
-#  define FOPWT         "w"   /* open file for writing in TEXT mode */
-#  ifndef DATE_FORMAT
-#    define DATE_FORMAT DF_MDY
-#  endif
-#  define lenEOL        1
-#  define PutNativeEOL  *q++ = native(LF);
-#endif /* MTS */
-
-/*---------------------------------------------------------------------------
     Unix section:
   ---------------------------------------------------------------------------*/
 
@@ -922,12 +897,12 @@
 #  define S_IEXEC   S_IXUSR
 #endif
 
-#if (defined(UNIX) && defined(S_IFLNK) && !defined(MTS))
+#if (defined(UNIX) && defined(S_IFLNK))
 #  define SYMLINKS
 #  ifndef S_ISLNK
 #    define S_ISLNK(m)  (((m) & S_IFMT) == S_IFLNK)
 #  endif
-#endif /* UNIX && S_IFLNK && !MTS */
+#endif /* UNIX && S_IFLNK */
 
 #ifndef S_ISDIR
 #  define S_ISDIR(m)  (((m) & S_IFMT) == S_IFDIR)
@@ -2081,9 +2056,7 @@ char    *GetLoadPath     OF((__GPRO));                              /* local */
 #ifdef W32
    int   SetFileSize     OF((FILE *file, zusz_t filesize));         /* local */
 #endif
-#ifndef MTS /* macro in MTS */
    void  close_outfile   OF((__GPRO));                              /* local */
-#endif
 #ifdef SET_SYMLINK_ATTRIBS
    int  set_symlnk_attribs  OF((__GPRO__ slinkentry *slnk_entry));  /* local */
 #endif
