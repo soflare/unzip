@@ -399,7 +399,6 @@ typedef struct _UzpOpts {
     int U_flag;         /* -U: escape non-ASCII, -UU No Unicode paths */
 #endif
     int vflag;          /* -v: (verbosely) list directory */
-    int V_flag;         /* -V: don't strip VMS version numbers */
     int W_flag;         /* -W: wildcard '*' won't match '/' dir separator */
 #if defined(UNIX)
     int X_flag;         /* -X: restore owner/protection or UID/GID or ACLs */

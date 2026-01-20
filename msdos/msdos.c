@@ -451,7 +451,6 @@ int mapname(__G__ renamed)
 {
     char pathcomp[FILNAMSIZ];      /* path-component buffer */
     char *pp, *cp=(char *)NULL;    /* character pointers */
-    char *lastsemi=(char *)NULL;   /* pointer to last semi-colon in pathcomp */
 #ifdef MAYBE_PLAIN_FAT
     char *last_dot=(char *)NULL;   /* last dot not converted to underscore */
 # ifdef USE_LFN
@@ -548,7 +547,6 @@ int mapname(__G__ renamed)
                      & MPN_MASK) > MPN_INF_TRUNC)
                     return error;
                 pp = pathcomp;    /* reset conversion buffer for next piece */
-                lastsemi = (char *)NULL; /* leave direct. semi-colons alone */
                 break;
 
 #ifdef MAYBE_PLAIN_FAT
@@ -580,6 +578,7 @@ int mapname(__G__ renamed)
             case '+':
             case ',':
             case '=':
+            case ';':
 # ifdef USE_LFN
                 if (use_lfn)
                     *pp++ = (char)workch;
@@ -597,18 +596,6 @@ int mapname(__G__ renamed)
             case '*':
             case '?':
                 *pp++ = '_';
-                break;
-
-            case ';':             /* start of VMS version? */
-                lastsemi = pp;
-#ifdef MAYBE_PLAIN_FAT
-# ifdef USE_LFN
-                if (use_lfn)
-                    *pp++ = ';';  /* keep for now; remove VMS ";##" later */
-# endif
-#else
-                *pp++ = ';';      /* keep for now; remove VMS ";##" later */
-#endif
                 break;
 
 #ifdef MAYBE_PLAIN_FAT
@@ -670,26 +657,6 @@ int mapname(__G__ renamed)
     }
 
     *pp = '\0';                   /* done with pathcomp:  terminate it */
-
-    /* if not saving them, remove VMS version numbers (appended ";###") */
-    if (!uO.V_flag && lastsemi) {
-#ifndef MAYBE_PLAIN_FAT
-        pp = lastsemi + 1;
-#else
-# ifdef USE_LFN
-        if (use_lfn)
-            pp = lastsemi + 1;
-        else
-            pp = lastsemi;        /* semi-colon was omitted:  expect all #'s */
-# else
-        pp = lastsemi;            /* semi-colon was omitted:  expect all #'s */
-# endif
-#endif
-        while (isdigit((uch)(*pp)))
-            ++pp;
-        if (*pp == '\0')          /* only digits between ';' and end:  nuke */
-            *lastsemi = '\0';
-    }
 
 #ifdef MAYBE_PLAIN_FAT
     maskDOSdevice(__G__ pathcomp, last_dot);

@@ -1647,7 +1647,6 @@ int mapname(__G__ renamed)
 {
     char pathcomp[FILNAMSIZ];   /* path-component buffer */
     char *pp, *cp=NULL;         /* character pointers */
-    char *lastsemi = NULL;      /* pointer to last semi-colon in pathcomp */
     int killed_ddot = FALSE;    /* is set when skipping "../" pathcomp */
     int error;
     register unsigned workch;   /* hold the character being tested */
@@ -1727,7 +1726,6 @@ int mapname(__G__ renamed)
                      & MPN_MASK) > MPN_INF_TRUNC)
                     return error;
                 pp = pathcomp;    /* reset conversion buffer for next piece */
-                lastsemi = (char *)NULL; /* leave direct. semi-colons alone */
                 break;
 
             case ':':             /* drive spec not stored, so no colon allowed */
@@ -1739,10 +1737,6 @@ int mapname(__G__ renamed)
             case '?':             /* no wildcards allowed */
             case '*':
                 *pp++ = '_';      /* these rules apply equally to FAT and NTFS */
-                break;
-            case ';':             /* start of VMS version? */
-                lastsemi = pp;    /* remove VMS version later... */
-                *pp++ = ';';      /*  but keep semicolon for now */
                 break;
             case ' ':             /* keep spaces unless specifically */
                 /* NT cannot create filenames with spaces on FAT volumes */
@@ -1829,15 +1823,6 @@ int mapname(__G__ renamed)
     }
 
     *pp = '\0';                   /* done with pathcomp:  terminate it */
-
-    /* if not saving them, remove VMS version numbers (appended "###") */
-    if (!uO.V_flag && lastsemi) {
-        pp = lastsemi + 1;        /* semi-colon was kept:  expect #'s after */
-        while (isdigit((uch)(*pp)))
-            ++pp;
-        if (*pp == '\0')          /* only digits between ';' and end:  nuke */
-            *lastsemi = '\0';
-    }
 
     maskDOSdevice(__G__ pathcomp);
 

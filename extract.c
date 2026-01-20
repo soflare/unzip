@@ -23,7 +23,6 @@
              test_compr_eb()
              memextract()
              memflush()
-             extract_izvms_block()    (VMS_TEXT_CONV)
              set_deferred_symlink()   (SYMLINKS only)
              fnfilter()
              dircomp()                (SET_DIR_ATTRIB only)
@@ -98,10 +97,6 @@ static int extract_or_test_member OF((__GPRO));
         unsigned compr_offset,
         int (*test_uc_ebdata)(__GPRO__ uch *eb, unsigned eb_size,
                               uch *eb_ucptr, ulg eb_ucsize)));
-#endif
-#if defined(VMS_TEXT_CONV)
-   static void decompress_bits OF((uch *outptr, unsigned needlen,
-                                   ZCONST uch *bitptr));
 #endif
 #ifdef SYMLINKS
    static void set_deferred_symlink OF((__GPRO__ slinkentry *slnk_entry));
@@ -230,8 +225,6 @@ static ZCONST char Far ErrorInArchive[] =
   "At least one %serror was detected in %s.\n";
 static ZCONST char Far ZeroFilesTested[] =
   "Caution:  zero files tested in %s.\n";
-static ZCONST char Far VMSFormatQuery[] =
-  "\n%s:  stored in VMS format.  Extract anyway? (y/n) ";
 
 #if CRYPT
    static ZCONST char Far SkipCannotGetPasswd[] =
@@ -890,25 +883,7 @@ static int store_info(__G)   /* return 0 if skipping, 1 if OK */
             break;
     }
 
-    if (G.crec.version_needed_to_extract[1] == VMS_) {
-        if (G.crec.version_needed_to_extract[0] > VMS_UNZIP_VERSION) {
-            if (!((uO.tflag && uO.qflag) || (!uO.tflag && !QCOND2)))
-                Info(slide, 0x401, ((char *)slide, LoadFarString(VersionMsg),
-                  FnFilter1(G.filename), "VMS",
-                  G.crec.version_needed_to_extract[0] / 10,
-                  G.crec.version_needed_to_extract[0] % 10,
-                  VMS_UNZIP_VERSION / 10, VMS_UNZIP_VERSION % 10));
-            return 0;
-        }
-        else if (!uO.tflag && !IS_OVERWRT_ALL) { /* if -o, extract anyway */
-            Info(slide, 0x481, ((char *)slide, LoadFarString(VMSFormatQuery),
-              FnFilter1(G.filename)));
-            fgets(G.answerbuf, sizeof(G.answerbuf), stdin);
-            if ((*G.answerbuf != 'y') && (*G.answerbuf != 'Y'))
-                return 0;
-        }
-    /* usual file type:  don't need VMS to extract */
-    } else if (G.crec.version_needed_to_extract[0] > UNZVERS_SUPPORT) {
+    if (G.crec.version_needed_to_extract[0] > UNZVERS_SUPPORT) {
         if (!((uO.tflag && uO.qflag) || (!uO.tflag && !QCOND2)))
             Info(slide, 0x401, ((char *)slide, LoadFarString(VersionMsg),
               FnFilter1(G.filename), "PK",
@@ -2272,124 +2247,6 @@ int memflush(__G__ rawbuf, size)
     return 0;
 
 } /* end function memflush() */
-
-
-
-
-
-#if defined(VMS_TEXT_CONV)
-
-/************************************/
-/*  Function extract_izvms_block()  */
-/************************************/
-
-/*
- * Extracts block from p. If resulting length is less than needed, fill
- * extra space with corresponding bytes from 'init'.
- * Currently understands 3 formats of block compression:
- * - Simple storing
- * - Compression of zero bytes to zero bits
- * - Deflation (see memextract())
- * The IZVMS block data is returned in malloc'd space.
- */
-uch *extract_izvms_block(__G__ ebdata, size, retlen, init, needlen)
-    __GDEF
-    ZCONST uch *ebdata;
-    unsigned size;
-    unsigned *retlen;
-    ZCONST uch *init;
-    unsigned needlen;
-{
-    uch *ucdata;       /* Pointer to block allocated */
-    int cmptype;
-    unsigned usiz, csiz;
-
-    cmptype = (makeword(ebdata+EB_IZVMS_FLGS) & EB_IZVMS_BCMASK);
-    csiz = size - EB_IZVMS_HLEN;
-    usiz = (cmptype == EB_IZVMS_BCSTOR ?
-            csiz : makeword(ebdata+EB_IZVMS_UCSIZ));
-
-    if (retlen)
-        *retlen = usiz;
-
-    if ((ucdata = (uch *)malloc(MAX(needlen, usiz))) == NULL)
-        return NULL;
-
-    if (init && (usiz < needlen))
-        memcpy((char *)ucdata, (ZCONST char *)init, needlen);
-
-    switch (cmptype)
-    {
-        case EB_IZVMS_BCSTOR: /* The simplest case */
-            memcpy(ucdata, ebdata+EB_IZVMS_HLEN, usiz);
-            break;
-        case EB_IZVMS_BC00:
-            decompress_bits(ucdata, usiz, ebdata+EB_IZVMS_HLEN);
-            break;
-        case EB_IZVMS_BCDEFL:
-            memextract(__G__ ucdata, (ulg)usiz,
-                       ebdata+EB_IZVMS_HLEN, (ulg)csiz);
-            break;
-        default:
-            free(ucdata);
-            ucdata = NULL;
-    }
-    return ucdata;
-
-} /* end of extract_izvms_block */
-
-
-
-
-
-/********************************/
-/*  Function decompress_bits()  */
-/********************************/
-/*
- *  Simple uncompression routine. The compression uses bit stream.
- *  Compression scheme:
- *
- *  if (byte!=0)
- *      putbit(1),putbyte(byte)
- *  else
- *      putbit(0)
- */
-static void decompress_bits(outptr, needlen, bitptr)
-    uch *outptr;        /* Pointer into output block */
-    unsigned needlen;   /* Size of uncompressed block */
-    ZCONST uch *bitptr; /* Pointer into compressed data */
-{
-    ulg bitbuf = 0;
-    int bitcnt = 0;
-
-#define _FILL   {       bitbuf |= (*bitptr++) << bitcnt;\
-                        bitcnt += 8;                    \
-                }
-
-    while (needlen--)
-    {
-        if (bitcnt <= 0)
-            _FILL;
-
-        if (bitbuf & 1)
-        {
-            bitbuf >>= 1;
-            if ((bitcnt -= 1) < 8)
-                _FILL;
-            *outptr++ = (uch)bitbuf;
-            bitcnt -= 8;
-            bitbuf >>= 8;
-        }
-        else
-        {
-            *outptr++ = '\0';
-            bitcnt -= 1;
-            bitbuf >>= 1;
-        }
-    }
-} /* end function decompress_bits() */
-
-#endif /* VMS_TEXT_CONV */
 
 
 

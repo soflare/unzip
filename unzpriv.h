@@ -70,16 +70,6 @@
 #  undef USE_BZIP2
 #endif
 
-#if defined(NO_VMS_TEXT_CONV)
-#  ifdef VMS_TEXT_CONV
-#    undef VMS_TEXT_CONV
-#  endif
-#else
-#  if (!defined(VMS_TEXT_CONV) && !defined(SFX))
-#    define VMS_TEXT_CONV
-#  endif
-#endif
-
 /* Enable -B option per default on specific systems, to allow backing up
  * files that would be overwritten.
  * (This list of systems must be kept in sync with the list of systems
@@ -386,7 +376,6 @@
 #  define UNZIP_VERSION   20   /* compatible with PKUNZIP 2.0 */
 #endif
 #endif
-#define VMS_UNZIP_VERSION 42   /* if OS-needed-to-extract is VMS:  can do */
 
 #if defined(MSDOS)
 #  define DOS
@@ -1916,11 +1905,6 @@ int    extract_or_test_files     OF((__GPRO));
 int    memextract                OF((__GPRO__ uch *tgt, ulg tgtsize,
                                      ZCONST uch *src, ulg srcsize));
 int    memflush                  OF((__GPRO__ ZCONST uch *rawbuf, ulg size));
-#if defined(VMS_TEXT_CONV)
-   uch   *extract_izvms_block    OF((__GPRO__ ZCONST uch *ebdata,
-                                     unsigned size, unsigned *retlen,
-                                     ZCONST uch *init, unsigned needlen));
-#endif
 char  *fnfilter                  OF((ZCONST char *raw, uch *space,
                                      extent size));
 

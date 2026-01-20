@@ -402,9 +402,6 @@ static ZCONST char Far ZipInfoUsageLine3[] = "miscellaneous options:\n\
      static ZCONST char Far UseBZip2[] =
      "USE_BZIP2 (PKZIP 4.6+, using bzip2 lib version %s)";
 #  endif
-#  ifdef VMS_TEXT_CONV
-     static ZCONST char Far VmsTextConv[] = "VMS_TEXT_CONV";
-#  endif
 #  ifdef WILD_STOP_AT_DIR
      static ZCONST char Far WildStopAtDir[] = "WILD_STOP_AT_DIR";
 #  endif
@@ -1343,12 +1340,6 @@ int uz_opts(__G__ pargc, pargv)
                         uO.vflag = 2;
                     break;
 #endif /* !SFX */
-                case ('V'):    /* Version (retain VMS/DEC-20 file versions) */
-                    if (negative)
-                        uO.V_flag = FALSE, negative = 0;
-                    else
-                        uO.V_flag = TRUE;
-                    break;
 #ifdef WILD_STOP_AT_DIR
                 case ('W'):    /* Wildcard interpretation (stop at '/'?) */
                     if (negative)
@@ -2063,11 +2054,6 @@ static void show_version_info(__G)
           BZ2_bzlibVersion());
         Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
           (char *)(slide+256)));
-        ++numopts;
-#endif
-#ifdef VMS_TEXT_CONV
-        Info(slide, 0, ((char *)slide, LoadFarString(CompileOptFormat),
-          LoadFarStringSmall(VmsTextConv)));
         ++numopts;
 #endif
 #ifdef WILD_STOP_AT_DIR

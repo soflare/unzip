@@ -495,7 +495,6 @@ int mapname(__G__ renamed)
 {
     char pathcomp[FILNAMSIZ];      /* path-component buffer */
     char *pp, *cp=(char *)NULL;    /* character pointers */
-    char *lastsemi=(char *)NULL;   /* pointer to last semi-colon in pathcomp */
     int killed_ddot = FALSE;       /* is set when skipping "../" pathcomp */
     int error = MPN_OK;
     register unsigned workch;      /* hold the character being tested */
@@ -551,7 +550,6 @@ int mapname(__G__ renamed)
                      & MPN_MASK) > MPN_INF_TRUNC)
                     return error;
                 pp = pathcomp;    /* reset conversion buffer for next piece */
-                lastsemi = (char *)NULL; /* leave direct. semi-colons alone */
                 break;
 
 #ifdef __CYGWIN__   /* Cygwin runs on Win32, apply FAT/NTFS filename rules */
@@ -566,11 +564,6 @@ int mapname(__G__ renamed)
                 *pp++ = '_';  /* these rules apply equally to FAT and NTFS */
                 break;
 #endif
-
-            case ';':             /* VMS version (or DEC-20 attrib?) */
-                lastsemi = pp;
-                *pp++ = ';';      /* keep for now; remove VMS ";##" */
-                break;            /*  later, if requested */
 
             default:
                 /* disable control character filter when requested,
@@ -635,15 +628,6 @@ int mapname(__G__ renamed)
     }
 
     *pp = '\0';                   /* done with pathcomp:  terminate it */
-
-    /* if not saving them, remove VMS version numbers (appended ";###") */
-    if (!uO.V_flag && lastsemi) {
-        pp = lastsemi + 1;
-        while (isdigit((uch)(*pp)))
-            ++pp;
-        if (*pp == '\0')          /* only digits between ';' and end:  nuke */
-            *lastsemi = '\0';
-    }
 
     /* On UNIX (and compatible systems), "." and ".." are reserved for
      * directory navigation and cannot be used as regular file names.
